@@ -105,7 +105,7 @@ const Navbar = ({ }: Props) => {
     else if (!!res.data) { setPassData(res.data); setUsername(res.data.username) }
 
     if ((!!response.error && !!res.error) || (res.error == undefined && response.error == undefined)) {
-      setMessage("Bạn cần đăng nhập để sử dụng chức năng này!")
+      setMessage(intl.formatMessage({ id: "Navbar.Message" }))
       openModal(true)
     }
   }
@@ -118,40 +118,40 @@ const Navbar = ({ }: Props) => {
     <>
       {modal && <NotiPopup onClose={() => { openModal(false); route.push("/") }} message={message} />}
       {modal2 && <SubmitPopup onClose={() => { openModal2(false); }} message={message} submit={handleLogout} />}
-      {modal3 && passData && <DetailPopup onClose={() => { openModal3(false) }} title="Thông tin nhân viên" children={
+      {modal3 && passData && <DetailPopup onClose={() => { openModal3(false) }} title={intl.formatMessage({ id: "Navbar.Title" })} children={
         <div className="flex flex-row gap-3 text-[#000000] dark:text-white">
           <div className="w-32 h-full flex-col">
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">Họ và tên</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info8" /></span>
               <span className="font-semibold">:</span>
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">Tài khoản</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info1" /></span>
               <span className="font-semibold">:</span>
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">Email</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info2" /></span>
               <span className="font-semibold">:</span>
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">Số điện thoại</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info3" /></span>
               <span className="font-semibold">:</span>
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">Ngày sinh</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info4" /></span>
               <span className="font-semibold">:</span>
               {" "}
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">Vị trí</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info5" /></span>
               <span className="font-semibold">:</span>
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold">CCCD</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info6" /></span>
               <span className="font-semibold">:</span>
             </p>
             <p className="whitespace-nowrap flex flex-row justify-between">
-              <span className="font-semibold">Nơi ở</span>
+              <span className="font-semibold"><FormattedMessage id="Navbar.Info7" /></span>
               <span className="font-semibold">:</span>
             </p>
           </div>

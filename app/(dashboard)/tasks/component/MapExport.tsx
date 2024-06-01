@@ -11,7 +11,7 @@ import { SourceContext } from '../context/SourceContext';
 import Notification from '@/components/notification'
 import { DistanceContext } from '../context/DistanceContext';
 import darkTheme from '../maptheme/dark.json';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 function MapExport() {
     const { theme, setTheme } = useThemeContext()
@@ -31,7 +31,7 @@ function MapExport() {
         width: '100%',
         height: '100%',
     };
-
+    const intl = useIntl()
     const mapOptions = {
         disableDefaultUI: true,
         minZoom: 4,
@@ -176,11 +176,11 @@ function MapExport() {
                     map.setZoom(14)
                 }
             }, error => {
-                setMessage("Vui lòng cho phép trình duyệt quyền truy cập vị trí để sử dụng tính năng này.")
+                setMessage(intl.formatMessage({ id: "Mission.Map.Message" }))
                 setOpenModal(true)
             });
         } else {
-            setMessage("Vui lòng cho phép trình duyệt quyền truy cập vị trí để sử dụng tính năng này.")
+            setMessage(intl.formatMessage({ id: "Mission.Map.Message" }))
             setOpenModal(true)
         }
     }, [map]);

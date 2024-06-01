@@ -32,8 +32,8 @@ export default function layoutStructure({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const locale = searchParams.get('locale') || 'en';
-  const defaultLocale = 'en';
+  const locale = searchParams.get('locale') || 'vi';
+  const defaultLocale = 'vi';
   const messages = languages[locale];
   return (
     <IntlProvider messages={messages} locale={locale} defaultLocale={defaultLocale}>

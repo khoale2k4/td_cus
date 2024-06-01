@@ -264,7 +264,7 @@ const DetailOrder: React.FC<DetailPopupProps> = ({ onClose, dataInitial, reloadD
             handleFetchOrder()
             setIsEditing(false);
             setReload(true)
-            setMessage("Cập nhật thành công!");
+            setMessage(intl.formatMessage({ id: 'Mission.Detail.Alert1' }));
             setOpenError(true)
         }
         setLoading(false)
@@ -428,7 +428,7 @@ const DetailOrder: React.FC<DetailPopupProps> = ({ onClose, dataInitial, reloadD
                             </>}
                     </Button>
                 </div>
-            </div>} onClose={reload ? reloadData : onClose} title="Chi tiết đơn hàng" />
+            </div>} onClose={reload ? reloadData : onClose} title={intl.formatMessage({ id: "Mission.Detail.Info18" })} />
 
     );
 };

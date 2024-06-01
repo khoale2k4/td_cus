@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { QrReader } from 'react-qr-reader';
 import { IoIosQrScanner } from "react-icons/io";
 import { MdClose } from "react-icons/md";
+import { FormattedMessage } from "react-intl";
 
 interface QRscannerProps {
     onClose: () => void;
@@ -104,7 +105,7 @@ const QRscanner: React.FC<QRscannerProps> = ({ onClose, data, setData }) => {
                 <button className={`${cameraPermission === false ? "text-black dark:text-white" : "text-white"} absolute top-4 right-4 z-20`} onClick={handleClose}><MdClose className="w-6 h-6" /></button>
                 {cameraPermission === false ? (
                     <div className="flex flex-col items-center justify-center h-full px-4">
-                        <p className="text-red-500 text-center">Vui lòng cho phép truy cập camera và tải lại trang để sử dụng chức năng này!</p>
+                        <p className="text-red-500 text-center"><FormattedMessage id="QR.Message" /></p>
                     </div>
                 ) : (
                     <div className="h-full w-full relative flex justify-center place-items-center">

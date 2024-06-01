@@ -50,19 +50,19 @@ const ImageView: React.FC<ImageViewProps> = ({ onClose, url }) => {
         >
             <motion.div
                 ref={notificationRef}
-                className={`relative w-full h-full bg-white dark:bg-navy-900 rounded-xl p-2 flex flex-col`}
+                className={`relative w-full h-full bg-white dark:bg-[#242526] rounded-xl p-2 flex flex-col`}
                 initial={{ scale: 0 }}
                 animate={{ scale: isVisible ? 1 : 0 }}
                 exit={{ scale: 0 }}
                 transition={{ duration: 0.5 }}
             >
                 <Button
-                    className="absolute dark:text-[#000000] text-gray-500 right-6 top-6 w-8 h-8 rounded-full mb-2 z-30 bg-white shadow"
+                    className="absolute text-[#000000] dark:text-white right-6 top-6 w-8 h-8 rounded-full mb-2 z-30 bg-white dark:bg-[#242526]  shadow"
                     onClick={handleClose}
                 >
                     <IoMdClose className="w-5/6 h-5/6" />
                 </Button>
-                <div className="w-full h-full relative flex flex-col dark:bg-navy-800 bg-gray-200 px-2 py-2 rounded-sm gap-1">
+                <div className="w-full h-full relative flex flex-col dark:bg-[#3A3B3C] bg-gray-200 px-2 py-2 rounded-sm gap-1">
                     <Image
                         src={url}
                         alt={`Image full`}

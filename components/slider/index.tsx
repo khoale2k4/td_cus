@@ -8,6 +8,7 @@ import { Button } from "@nextui-org/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 import ImageView from "../image";
+import { FormattedMessage } from "react-intl";
 export function CarouselSlider({ ObjUrls }: { ObjUrls: any }) {
     const [urlState, setUrlState] = useState<string>("")
     const [openModal, setIsOpenModal] = useState(false)
@@ -77,7 +78,7 @@ export function CarouselSlider({ ObjUrls }: { ObjUrls: any }) {
                 </div>
             )) : (
                 <div className="flex justify-center text-center">
-                    <p>No image uploaded.</p>
+                    <p><FormattedMessage id="NoimgUploaded" /></p>
                 </div>
             )}
         </Carousel>

@@ -55,7 +55,6 @@ const CheckTable = (props: Props) => {
     const data = useMemo(() => tableData, [tableData]);
     const [searchValue, setSearchValue] = useState("");
     const [currentPageInput, setCurrentPageInput] = useState(1);
-
     const tableInstance = useTable(
         {
             columns,
@@ -131,7 +130,7 @@ const CheckTable = (props: Props) => {
                                 setGlobalFilter(e.target.value)
                             }}
                             type="text"
-                            placeholder="Tìm kiếm..."
+                            placeholder={intl.formatMessage({ id: "Navbar.Search" })}
                             className={`block h-full w-full rounded-full bg-lightPrimary text-sm font-medium text-navy-800 dark:text-white  placeholder:text-navy-800 placeholder:dark:text-gray-300
             outline-none dark:bg-[#3A3B3C]  pl-1 pr-3`}
                         />
@@ -206,7 +205,7 @@ const CheckTable = (props: Props) => {
                     </Button>
                 </div>
             </div>
-            {tableData.length == 0 ? <div className="h-full flex w-full place-items-center text-center justify-center">Lịch sử công việc trống</div>
+            {tableData.length == 0 ? <div className="h-full flex w-full place-items-center text-center justify-center"><FormattedMessage id="History.Message" /></div>
                 : <div className="mt-4 sm:mt-8 overflow-x-auto no-scrollbar md:scrollbar h-full">
                     <table {...getTableProps()} className="w-full" color="gray-500">
                         <thead>

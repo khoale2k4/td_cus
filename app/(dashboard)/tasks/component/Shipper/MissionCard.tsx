@@ -68,11 +68,10 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
         const response = await ordersOperation.updateSignature(imageData, confirmingUpdateTaskInfo);
         setOpenConfirm(false)
         if (response.error || response.error.error) {
-            console.log(response)
-            setMessage(intl.formatMessage({ id: 'Mission.Detail.Alert3' }));
+            setMessage(intl.formatMessage({ id: 'TaskCard.ErrorMessage' }));
             setOpenError(true)
         } else {
-            setMessage("Cập nhật chữ ký thành công!")
+            setMessage(intl.formatMessage({ id: 'Mission.Detail.Alert5' }))
             setOpenError(true)
         }
     }
@@ -101,7 +100,7 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
     const handleSubmitImg = async () => {
 
         if (!files) {
-            setMessage("Vui lòng chọn ít nhất 1 ảnh!");
+            setMessage(intl.formatMessage({ id: "Mission.Detail.Alert4" }));
             setOpenError(true)
             return;
         }
@@ -122,7 +121,7 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
                 setOpenConfirm(false)
                 setOpenError(true)
             } else {
-                setMessage("Cập nhật ảnh thành công.")
+                setMessage(intl.formatMessage({ id: "Mission.Detail.Alert3" }))
                 setOpenConfirm(false)
                 setOpenError(true)
             }
@@ -139,7 +138,7 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
             {openError && <NotiPopup onClose={() => { setOpenError(false); }} message={message} />}
             {openDirect && <DirectPopup onClose={() => { setOpenDirect(false) }} dataInitial={data.order} toggle={toggle} />}
             {openDetail && <DetailOrder onClose={() => setOpenDetail(false)} dataInitial={data} reloadData={reloadData} />}
-            {openSign && <DetailPopup onClose={() => { setOpenSign(false); setOption(0); setSavedSignature(null) }} className="pt-0" title="Ảnh chữ ký" children={
+            {openSign && <DetailPopup onClose={() => { setOpenSign(false); setOption(0); setSavedSignature(null) }} className="pt-0" title={intl.formatMessage({ id: "Mission.Signature.Title" })} children={
                 <div className="relative flex flex-col rounded-b-3xl">
                     <div className="sticky top-0 w-full flex bg-white dark:bg-[#242526] mb-2">
                         <Button className={`w-full flex flex-row p-2 ${option === 0 ? "text-red-500 font-semibold" : "text-black"}`} onClick={() => setOption(0)}>
@@ -176,7 +175,7 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
                 </div>
 
             } />}
-            {openImg && <DetailPopup onClose={() => { setOpenImg(false); setOption(0); setFiles([]) }} className="pt-0" title="Ảnh đơn hàng" children={
+            {openImg && <DetailPopup onClose={() => { setOpenImg(false); setOption(0); setFiles([]) }} className="pt-0" title={intl.formatMessage({ id: "TaskCard.Img" })} children={
                 <div className="relative flex flex-col rounded-b-3xl">
                     <div className="sticky top-0 w-full flex bg-white dark:bg-[#242526] mb-2">
                         <Button className={`w-full flex flex-row p-2 ${option === 0 ? "text-red-500 font-semibold" : "text-black"}`} onClick={() => setOption(0)}>
@@ -228,11 +227,11 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
                                 <p className="truncate font-bold text-center">{data.order_id}</p>
                             </div>
                             <div className="flex flex-col mt-2">
-                                <p className="font-bold whitespace-nowrap">Địa điểm nhận hàng: </p>
+                                <p className="font-bold whitespace-nowrap"><FormattedMessage id="Mission.Detail.Info25" />: </p>
                                 <p className="line-clamp-1">{`${data.order.detail_source}, ${data.order.ward_source}, ${data.order.district_source}, ${data.order.province_source}`}</p>
                             </div>
                             <div className="flex flex-col mt-1">
-                                <p className="font-bold whitespace-nowrap">Địa điểm giao hàng: </p>
+                                <p className="font-bold whitespace-nowrap"><FormattedMessage id="Mission.Detail.Info26" />: </p>
                                 <p className="line-clamp-1">{`${data.order.detail_dest}, ${data.order.ward_dest}, ${data.order.district_dest}, ${data.order.province_dest}`}</p>
                             </div>
                         </div>
@@ -247,10 +246,10 @@ const MissionCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle:
                             <FormattedMessage id="TaskCard.Detail" />
                         </Button>
                         <Button className="w-1/2 h-full border-r dark:border-[#3A3B3C]" onClick={() => setOpenSign(true)}>
-                            Ảnh chữ ký
+                            <FormattedMessage id="TaskCard.Sign" />
                         </Button>
                         <Button className="w-1/2 h-full" onClick={() => setOpenImg(true)}>
-                            Ảnh đơn hàng
+                            <FormattedMessage id="TaskCard.Img" />
                         </Button>
                     </div>
                     <div className="flex w-full h-10 rounded-b-lg border-t dark:border-[#3A3B3C] text-sm">

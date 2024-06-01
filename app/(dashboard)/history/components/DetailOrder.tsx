@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import DetailPopup from "@/components/popup";
 import { OrdersOperation } from "@/TDLib/tdlogistics";
 import { UpdatingOrderImageCondition } from "@/TDLib/tdlogistcs";
@@ -19,7 +19,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
     const [imageUrls2, setImageUrls2] = useState<string[]>([]);
     const ordersOperation = new OrdersOperation();
     const [option, setOption] = useState<null | number>(0);
-
+    const intl = useIntl()
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -73,102 +73,102 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                 <div className="flex flex-row gap-3 text-[#000000] dark:text-white md:w-1/2">
                     <div className="w-50 h-full flex-col">
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Mã đơn hàng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info1" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Tên người gửi</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info9" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Địa chỉ người gửi</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info15" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Số điện thoại người gửi</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info10" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Tên người nhận</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info11" /></span>
                             <span className="font-semibold">:</span>
                             {" "}
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Địa chỉ người nhận</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info16" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Số điện thoại người nhận</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info12" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Phí giao hàng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info13" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between">
-                            <span className="font-semibold">Tiền COD</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info4" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between">
-                            <span className="font-semibold">Khối lượng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info5" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between">
-                            <span className="font-semibold">Chiều dài</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info6" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between">
-                            <span className="font-semibold">Chiều rộng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info7" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between">
-                            <span className="font-semibold">Chiều cao</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info8" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                     </div>
                     <div className="w-full h-full flex-col">
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.order_id || "Không có thông tin"}
+                            {dataInitial.order_id || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.name_sender || "Không có thông tin"}
+                            {dataInitial.name_sender || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
                             {`${dataInitial.detail_source}, ${dataInitial.ward_source}, ${dataInitial.district_source}, ${dataInitial.province_source}`}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.phone_number_sender || "Không có thông tin"}
+                            {dataInitial.phone_number_sender || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.name_receiver || "Không có thông tin"}
+                            {dataInitial.name_receiver || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
                             {`${dataInitial.detail_dest}, ${dataInitial.ward_dest}, ${dataInitial.district_dest}, ${dataInitial.province_dest}`}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.phone_number_receiver || "Không có thông tin"}
+                            {dataInitial.phone_number_receiver || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {parseFloat(dataInitial.fee).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) || "Không có thông tin"}
+                            {parseFloat(dataInitial.fee).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {parseFloat(dataInitial.COD).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) || "Không có thông tin"}
+                            {parseFloat(dataInitial.COD).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.mass || "Không có thông tin"}
+                            {dataInitial.mass || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.length || "Không có thông tin"}
+                            {dataInitial.length || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.width || "Không có thông tin"}
+                            {dataInitial.width || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {dataInitial.height || "Không có thông tin"}
+                            {dataInitial.height || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                     </div>
                 </div>
-            </div>} onClose={onClose} title="Chi tiết đơn hàng" />
+            </div>} onClose={onClose} title={intl.formatMessage({ id: "Mission.Detail.Info18" })} />
 
     );
 };

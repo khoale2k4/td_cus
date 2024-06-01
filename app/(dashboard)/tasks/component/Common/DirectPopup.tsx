@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 import { Button } from "@nextui-org/react";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { SourceContext } from "../../context/SourceContext";
 import { DestinationContext } from "../../context/DestinationContext";
 import DetailPopup from "@/components/popup";
@@ -21,7 +21,7 @@ const DirectPopup: React.FC<DirectPopupProps> = ({ onClose, dataInitial, toggle 
     const { source, setSource } = useContext(SourceContext);
     //@ts-ignore
     const { destination, setDestination } = useContext(DestinationContext);
-
+    const intl = useIntl()
     const handleSubmitClick = () => {
         toggle();
         if (option == "source") {
@@ -57,8 +57,8 @@ const DirectPopup: React.FC<DirectPopupProps> = ({ onClose, dataInitial, toggle 
                     setSource({
                         lat: latitude,
                         lng: longitude,
-                        label: "Vị trí của bạn",
-                        name: "Vị trí của bạn"
+                        label: intl.formatMessage({ id: "TaskCard.CurrentLocation" }),
+                        name: intl.formatMessage({ id: "TaskCard.CurrentLocation" })
                     })
                 },
                 (error) => {
@@ -95,7 +95,7 @@ const DirectPopup: React.FC<DirectPopupProps> = ({ onClose, dataInitial, toggle 
                     <span><FormattedMessage id="Mission.Direct.Button" /></span>
                 </Button>
             </div>
-        </>} onClose={onClose} title="Chỉ đường" />
+        </>} onClose={onClose} title={intl.formatMessage({ id: "TaskCard.Direction" })} />
 
     );
 };

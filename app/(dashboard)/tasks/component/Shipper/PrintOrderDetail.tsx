@@ -18,7 +18,7 @@ const PrintOrderDetails = forwardRef<HTMLDivElement, PrintOrderDetailsProps>((pr
                     className='rounded-md object-contain h-60 w-96'
                 />
             </div>
-            <h1 className="text-3xl font-bold mb-4 text-center -mt-10">Hoá đơn thanh toán đơn hàng</h1>
+            <h1 className="text-3xl font-bold mb-4 text-center -mt-10"><FormattedMessage id="Print.Title" /></h1>
             <div className="flex place-items-center mb-4 justify-center">
                 {qrCodeImageUrl && <Image
                     src={qrCodeImageUrl}

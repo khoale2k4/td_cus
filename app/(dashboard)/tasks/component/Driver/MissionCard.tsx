@@ -38,14 +38,7 @@ const TaskCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle: an
                         longitude: position.coords.longitude
                     });
                 },
-                error => {
-                    setMessage(intl.formatMessage({ id: 'TaskCard.LocationError' }));
-                    setOpenError(true);
-                }
             );
-        } else {
-            setMessage(intl.formatMessage({ id: 'TaskCard.UnsupportedBrowser' }));
-            setOpenError(true);
         }
     };
 
@@ -75,7 +68,7 @@ const TaskCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle: an
     };
 
     const handleOpenUndertake = async () => {
-        setMessage("Xác nhận tiếp nhận đơn hàng?")
+        setMessage(intl.formatMessage({ id: 'TaskCard.ConfirmationMessage2' }))
         setOpenConfirm(true)
     };
 
@@ -107,46 +100,46 @@ const TaskCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle: an
             {openConfirm && <SubmitPopup onClose={() => setOpenConfirm(false)} message={message} submit={handleUndertake} />}
             {openError && <NotiPopup onClose={() => { setOpenError(false); }} message={message} />}
             {openDirect && <DirectPopup onClose={() => { setOpenDirect(false) }} dataInitial={data.shipment} toggle={toggle} />}
-            {openDetail && data && <DetailPopup onClose={() => { setOpenDetail(false) }} title="Thông tin đơn hàng" children={
+            {openDetail && data && <DetailPopup onClose={() => { setOpenDetail(false) }} title={intl.formatMessage({ id: "Mission.Detail.Title" })} children={
                 <div className="flex flex-row gap-3 text-[#000000] dark:text-white">
                     <div className="w-54 h-full flex-col">
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Mã đơn hàng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info22" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Mã phương tiện</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info19" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Khối lượng lô hàng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info21" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Ngày tạo lô hàng</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info23" /></span>
                             <span className="font-semibold">:</span>
                         </p>
                         <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-                            <span className="font-semibold">Lần cập nhật cuối</span>
+                            <span className="font-semibold"><FormattedMessage id="Mission.Detail.Info24" /></span>
                             <span className="font-semibold">:</span>
                             {" "}
                         </p>
                     </div>
                     <div className="w-full h-full flex-col">
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {data.shipment_id || "Không có thông tin."}
+                            {data.shipment_id || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {data.shipment?.vehicle_id || "Không có thông tin."}
+                            {data.shipment?.vehicle_id || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="flex flex-col sm:flex-row sm:gap-2">
-                            {data.shipment?.mass || "Không có thông tin."}
+                            {data.shipment?.mass || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {createTime(data.shipment?.created_at) || "Không có thông tin."}
+                            {createTime(data.shipment?.created_at) || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                         <p className="whitespace-nowrap flex flex-row gap-2">
-                            {createTime(data.shipment?.last_update) || "Không có thông tin."}
+                            {createTime(data.shipment?.last_update) || intl.formatMessage({ id: "Mission.Detail.Info17" })}
                         </p>
                     </div>
                 </div>
@@ -190,7 +183,7 @@ const TaskCard = ({ data, toggle, keyName, reloadData }: { data: any, toggle: an
                             <FormattedMessage id="TaskCard.Detail" />
                         </Button>
                         <Button className="w-1/3 h-full rounded-r-none border-r dark:border-[#3A3B3C]" onClick={handleOpenUndertake}>
-                            Tiếp nhận
+                            <FormattedMessage id="TaskCard.Undertake" />
                         </Button>
                         <Button className="w-1/3 h-full rounded-b-lg rounded-l-none text-green-500" onClick={handleOpenStatus}>
                             <FormattedMessage id="TaskCard.Complete" />

@@ -71,7 +71,7 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ savedSignature, setSavedSig
             </div>
             <div className="mt-2 w-full sm:w-96 border border-gray-400 rounded-xl mb-2 bg-white">
                 <h3 className="text-md font-semibold text-center w-full mt-2 ">
-                    <FormattedMessage id="Mission.SignaturePreview" />
+                    <FormattedMessage id="Mission.AddImage.Preview" />
                 </h3>
                 {savedSignature != null && savedSignature instanceof Blob ? (
                     <img

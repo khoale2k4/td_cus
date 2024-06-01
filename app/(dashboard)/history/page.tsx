@@ -16,7 +16,6 @@ const ShipperHistory = () => {
 
         const data2 = await histories.getHistory({ option: option });
         if (!data2.error) setData(data2.data)
-        console.log(data2)
     }
 
     useEffect(() => {

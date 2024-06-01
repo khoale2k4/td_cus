@@ -102,7 +102,6 @@ const AddPanel = () => {
 
     useEffect(() => {
         sortData();
-        console.log(task)
     }, [task, searchValue]);
 
     return (
@@ -119,7 +118,7 @@ const AddPanel = () => {
                             {passData?.role == "PARTNER_DRIVER" && <div className="w-full px-1 sm:px-2">
                                 <div className={`bg-white dark:bg-[#3A3B3C] w-full flex rounded-md border dark:border-none text-black mt-1 md:mt-2`}>
                                     <input className="grow py-2 px-3 rounded-l-lg dark:bg-[#3A3B3C] text-md"
-                                        placeholder="Tìm kiếm theo mã lô hàng..."
+                                        placeholder={intl.formatMessage({ id: "Task.SearchBox" })}
                                         value={searchValue} onChange={(e) => handleSearchInputChange(e)} />
                                     <Button className="px-3 rounded-r-lg"
                                         onClick={() => setOpenScanner(true)}
@@ -173,7 +172,7 @@ const AddPanel = () => {
                         {passData && sortedData != null ?
                             (sortedData.length == 0 ?
                                 <div className='w-full h-full bg-white dark:text-white rounded-md dark:bg-[#242526] flex justify-center place-items-center'>
-                                    Hiện không có công việc.
+                                    <FormattedMessage id="Task.NoTask" />
                                 </div>
                                 :
                                 <>
