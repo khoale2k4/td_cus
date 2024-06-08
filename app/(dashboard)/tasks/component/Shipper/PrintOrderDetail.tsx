@@ -15,10 +15,10 @@ const PrintOrderDetails = forwardRef<HTMLDivElement, PrintOrderDetailsProps>((pr
                     alt={`Logo`}
                     width={10000}
                     height={10000}
-                    className='rounded-md object-contain h-60 w-96'
+                    className='rounded-md object-contain h-52 w-80'
                 />
             </div>
-            <h1 className="text-3xl font-bold mb-4 text-center -mt-10"><FormattedMessage id="Print.Title" /></h1>
+            <h1 className="text-3xl font-bold mb-4 text-center -mt-10 px-10"><FormattedMessage id="Print.Title" /></h1>
             <div className="flex place-items-center mb-4 justify-center">
                 {qrCodeImageUrl && <Image
                     src={qrCodeImageUrl}
@@ -82,7 +82,7 @@ const PrintOrderDetails = forwardRef<HTMLDivElement, PrintOrderDetailsProps>((pr
                     <span className="pl-2">{data.height}</span>
                 </div>
             </div>
-            <h2 className="text-xl font-bold mb-4 text-center px-4">Cảm ơn quý khách & hẹn gặp lại</h2>
+            <h2 className="text-xl font-bold mb-4 text-center px-4 mt-4">Cảm ơn quý khách & hẹn gặp lại</h2>
         </div>
     );
 });
