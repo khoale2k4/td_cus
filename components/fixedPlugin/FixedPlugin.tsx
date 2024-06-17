@@ -8,7 +8,7 @@ export default function FixedPlugin() {
 
   return (
     <button
-      className="border-px !z-[99] flex h-[40px] w-[40px] lg:h-[50px] lg:w-[50px] items-center justify-center rounded-full border-[#6a53ff] bg-gradient-to-br from-red-400 to-red-600 p-0"
+      className="border-px flex h-[40px] w-[40px] lg:h-[50px] lg:w-[50px] items-center justify-center rounded-full border-[#6a53ff] bg-gradient-to-br from-red-400 to-red-600 p-0"
       onClick={() => {
         theme === 'dark' ? setTheme('light') : setTheme('dark')
       }}

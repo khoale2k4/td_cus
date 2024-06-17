@@ -46,7 +46,7 @@ function InputField(props: Props) {
       >
         {label}
       </label>
-      <div className="relative">
+      <div className="relative mt-1">
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -54,7 +54,7 @@ function InputField(props: Props) {
           type={showPassword ? "text" : type}
           id={id}
           placeholder={placeholder}
-          className={`mt-2 flex h-12 w-full items-center justify-center rounded-xl border ${className ? className : "bg-white/0"
+          className={`flex h-12 w-full items-center justify-center rounded-xl border ${className ? className : "bg-white/0"
             } p-3 text-sm outline-none duration-300 ${disabled === true
               ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
               : state === "error"

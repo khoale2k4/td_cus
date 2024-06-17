@@ -82,3 +82,49 @@ input:checked.defaultCheckbox::before {
 		/* Firefox */
 	}
 }
+
+/* HTML: <div class="ribbon">Your text content</div> */
+/* HTML: <div class="ribbon">Your text content</div> */
+.ribbon {
+	font-size: 28px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.ribbon {
+	font-size: 28px;
+	font-weight: bold;
+	color: #fff;
+	padding: 8px;
+	/* Thay đổi padding thành px */
+	border-left: 8px solid #0005;
+	/* Giá trị cố định thay cho var(--f) */
+	border-bottom: 16px solid #0000;
+	/* Giá trị cố định thay cho var(--r) */
+	clip-path: polygon(8px 0,
+			/* Giá trị cố định thay cho var(--f) */
+			100% 0,
+			100% calc(100% - 16px),
+			/* Giá trị cố định thay cho var(--r) */
+			calc(50% + 4px) 100%,
+			/* Giá trị cố định thay cho calc(50% + var(--f)/2) */
+			8px calc(100% - 16px),
+			/* Giá trị cố định thay cho var(--r) */
+			8px 8px,
+			/* Giá trị cố định thay cho var(--f) */
+			0 8px
+			/* Giá trị cố định thay cho var(--f) */
+		);
+}
+
+/* HTML: <div class="cloud"></div> */
+.cloud {
+	height: 100%;
+	margin-left: 45%;
+	margin-bottom: -5%;
+	aspect-ratio: 1.8;
+	--g: radial-gradient(50% 50% at center center, #000 98%, #0000) no-repeat;
+	/* Updated syntax */
+	mask: var(--g) 100% 100%/30% 60%, var(--g) 70% 0/50% 100%, var(--g) 0 100%/36% 68%, var(--g) 27% 18%/26% 40%, linear-gradient(#000 0 0) bottom/67% 58% no-repeat;
+	background: #ffffff;
+}
