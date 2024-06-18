@@ -11,11 +11,13 @@ import { useRouter } from "next/navigation";
 import { FormattedMessage, useIntl } from "react-intl";
 // import { PartnerStaffAuthenticate, PartnerStaffOperation, StaffsAuthenticate, StaffsOperation } from "@/TDLib/tdlogistics";
 import LanguageSwitcher from "@/components/language";
-import { motion, useAnimation } from "framer-motion";
+import { Variants, motion, useAnimation } from "framer-motion";
 import cloudData from '@/data/cloud.json';
 import bikeData from '@/data/lottie.json';
 import dynamic from "next/dynamic";
 import { AuthOperation } from "@/TDLib/main";
+import OTPField from "@/components/otp";
+import DetailPopup from "@/components/popup";
 const Lottie = dynamic(() => import('lottie-react'), {
   ssr: false,
 });
@@ -26,8 +28,8 @@ const AuthPage: FC<Props> = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [role, setRole] = useState(1);
-  const [account, setAccount] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const route = useRouter();
   const [loading, setLoading] = useState(false)
   const intl = useIntl();
@@ -37,28 +39,47 @@ const AuthPage: FC<Props> = () => {
   const section2Ref = useRef(null);
   const [isAnimated, setIsAnimated] = useState(false);
   const authOperation = new AuthOperation();
+  const [otp, setshowOtp] = useState(false)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneNumberRegex = /^\d{10}$/;
+
   const handleCheckField = () => {
-    if (!account || !password) {
+    if (!email || !phoneNumber) {
       setError(true);
       setMessage(intl.formatMessage({ id: "Login.Message1" }));
+      setModal(true);
+      return true;
+    } else if (!emailRegex.test(email) || !phoneNumberRegex.test(phoneNumber)) {
+      setError(true);
+      setMessage("Vui lòng nhập đúng định dạng email và số điện thoại.");
       setModal(true);
       return true;
     }
     return false;
   };
 
+  const handlePhoneNumberChange = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    setPhoneNumber(numericValue);
+  };
+
   const handleSignUpButton = async () => {
     if (handleCheckField()) return;
     setLoading(true)
-    const response = await authOperation.sendOtp({ email: account, phoneNumber: password })
-    console.log(response)
-    setLoading(false)
+    const response = await authOperation.sendOtp({ email: email, phoneNumber: phoneNumber })
+    if (!response.error && !response.error.error) {
+      setshowOtp(true)
+    } else {
+      setMessage("Gửi OTP thất bại, vui lòng thử lại sau.")
+      setModal(true)
+      setLoading(false)
+    }
   };
 
   const handleNotificationClose = async () => {
     setModal(false);
     if (!error) {
-      route.push("/tasks");
+      route.push("/orders");
     } else setError(false);
   };
 
@@ -74,7 +95,7 @@ const AuthPage: FC<Props> = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [account, password]);
+  }, [email, phoneNumber]);
 
   useEffect(() => {
     setIsAnimated(true);
@@ -89,9 +110,20 @@ const AuthPage: FC<Props> = () => {
         {modal && (
           <NotiPopup message={message} onClose={handleNotificationClose} />
         )}
+        {otp && <DetailPopup onClose={() => { setLoading(false); setshowOtp(false) }} title="Nhập OTP" className2="sm:w-fit">
+          <div className="flex flex-col gap-4">
+            <OTPField email={email} phoneNumber={phoneNumber} setMessage={setMessage} setModal={setModal} setError={setError} />
+            <div className="text-center">Vui lòng kiểm tra email !</div>
+          </div>
+        </DetailPopup>}
         <main className={`mx-auto min-h-screen`}>
           <div className="relative flex h-screen lg:p-8 xl:p-16">
             <div className={`mx-auto min-h-full h-full w-full relative rounded-xl bg-white dark:!bg-[#242526]`}>
+              <div className={`ribbon hidden z-20 lg:block absolute bg-white transition-all shadow-3xl duration-1000 ${isAnimated ? "-top-2 right-4 -scale-x-100" : "-top-2 right-[calc(100%-152px)]"}`}>
+                <div className={`w-28 h-28 flex place-items-center transition-all duration-1000 ${isAnimated ? "-scale-x-100" : ""}`}>
+                  <Image src="/Logo-App-Tien-Dung-Logistics.png" alt="Your image" width={250} height={250} />
+                </div>
+              </div>
               <motion.div
                 ref={section1Ref}
                 initial="hidden"
@@ -135,25 +167,25 @@ const AuthPage: FC<Props> = () => {
                         {role == 1 ? <FormattedMessage id="Login.Role3" /> : <FormattedMessage id="Login.Role4" />}{" "}
                       </p>
                     </div>
-                    {/* account */}
+                    {/* email */}
                     <InputField
                       variant="auth"
                       label={intl.formatMessage({ id: "Login.Box1" })}
                       placeholder={intl.formatMessage({ id: "Login.PlaceHolder" })}
-                      id="account"
+                      id="email"
                       type="text"
-                      value={account}
-                      setValue={setAccount}
+                      value={email}
+                      setValue={setEmail}
                       className="bg-white dark:!bg-[#3a3b3c]"
                     />
                     <InputField
                       variant="auth"
                       label={intl.formatMessage({ id: "Login.Box2" })}
                       placeholder={intl.formatMessage({ id: "Login.PlaceHolder2" })}
-                      id="password"
+                      id="phoneNumber"
                       type="text"
-                      value={password}
-                      setValue={setPassword}
+                      value={phoneNumber}
+                      setValue={handlePhoneNumberChange}
                       className="bg-white dark:!bg-[#3a3b3c]"
                     />
                     <div className="flex gap-3 mt-4">
@@ -180,13 +212,8 @@ const AuthPage: FC<Props> = () => {
                 ref={section2Ref}
                 initial="hidden"
                 animate={controls2}
-                className={`absolute top-0 hidden h-full bg-red-500 lg:block lg:w-[50%] xl:w-[55%] transition-all duration-1000  ${isAnimated ? "left-[50%] xl:left-[45%] rounded-r-xl" : "left-0 rounded-l-xl"}`}>
+                className={`absolute top-0 hidden overflow-clip h-full bg-red-500 lg:block lg:w-[50%] xl:w-[55%] transition-all duration-1000  ${isAnimated ? "left-[50%] xl:left-[45%] rounded-r-xl" : "left-0 rounded-l-xl"}`}>
                 <div className={`relative h-full w-full flex flex-col justify-between`}>
-                  <div className={`ribbon z-20 absolute bg-white transition-all shadow-3xl duration-1000 ${isAnimated ? "-top-2 right-4 -scale-x-100" : "-top-2 right-[calc(100%-152px)]"}`}>
-                    <div className={`w-28 h-28 flex place-items-center transition-all duration-1000 ${isAnimated ? "-scale-x-100" : ""}`}>
-                      <Image src="/Logo-App-Tien-Dung-Logistics.png" alt="Your image" width={250} height={250} />
-                    </div>
-                  </div>
                   <div className={`text-white lg:text-3xl xl:text-4xl h-[7.5rem] transition-all duration-1000 w-full flex justify-center font-semibold place-items-center text-center
                   ${isAnimated ? "pl-8 pr-48" : "pr-10 pl-48"}
                     `}>

@@ -6,11 +6,11 @@ import Sidebar from "@/components/sidebar";
 import SidebarProvider from "@/providers/SidebarProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import MapExport from "./tasks/component/MapExport";
-import { CollapseContext } from "./tasks/context/CollapseContext";
-import { DestinationContext } from "./tasks/context/DestinationContext";
-import { DistanceContext } from "./tasks/context/DistanceContext";
-import { SourceContext } from "./tasks/context/SourceContext";
+import MapExport from "./orders/component/MapExport";
+import { CollapseContext } from "./orders/context/CollapseContext";
+import { DestinationContext } from "./orders/context/DestinationContext";
+import { DistanceContext } from "./orders/context/DistanceContext";
+import { SourceContext } from "./orders/context/SourceContext";
 import PassDataProvider from "@/providers/PassedData";
 const RootStructure = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -46,7 +46,7 @@ const RootStructure = ({ children }: { children: React.ReactNode }) => {
                       {/* Navbar & Main Content */}
                       <div className="h-full w-full bg-lightPrimary dark:!bg-[#3a3b3c]">
                         {/* Main Content */}
-                        {pathname != "/tasks" ? (
+                        {pathname != "/orders" ? (
                           <main className="mx-[12px] h-full flex-none transition-all md:pr-2 xl:ml-[313px]">
                             {/* Routes */}
                             <div className="h-full">

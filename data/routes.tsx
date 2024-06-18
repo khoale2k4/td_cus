@@ -1,13 +1,12 @@
-import { FaMapLocationDot } from "react-icons/fa6";
-import { FaCar, FaRoad, FaChartPie, FaHistory } from "react-icons/fa";
-import { FaPersonBiking } from "react-icons/fa6";
+import { FaHistory } from "react-icons/fa";
+import { FiPackage } from "react-icons/fi";
 
 const routes = [
   {
     name: "Đơn hàng",
     layout: "/dashboard",
-    path: "tasks",
-    icon: <FaMapLocationDot className="h-5 w-5 ml-0.5" />,
+    path: "orders",
+    icon: <FiPackage className="h-5 w-5 ml-0.5" />,
   },
   {
     name: "Lịch sử",

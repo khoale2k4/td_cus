@@ -42,13 +42,13 @@ export function SidebarLinks({ onClickRoute }: Props) {
   };
 
   const createLinks = (routes: any) => {
-    const toolRoutes = routes.filter((route: { path: string; }) => route.path === "tasks");
-    const managementRoutes = routes.filter((route: { path: string; }) => route.path !== "tasks");
+    const toolRoutes = routes.filter((route: { path: string; }) => route.path === "orders");
+    const managementRoutes = routes.filter((route: { path: string; }) => route.path !== "orders");
 
     return (
       <>
         <div className="mb-4">
-          <p className={`${activeIndex != null && activeIndex < toolRoutes.length ? "" : "text-gray-600"} font-semibold mb-2 pl-5`}><FormattedMessage id="routes.task2" /></p>
+          <p className={`${activeIndex != null && activeIndex < toolRoutes.length ? "" : "text-gray-600"} font-semibold mb-2 pl-5`}><FormattedMessage id="routes.orders2" /></p>
           {toolRoutes.map((route: any, index: number) => (
             <Link key={`tool-${index}`} href={route.path} onClick={(e) => handleRouteClick(index, e)}>
               <motion.div

@@ -10,9 +10,10 @@ interface DetailPopupProps {
     title: string;
     children: any;
     className?: string;
+    className2?: string;
 }
 
-const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, className }) => {
+const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, className, className2 }) => {
     const notificationRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(true);
 
@@ -39,7 +40,7 @@ const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, cla
         >
             <motion.div
                 ref={notificationRef}
-                className={`relative w-full sm:w-9/12 dark:bg-[#242526] bg-white rounded-xl p-4`}
+                className={`relative w-full ${className2 ? className2 : "sm:w-9/12"} dark:bg-[#242526] bg-white rounded-xl p-4`}
                 initial={{ scale: 0 }}
                 animate={{ scale: isVisible ? 1 : 0 }}
                 exit={{ scale: 0 }}
@@ -53,7 +54,7 @@ const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, cla
                         className="absolute right-0 w-8 h-8 top-0 rounded-full mb-2 hover:bg-gray-200 dark:hover:text-navy-900 flex justify-center place-items-center"
                         onClick={handleClose}
                     >
-                        <IoMdClose className="w-5/6 h-5/6 text-[#000000] dark:text-white" />
+                        <IoMdClose className="w-5/6 h-5/6 text-[#000000] dark:text-white dark:hover:text-[#242526]" />
                     </button>
                 </div>
                 <div className={`max-h-[calc(100dvh-140px)] relative flex flex-col dark:text-white w-full overflow-y-scroll rounded-sm no-scrollbar ${className ? className : "pt-4"}`}>

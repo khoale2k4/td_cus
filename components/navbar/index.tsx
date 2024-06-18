@@ -4,23 +4,23 @@ import { useEffect, useState, useRef, useContext } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FiAlignJustify, FiSearch } from "react-icons/fi";
-import { RiMoonFill, RiSunFill } from "react-icons/ri";
+import { RiImageEditLine, RiMoonFill, RiSunFill } from "react-icons/ri";
 import { TbBrandGithubFilled } from "react-icons/tb";
 import Dropdown from "@/components/dropdown";
 import routes from "@/data/routes";
 import { useSidebarContext } from "@/providers/SidebarProvider";
 import { useThemeContext } from "@/providers/ThemeProvider";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import { BsGlobe } from "react-icons/bs";
 import LanguageSwitcher from "../language";
 import { FormattedMessage, useIntl } from "react-intl";
-import { PartnerStaffOperation, StaffsOperation } from "@/TDLib/tdlogistics";
 import { PassDataContext } from "@/providers/PassedData";
 import NotiPopup from "../notification";
 import SubmitPopup from "../submit";
 import DetailPopup from "../popup";
-
+import { CustomerOperation } from "@/TDLib/main";
+import { IoCloudUploadOutline } from "react-icons/io5";
 type Props = {};
 
 const Navbar = ({ }: Props) => {
@@ -42,7 +42,8 @@ const Navbar = ({ }: Props) => {
   const [modal, openModal] = useState(false)
   const [modal2, openModal2] = useState(false)
   const [modal3, openModal3] = useState(false)
-
+  const [avatarUpload, setavatarUpload] = useState<File | "">("");
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const handleDocumentClick = (event: any) => {
       if (
@@ -65,7 +66,7 @@ const Navbar = ({ }: Props) => {
   }, [pathname]);
 
   const getActiveRoute = (routes: any) => {
-    let activeRoute = "tasks";
+    let activeRoute = "orders";
     for (let i = 0; i < routes.length; i++) {
       if (window.location.href.indexOf(routes[i].path) !== -1) {
         setCurrentRoute(routes[i].path);
@@ -80,8 +81,8 @@ const Navbar = ({ }: Props) => {
   };
 
   const handleLogout = async () => {
-    const action = new StaffsOperation()
-    await action.logout()
+    const action = new CustomerOperation()
+    // await action.logout()
     route.push("/");
   };
 
@@ -91,20 +92,27 @@ const Navbar = ({ }: Props) => {
     window.find(search);
   };
 
-  const checkUserLoggedIn = async () => {
-    const getinfo = new PartnerStaffOperation()
-    const staffsOperation = new StaffsOperation();
-    const response = await getinfo.getAuthenticatedPartnerStaffInfo();
-    const res = await staffsOperation.getAuthenticatedStaffInfo();
+  const handleUploadAvatar = async () => {
+    if (!avatarUpload) return;
+    const customerOperation = new CustomerOperation()
+    setLoading(true)
+    const response = await customerOperation.updateAvatar({ avatar: avatarUpload })
     console.log(response)
-    console.log(res)
+    if (!response.error && !response.error.error) {
+      setProfilePicture(URL.createObjectURL(avatarUpload))
+      setavatarUpload("")
+    }
+    setLoading(false)
+  };
+
+  const checkUserLoggedIn = async () => {
+    const getinfo = new CustomerOperation()
+    const response = await getinfo.getAuthenticatedCustomerInfo();
+    console.log(response)
     if (!!response.error || response.error?.error || response.error == undefined) console.log(response)
-    else if (!!response.data) { setPassData(response.data); setUsername(response.data.username) }
-
-    if (!!res.error || res.error?.error || res.error == undefined) console.log(res)
-    else if (!!res.data) { setPassData(res.data); setUsername(res.data.username) }
-
-    if ((!!response.error && !!res.error) || (res.error == undefined && response.error == undefined)) {
+    else if (!!response.data) { setPassData(response.data); setUsername(response.data.account.email); }
+    console.log(response)
+    if ((!!response.error) || (response.error == undefined)) {
       setMessage(intl.formatMessage({ id: "Navbar.Message" }))
       openModal(true)
     }
@@ -118,68 +126,84 @@ const Navbar = ({ }: Props) => {
     <>
       {modal && <NotiPopup onClose={() => { openModal(false); route.push("/") }} message={message} />}
       {modal2 && <SubmitPopup onClose={() => { openModal2(false); }} message={message} submit={handleLogout} />}
-      {modal3 && passData && <DetailPopup onClose={() => { openModal3(false) }} title={intl.formatMessage({ id: "Navbar.Title" })} children={
-        <div className="flex flex-row gap-3 text-[#000000] dark:text-white">
-          <div className="w-32 h-full flex-col">
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info8" /></span>
-              <span className="font-semibold">:</span>
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info1" /></span>
-              <span className="font-semibold">:</span>
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info2" /></span>
-              <span className="font-semibold">:</span>
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info3" /></span>
-              <span className="font-semibold">:</span>
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info4" /></span>
-              <span className="font-semibold">:</span>
-              {" "}
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info5" /></span>
-              <span className="font-semibold">:</span>
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between gap-2">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info6" /></span>
-              <span className="font-semibold">:</span>
-            </p>
-            <p className="whitespace-nowrap flex flex-row justify-between">
-              <span className="font-semibold"><FormattedMessage id="Navbar.Info7" /></span>
-              <span className="font-semibold">:</span>
-            </p>
+      {modal3 && passData && <DetailPopup onClose={() => { openModal3(false) }} title={intl.formatMessage({ id: "Navbar.Title" })} className2="lg:w-fit" children={
+        <div className="flex flex-col gap-6">
+          <div className="w-full flex justify-center">
+            <div className="relative flex w-40 h-40 lg:w-60 lg:h-60 hover:cursor-pointer rounded-full overflow-hidden transition-all duration-500 cursor-pointer">
+              <motion.img
+                initial="initial"
+                animate="enter"
+                exit="exit"
+                transition={{ duration: 0.7 }}
+                className="w-full h-full object-cover"
+                src={avatarUpload ? URL.createObjectURL(avatarUpload) : profilePicture}
+              // onClick={() => setModalIsOpen(true)}
+              />
+              <label className="absolute w-full h-20px py-2.5 bottom-0 inset-x-0 bg-[#000000]/50 
+                  text-white text-2xl flex items-center hover:cursor-pointer justify-center 
+                  active:scale-150 transition-all ease-in-out duration-500">
+                <RiImageEditLine />
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target?.files ? e.target?.files[0] : "";
+                    console.log(file)
+                    console.log(file)
+                    console.log(file)
+                    setavatarUpload(file);
+                  }}
+                />
+              </label>
+            </div>
           </div>
-          <div className="w-full h-full flex-col">
-            <p className="whitespace-nowrap flex flex-row gap-2">
-              {passData.fullname}
-            </p>
-            <p className="whitespace-nowrap flex flex-row gap-2">
-              {passData.username}
-            </p>
-            <p className="flex flex-col sm:flex-row sm:gap-2">
-              {passData.email}
-            </p>
-            <p className="whitespace-nowrap flex flex-row gap-2">
-              {passData.phone_number}
-            </p>
-            <p className="whitespace-nowrap flex flex-row gap-2">
-              {new Date(passData.date_of_birth).toLocaleDateString("en-US")}
-            </p>
-            <p className="whitespace-nowrap flex flex-row gap-2">
-              {passData.position}
-            </p>
-            <p className="whitespace-nowrap flex flex-row gap-2">
-              {passData.cccd}
-            </p>
-            <p className="flex flex-col">
-              {passData.detail_address}, {passData.town}, {passData.district}, {passData.province}
-            </p>
+          {avatarUpload &&
+            <div className="w-full flex justify-center">
+              <button
+                onClick={loading ? () => { } : handleUploadAvatar}
+                className="linear w-full sm:w-2/3 border-2 rounded-xl py-[10px] text-base font-medium transition duration-200 dark:text-white flex justify-center place-items-center"
+              >
+                {loading ? <svg aria-hidden="true" className="w-20 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                  <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                </svg> : <div className="flex gap-2 justify-center place-items-center"><IoCloudUploadOutline />Xác nhận tải lên</div>}
+              </button>
+            </div>
+          }
+
+          <div className="flex flex-row gap-3 text-[#000000] dark:text-white">
+            <div className="w-32 h-full flex-col">
+              <p className="whitespace-nowrap flex flex-row justify-between gap-2">
+                <span className="font-semibold"><FormattedMessage id="Navbar.Info8" /></span>
+                <span className="font-semibold">:</span>
+              </p>
+              <p className="whitespace-nowrap flex flex-row justify-between gap-2">
+                <span className="font-semibold"><FormattedMessage id="Navbar.Info1" /></span>
+                <span className="font-semibold">:</span>
+              </p>
+              <p className="whitespace-nowrap flex flex-row justify-between gap-2">
+                <span className="font-semibold"><FormattedMessage id="Navbar.Info3" /></span>
+                <span className="font-semibold">:</span>
+              </p>
+              <p className="whitespace-nowrap flex flex-row justify-between">
+                <span className="font-semibold"><FormattedMessage id="Navbar.Info7" /></span>
+                <span className="font-semibold">:</span>
+              </p>
+            </div>
+            <div className="w-full h-full flex-col">
+              <p className="whitespace-nowrap flex flex-row gap-2">
+                {passData.fullname ? passData.fullname : "Chưa có thông tin"}
+              </p>
+              <p className="whitespace-nowrap flex flex-row gap-2">
+                {passData.account.email ? passData.account.email : "Chưa có thông tin"}
+              </p>
+              <p className="flex flex-col sm:flex-row sm:gap-2">
+                {passData.account.phoneNumber ? passData.account.phoneNumber : "Chưa có thông tin"}
+              </p>
+              <p className="flex flex-col">
+                {passData.detailAddress}, {passData.town}, {passData.district}, {passData.province}
+              </p>
+            </div>
           </div>
         </div>
       } />}
