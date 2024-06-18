@@ -67,7 +67,7 @@ const AuthPage: FC<Props> = () => {
     if (handleCheckField()) return;
     setLoading(true)
     const response = await authOperation.sendOtp({ email: email, phoneNumber: phoneNumber })
-    if (!response.error && !response.error.error) {
+    if (!response.error && !response.error?.error) {
       setshowOtp(true)
     } else {
       setMessage("Gửi OTP thất bại, vui lòng thử lại sau.")

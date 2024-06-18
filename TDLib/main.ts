@@ -1,3 +1,4 @@
+const FormData = require("form-data");
 import axios, { AxiosResponse } from "axios";
 
 export interface SendingOtp {
@@ -13,7 +14,7 @@ export interface VerifyingOtp {
 
 export class AuthOperation {
     private baseUrl: String;
-    
+
     constructor() {
         this.baseUrl = "https://api2.tdlogistics.net.vn/v2/auth/otp";
     }
@@ -93,7 +94,7 @@ export class CustomerOperation {
 
     async updateInfo(params: UpdatingCustomerParams, payload: UpdatingCustomerPayload) {
         try {
-            const response = await axios.post(`${this.baseUrl}/update?customerId=${params.customerId}`, payload, {
+            const response = await axios.put(`${this.baseUrl}/update?customerId=${params.customerId}`, payload, {
                 withCredentials: true
             });
 
@@ -121,7 +122,10 @@ export class CustomerOperation {
 
     async updateAvatar(payload: UpdatingAvatarPayload) {
         try {
-            const response = await axios.put(`${this.baseUrl}/avatar/update`, payload, {
+            const formData = new FormData();
+            formData.append('avatar', payload.avatar);
+
+            const response = await axios.put(`${this.baseUrl}/avatar/update`, formData, {
                 withCredentials: true
             });
 
@@ -135,7 +139,7 @@ export class CustomerOperation {
 
     async getAvatar(params: GettingAvatarParams) {
         try {
-            const response = await axios.get(`${this.baseUrl}/avatar/update?customerId=${params.customerId}`, {
+            const response = await axios.get(`${this.baseUrl}/avatar/get?customerId=${params.customerId}`, {
                 withCredentials: true
             });
 
@@ -226,7 +230,7 @@ export interface UpdatingOrderInfo {
     width?: number,
     length?: number,
     COD?: number,
-    statusCode?: number, 
+    statusCode?: number,
 }
 
 export interface CancelingOrderCondition {

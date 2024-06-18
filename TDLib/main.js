@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -37,15 +37,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdministrativeOperation = exports.OrdersOperation = exports.CustomerOperation = exports.AuthOperation = void 0;
+var FormData = require("form-data");
 var axios_1 = require("axios");
 var AuthOperation = /** @class */ (function () {
     function AuthOperation() {
         this.baseUrl = "https://api2.tdlogistics.net.vn/v2/auth/otp";
     }
     AuthOperation.prototype.sendOtp = function (payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_1;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -65,16 +66,16 @@ var AuthOperation = /** @class */ (function () {
         });
     };
     AuthOperation.prototype.verifyOtp = function (payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_2;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/verify"), payload, {
-                                withCredentials: true
-                            })];
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, message: response.data.message, data: response.data.data }];
@@ -96,16 +97,16 @@ var CustomerOperation = /** @class */ (function () {
         this.baseUrl = "https://api2.tdlogistics.net.vn/v2/customers";
     }
     CustomerOperation.prototype.getAuthenticatedCustomerInfo = function () {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_3;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.get("".concat(this.baseUrl, "/"), {
-                                withCredentials: true
-                            })];
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, message: response.data.message, data: response.data.data }];
@@ -120,16 +121,16 @@ var CustomerOperation = /** @class */ (function () {
         });
     };
     CustomerOperation.prototype.updateInfo = function (params, payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_4;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/update?customerId=").concat(params.customerId), payload, {
-                                withCredentials: true
-                            })];
+                        return [4 /*yield*/, axios_1.default.put("".concat(this.baseUrl, "/update?customerId=").concat(params.customerId), payload, {
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, message: response.data.message, data: response.data.data }];
@@ -144,16 +145,16 @@ var CustomerOperation = /** @class */ (function () {
         });
     };
     CustomerOperation.prototype.search = function (payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_5;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/search"), payload, {
-                                withCredentials: true
-                            })];
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, message: response.data.message, data: response.data.data }];
@@ -168,16 +169,18 @@ var CustomerOperation = /** @class */ (function () {
         });
     };
     CustomerOperation.prototype.updateAvatar = function (payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_6;
+            var formData, response, error_6;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, axios_1.default.put("".concat(this.baseUrl, "/avatar/update"), payload, {
-                                withCredentials: true
-                            })];
+                        formData = new FormData();
+                        formData.append('avatar', payload.avatar);
+                        return [4 /*yield*/, axios_1.default.put("".concat(this.baseUrl, "/avatar/update"), formData, {
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, message: response.data.message, data: response.data.data }];
@@ -192,16 +195,16 @@ var CustomerOperation = /** @class */ (function () {
         });
     };
     CustomerOperation.prototype.getAvatar = function (params) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_7;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, axios_1.default.get("".concat(this.baseUrl, "/avatar/update?customerId=").concat(params.customerId), {
-                                withCredentials: true
-                            })];
+                        return [4 /*yield*/, axios_1.default.get("".concat(this.baseUrl, "/avatar/get?customerId=").concat(params.customerId), {
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, response.data];
@@ -223,16 +226,16 @@ var OrdersOperation = /** @class */ (function () {
         this.baseUrl = "https://api2.tdlogistics.net.vn/v2/orders";
     }
     OrdersOperation.prototype.create = function (payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_8;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.put("".concat(this.baseUrl, "/create"), payload, {
-                                withCredentials: true,
-                            })];
+                            withCredentials: true,
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, data: response.data.data, message: response.data.message }];
@@ -247,16 +250,16 @@ var OrdersOperation = /** @class */ (function () {
         });
     };
     OrdersOperation.prototype.get = function (payload) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, data, error_9;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/search"), payload, {
-                                withCredentials: true,
-                            })];
+                            withCredentials: true,
+                        })];
                     case 1:
                         response = _c.sent();
                         data = response.data;
@@ -272,16 +275,16 @@ var OrdersOperation = /** @class */ (function () {
         });
     };
     OrdersOperation.prototype.checkExist = function (params) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, data, error_10;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.get("".concat(this.baseUrl, "/check?orderId=").concat(params.orderId), {
-                                withCredentials: true,
-                            })];
+                            withCredentials: true,
+                        })];
                     case 1:
                         response = _c.sent();
                         data = response.data;
@@ -297,16 +300,16 @@ var OrdersOperation = /** @class */ (function () {
         });
     };
     OrdersOperation.prototype.update = function (payload, params) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, data, error_11;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.put("".concat(this.baseUrl, "/update?orderId=").concat(params.orderId), payload, {
-                                withCredentials: true,
-                            })];
+                            withCredentials: true,
+                        })];
                     case 1:
                         response = _c.sent();
                         data = response.data;
@@ -322,16 +325,16 @@ var OrdersOperation = /** @class */ (function () {
         });
     };
     OrdersOperation.prototype.cancel = function (params) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, data, error_12;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.delete("".concat(this.baseUrl, "/cancel?orderId=").concat(params.orderId), {
-                                withCredentials: true,
-                            })];
+                            withCredentials: true,
+                        })];
                     case 1:
                         response = _c.sent();
                         data = response.data;
@@ -354,16 +357,16 @@ var AdministrativeOperation = /** @class */ (function () {
         this.baseUrl = "https://api2.tdlogistics.net.vn/v2/administrative";
     }
     AdministrativeOperation.prototype.get = function (conditions) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response, error_13;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/search"), conditions, {
-                                withCredentials: true
-                            })];
+                            withCredentials: true
+                        })];
                     case 1:
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, data: response.data.data, message: response.data.message }];

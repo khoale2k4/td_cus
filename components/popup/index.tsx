@@ -11,9 +11,10 @@ interface DetailPopupProps {
     children: any;
     className?: string;
     className2?: string;
+    button?: any;
 }
 
-const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, className, className2 }) => {
+const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, className, className2, button }) => {
     const notificationRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(true);
 
@@ -60,6 +61,7 @@ const DetailPopup: React.FC<DetailPopupProps> = ({ onClose, children, title, cla
                 <div className={`max-h-[calc(100dvh-140px)] relative flex flex-col dark:text-white w-full overflow-y-scroll rounded-sm no-scrollbar ${className ? className : "pt-4"}`}>
                     {children}
                 </div>
+                {button}
             </motion.div>
         </motion.div>
         ,

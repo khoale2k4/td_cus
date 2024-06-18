@@ -37,6 +37,9 @@
     "routes.orders": "Vận chuyển",
     "routes.orders2": "Công cụ",
     "routes.manage": "Quản lý",
-    "routes.history": "Lịch sử",
-    "Map.Message": "Vui lòng cho phép trình duyệt truy cập thông tin vị trí để sử dụng chức năng này."
+    "routes.history": "Lịch sử đơn hàng",
+    "Map.Message": "Vui lòng cho phép trình duyệt truy cập thông tin vị trí để sử dụng chức năng này.",
+    "OrderForm.LocationForm.SelectProvince": "Chọn tỉnh",
+    "OrderForm.LocationForm.SelectDistrict": "Chọn quận",
+    "OrderForm.LocationForm.SelectWard": "Chọn phường"
 }

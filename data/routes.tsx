@@ -9,7 +9,7 @@ const routes = [
     icon: <FiPackage className="h-5 w-5 ml-0.5" />,
   },
   {
-    name: "Lịch sử",
+    name: "Lịch sử đơn hàng",
     layout: "/dashboard",
     path: "history",
     icon: <FaHistory className="h-5 w-5 ml-0.5" />,
