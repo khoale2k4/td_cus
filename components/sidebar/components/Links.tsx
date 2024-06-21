@@ -16,133 +16,76 @@ const linkVariants: Variants = {
   animate: { opacity: 1, y: 0 },
 };
 
-export function SidebarLinks({ onClickRoute }: Props) {
+const SidebarLinks = ({ onClickRoute }: Props) => {
   const pathname = usePathname();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const intl = useIntl()
+  const intl = useIntl();
+
   useEffect(() => {
     const findActiveRouteIndex = () => {
-      for (let i = 0; i < routes.length; i++) {
-        const route = routes[i];
-        if (route.layout && route.path && pathname.includes(route.path)) {
-          return i;
-        }
-      }
-      return null;
+      return routes.findIndex(route => route.layout && route.path && pathname.includes(route.path));
     };
-
     setActiveIndex(findActiveRouteIndex());
   }, [pathname]);
 
-  const handleRouteClick = (index: number, e: React.MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+  const handleRouteClick = (index: number, e: React.MouseEvent<HTMLElement>) => {
     setActiveIndex(index);
-    if (onClickRoute) {
-      onClickRoute(e);
-    }
+    onClickRoute && onClickRoute(e);
   };
 
   const createLinks = (routes: any) => {
-    const toolRoutes = routes.filter((route: { path: string; }) => route.path === "orders");
-    const managementRoutes = routes.filter((route: { path: string; }) => route.path !== "orders");
+    const toolRoutes = routes.filter((route: { path: string }) => route.path === "orders");
+    const managementRoutes = routes.filter((route: { path: string }) => route.path === "history");
+    const helpRoutes = routes.filter((route: { path: string }) => route.path === "help");
 
-    return (
-      <>
-        <div className="mb-4">
-          <p className={`${activeIndex != null && activeIndex < toolRoutes.length ? "" : "text-gray-600"} font-semibold mb-2 pl-5`}><FormattedMessage id="routes.orders2" /></p>
-          {toolRoutes.map((route: any, index: number) => (
-            <Link key={`tool-${index}`} href={route.path} onClick={(e) => handleRouteClick(index, e)}>
+    const renderLinks = (routes: any, startIndex: number, headerId: string) => (
+      <div>
+        <p className={`${activeIndex != null && activeIndex == startIndex ? "" : "text-gray-600"} font-semibold mb-2 pl-5 pt-2`}><FormattedMessage id={headerId} /></p>
+        {routes.map((route: any, index: number) => {
+          const routeIndex = index + startIndex;
+          return (
+            <Link key={`route-${routeIndex}`} href={route.path} onClick={(e) => handleRouteClick(routeIndex, e)}>
               <motion.div
                 variants={linkVariants}
                 initial="initial"
                 animate="animate"
-                transition={{ duration: 0.3, delay: 0.1 * index }}
+                transition={{ duration: 0.3, delay: 0.1 * routeIndex }}
                 className="relative mb-3 flex hover:cursor-pointer"
               >
-                <li
-                  className="my-[3px] flex cursor-pointer items-center px-8"
-                >
-                  <span
-                    className={`${activeIndex === index
-                      ? "font-bold text-red-500 dark:text-white"
-                      : "font-medium text-gray-600"
-                      }`}
-                  >
+                <li className="my-[3px] flex cursor-pointer items-center px-8">
+                  <span className={`${activeIndex === routeIndex ? "font-bold text-red-500 dark:text-white" : "font-medium text-gray-600"}`}>
                     {route.icon ? route.icon : <DashIcon />}{" "}
                   </span>
-                  <p
-                    className={`leading-1 ml-4 flex ${activeIndex === index
-                      ? "font-medium text-red-500 dark:text-white"
-                      : "font-medium text-gray-600"
-                      }`}
-                  >
+                  <p className={`leading-1 ml-4 flex ${activeIndex === routeIndex ? "font-medium text-red-500 dark:text-white" : "font-medium text-gray-600"}`}>
                     {intl.formatMessage({ id: `routes.${route.path}` })}
                   </p>
                 </li>
-                {activeIndex === index && (
+                {activeIndex === routeIndex && (
                   <motion.div
                     className="absolute right-0 -top-0.5 h-9 w-1 rounded-lg bg-red-500 dark:bg-red-500"
                     initial={{ x: "100%", opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: "-100%", opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 * index }}
+                    transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 * routeIndex }}
                   />
                 )}
               </motion.div>
             </Link>
-          ))}
-        </div>
-        <div>
-          <p className={`${activeIndex != null && activeIndex >= toolRoutes.length ? "" : "text-gray-600"} font-semibold mb-2 pl-5 pt-2`}><FormattedMessage id="routes.manage" /></p>
-          {managementRoutes.map((route: any, index: number) => {
-            const managementIndex = index + toolRoutes.length;
-            return (
-              <Link key={`management-${index}`} href={route.path} onClick={(e) => handleRouteClick(managementIndex, e)}>
-                <motion.div
-                  variants={linkVariants}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ duration: 0.3, delay: 0.1 * (managementIndex) }}
-                  className="relative mb-3 flex hover:cursor-pointer"
-                >
-                  <li
-                    className="my-[3px] flex cursor-pointer items-center px-8"
-                  >
-                    <span
-                      className={`${activeIndex === managementIndex
-                        ? "font-medium text-red-500 dark:text-white"
-                        : "font-medium text-gray-600"
-                        }`}
-                    >
-                      {route.icon ? route.icon : <DashIcon />}{" "}
-                    </span>
-                    <p
-                      className={`leading-1 ml-4 flex ${activeIndex === managementIndex
-                        ? "font-medium text-red-500 dark:text-white"
-                        : "font-medium text-gray-600"
-                        }`}
-                    >
-                      {intl.formatMessage({ id: `routes.${route.path}` })}
-                    </p>
-                  </li>
-                  {activeIndex === managementIndex && (
-                    <motion.div
-                      className="absolute right-0 -top-0.5 h-9 w-1 rounded-lg bg-red-500 dark:bg-red-500"
-                      initial={{ x: "100%", opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: "-100%", opacity: 0 }}
-                      transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 * (managementIndex) }}
-                    />
-                  )}
-                </motion.div>
-              </Link>
-            );
-          })}
-        </div>
+          );
+        })}
+      </div>
+    );
+
+    return (
+      <>
+        {renderLinks(toolRoutes, 0, "routes.orders2")}
+        {renderLinks(managementRoutes, 1, "routes.manage")}
+        {renderLinks(helpRoutes, 2, "routes.helpcenter")}
       </>
     );
   };
 
   return createLinks(routes);
-}
+};
 
 export default SidebarLinks;

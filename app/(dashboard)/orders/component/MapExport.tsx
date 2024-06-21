@@ -1,29 +1,25 @@
 'use client'
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DirectionsRenderer, GoogleMap, MarkerF, OverlayView, OverlayViewF, useJsApiLoader } from '@react-google-maps/api';
 import { FiZoomIn, FiZoomOut } from 'react-icons/fi';
 import { MdOutlineMyLocation } from 'react-icons/md';
 import { Button } from '@nextui-org/react';
 import { useThemeContext } from '@/providers/ThemeProvider';
-import { CollapseContext } from '../context/CollapseContext';
-import { DestinationContext } from '../context/DestinationContext';
-import { SourceContext } from '../context/SourceContext';
+import { CollapseContext, useCollapseContext } from '../context/CollapseContext';
+import { DestinationContext, useDestinationContext } from '../context/DestinationContext';
+import { SourceContext, useSourceContext } from '../context/SourceContext';
 import Notification from '@/components/notification'
-import { DistanceContext } from '../context/DistanceContext';
+import { DistanceContext, useDistanceContext } from '../context/DistanceContext';
 import darkTheme from '../maptheme/dark.json';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 function MapExport() {
     const { theme, setTheme } = useThemeContext()
     const [map, setMap] = React.useState<google.maps.Map | null>(null);
-    // @ts-ignore
-    const { isCollapsed, setIsCollapsed } = useContext(CollapseContext);
-    // @ts-ignore
-    const { source, setSource } = useContext(SourceContext);
-    // @ts-ignore
-    const { distance, setDistance } = useContext(DistanceContext);
-    // @ts-ignore
-    const { destination, setDestination } = useContext(DestinationContext);
+    const { isCollapsed, setIsCollapsed } = useCollapseContext()
+    const { source, setSource } = useSourceContext()
+    const { distance, setDistance } = useDistanceContext()
+    const { destination, setDestination } = useDestinationContext()
     const [openModal, setOpenModal] = useState(false)
     const [message, setMessage] = useState("")
     const [directionRoutePoints, setdirectionRoutePoints] = useState<google.maps.DirectionsResult>();
@@ -57,7 +53,6 @@ function MapExport() {
                 travelMode: google.maps.TravelMode.DRIVING,
             }, (result: any, status) => {
                 if (status === google.maps.DirectionsStatus.OK) {
-                    setIsCollapsed(true)
                     setdirectionRoutePoints(result);
                     let totalDistance = 0;
                     result.routes[0].legs?.forEach((leg: any) => {
@@ -67,13 +62,6 @@ function MapExport() {
                     setDistance(kmDistance);
                 }
             });
-        }
-    };
-
-    const handleOpenGoogleMaps = () => {
-        if (destination) {
-            const url = `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`;
-            window.open(url, "_blank");
         }
     };
 
@@ -215,7 +203,7 @@ function MapExport() {
                     position={source}
                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 >
-                    <div className="absolute top-2 right-0 translate-x-1/2 p-2 text-[#000000] dark:bg-[#3a3b3c] dark:text-gray-300 bg-white border-[#000000] border-2 dark:border-gray-300
+                    <div className="absolute top-2 right-0 translate-x-1/2 p-2 text-[#000000] dark:bg-[#3a3b3c] dark:text-gray-300 bg-white border-red-500 border-2 dark:border-gray-300
                     transition duration-200 hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 shadow-xl rounded-xl font-semibold text-xs truncate max-w-10">
                         <p>{source.label}</p>
                     </div>
@@ -236,18 +224,10 @@ function MapExport() {
                     position={destination}
                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 >
-                    <div className="absolute top-2 right-0 translate-x-1/2 p-2 text-[#000000] dark:bg-[#3a3b3c] dark:text-gray-300 bg-white border-[#000000] border-2 dark:border-gray-300
+                    <div className="absolute top-2 right-0 translate-x-1/2 p-2 text-[#000000] dark:bg-[#3a3b3c] dark:text-gray-300 bg-white border-red-500 border-2 dark:border-gray-300
                     transition duration-200 hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 shadow-xl rounded-xl font-semibold text-xs truncate max-w-10">
                         <p>{destination.label}</p>
                         <p className="text-center underline">{distance} km</p>
-                        <div className="w-full flex justify-center">
-                            <Button
-                                className="px-2 mt-2 rounded h-8 text-white bg-red-500 hover:bg-red-600"
-                                onClick={handleOpenGoogleMaps}
-                            >
-                                <FormattedMessage id="Mission.Map.Button" />
-                            </Button>
-                        </div>
                     </div>
                 </OverlayViewF>
             </MarkerF>

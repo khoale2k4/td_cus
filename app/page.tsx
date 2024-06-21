@@ -40,8 +40,8 @@ const AuthPage: FC<Props> = () => {
   const [isAnimated, setIsAnimated] = useState(false);
   const authOperation = new AuthOperation();
   const [otp, setshowOtp] = useState(false)
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneNumberRegex = /^\d{10}$/;
+  const emailRegex = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9._-]{1,255}\.[a-zA-Z]{2,4}$/;
+  const phoneNumberRegex = /^[0-9]{1,10}$/;
 
   const handleCheckField = () => {
     if (!email || !phoneNumber) {
@@ -66,7 +66,7 @@ const AuthPage: FC<Props> = () => {
   const handleSignUpButton = async () => {
     if (handleCheckField()) return;
     setLoading(true)
-    const response = await authOperation.sendOtp({ email: email, phoneNumber: phoneNumber })
+    const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
     if (!response.error && !response.error?.error) {
       setshowOtp(true)
     } else {
@@ -133,8 +133,11 @@ const AuthPage: FC<Props> = () => {
                 <div className="overflow-y-scroll no-scrollbar grid w-full">
                   <div className="w-full flex-col px-2 flex gap-4 justify-center place-items-stretch py-4">
                     <div className="flex justify-between flex-col gap-2">
-                      <h4 className="text-4xl font-bold text-navy-700 dark:text-white">
+                      <h4 className="text-4xl font-bold text-navy-700 dark:text-white flex justify-between">
                         <FormattedMessage id="Login.Login" />
+                        <div className="lg:hidden mb-2">
+                          <FixedPlugin />
+                        </div>
                       </h4>
                       <p className="pl-1 text-base text-gray-600">
                         <FormattedMessage id="Login.Login2" />
@@ -199,8 +202,10 @@ const AuthPage: FC<Props> = () => {
                           <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
                         </svg> : <FormattedMessage id="Login.Submit" />}
                       </button>
-                      <div className="h-full bg-red-500 py-[15px] rounded-full text-white px-3.5 flex justify-center place-items-center">
-                        <LanguageSwitcher message="h-5 w-5 text-white" />
+                      <div className="h-full bg-red-500 rounded-full text-white flex justify-center place-items-center">
+                        <LanguageSwitcher message="h-5 w-5 text-white"
+                          animation="origin-[75%_95%] transition-all duration-300 ease-in-out"
+                          animation2="bottom-12 -right-4" className="w-[3.1rem] h-[3.1rem] rounded-full flex justify-center place-items-center" />
                       </div>
                     </div>
 

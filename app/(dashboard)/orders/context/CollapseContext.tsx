@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function CollapseProvider({ children }: Props) {
-    const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+    const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
     return (
         <CollapseContext.Provider

@@ -15,7 +15,7 @@ import { Variants, motion } from "framer-motion";
 import { BsGlobe } from "react-icons/bs";
 import LanguageSwitcher from "../language";
 import { FormattedMessage, useIntl } from "react-intl";
-import { PassDataContext } from "@/providers/PassedData";
+import { usePassDataContext } from "@/providers/PassedData";
 import NotiPopup from "../notification";
 import SubmitPopup from "../submit";
 import DetailPopup from "../popup";
@@ -23,8 +23,8 @@ import { AdministrativeOperation, CustomerOperation } from "@/TDLib/main";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { Button } from "@nextui-org/react";
 import { FaPen } from "react-icons/fa";
-const axios = require('axios');
 import Select from "react-select";
+import { useSettingContext } from "@/providers/SettingProvider";
 type Props = {};
 
 const Navbar = ({ }: Props) => {
@@ -40,12 +40,12 @@ const Navbar = ({ }: Props) => {
   const [search, setSearch] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { passData, setPassData } = useContext(PassDataContext)
+  const { passData, setPassData } = usePassDataContext()
   const intl = useIntl();
   const [message, setMessage] = useState("")
   const [modal, openModal] = useState(false)
   const [modal2, openModal2] = useState(false)
-  const [modal3, openModal3] = useState(false)
+  const { openSetting, setOpenSetting } = useSettingContext()
   const [modal4, openModal4] = useState(false)
   const [modal5, openModal5] = useState(false)
   const [avatarUpload, setavatarUpload] = useState<File | "">("");
@@ -59,6 +59,7 @@ const Navbar = ({ }: Props) => {
   const [selectedDistrict, setSelectedDistrict] = useState<any>("");
   const [selectedWard, setSelectedWard] = useState<any>("");
   const adminOperation = new AdministrativeOperation();
+  const imgURL = "https://api2.tdlogistics.net.vn/v2/customers/avatar/get?customerId="
   const getActiveRoute = (routes: any) => {
     let activeRoute = "orders";
     for (let i = 0; i < routes.length; i++) {
@@ -92,7 +93,7 @@ const Navbar = ({ }: Props) => {
     setLoading(true)
     const response = await customerOperation.updateAvatar({ avatar: avatarUpload })
     if (!response.error && !response.error?.error) {
-      setProfilePicture(URL.createObjectURL(avatarUpload))
+      setProfilePicture(`${imgURL}${passData.id}`)
       setavatarUpload("")
     }
     setLoading(false)
@@ -107,13 +108,7 @@ const Navbar = ({ }: Props) => {
       setPassData(response.data);
       setDataUpdate(response.data);
       setUsername(response.data.account.email);
-      const response2 = await getinfo.getAvatar({ customerId: response.data.id });
-      if (!response2.error && !response2.error?.error) {
-        // console.log(response2)
-        // const avatarBase64 = Buffer.from(response2, 'binary').toString('base64');
-        // console.log(avatarBase64);
-        // setProfilePicture(avatarBase64);
-      }
+      setProfilePicture(`${imgURL}${response.data.id}`)
     }
 
     if ((!!response.error) || (response.error == undefined)) {
@@ -132,17 +127,29 @@ const Navbar = ({ }: Props) => {
   const handleProvinceChange = async (selectedOption: any) => {
     setSelectedProvince(selectedOption);
     const a = { province: selectedOption.value };
-    handleInputChange("province", selectedOption.value);
+    setDataUpdate((prevState: any) => ({
+      ...prevState,
+      province: selectedOption.value,
+      districts: null,
+      ward: null,
+    }));
     const response = await adminOperation.get(a);
     setDistricts(response.data);
+    setSelectedDistrict(null);
+    setSelectedWard(null)
   };
 
   const handleDistrictChange = async (selectedOption: any) => {
     setSelectedDistrict(selectedOption);
     const a = { province: selectedProvince.value, district: selectedOption.value };
-    handleInputChange("district", selectedOption.value);
+    setDataUpdate((prevState: any) => ({
+      ...prevState,
+      district: selectedOption.value,
+      ward: null,
+    }));
     const response = await adminOperation.get(a);
     setWards(response.data);
+    setSelectedWard(null)
   };
 
   const handleWardChange = (selectedOption: any) => {
@@ -158,8 +165,11 @@ const Navbar = ({ }: Props) => {
 
   const fetchData = async () => {
     const response = await adminOperation.get({});
-    const data = sortData(response.data);
-    setProvinces(data);
+    if (response.data) {
+      const data = sortData(response.data);
+      setProvinces(data);
+    }
+
   };
 
   const styles = {
@@ -200,6 +210,7 @@ const Navbar = ({ }: Props) => {
     menuList: (provided: any) => ({
       ...provided,
       backgroundColor: "transparent",
+      maxHeight: "150px",
       color: theme === "dark" ? "#ffffff" : "#3A3B3C",
       marginTop: "2px",
     }),
@@ -272,7 +283,7 @@ const Navbar = ({ }: Props) => {
 
   useEffect(() => {
     checkUserLoggedIn();
-    fetchData();
+    fetchData()
   }, []);
 
   useEffect(() => {
@@ -302,7 +313,7 @@ const Navbar = ({ }: Props) => {
       {modal2 && <SubmitPopup onClose={() => { openModal2(false); }} message={message} submit={handleLogout} />}
       {modal4 && <NotiPopup onClose={() => { openModal4(false) }} message={message} />}
       {modal5 && <SubmitPopup onClose={() => { openModal5(false); }} message={message} submit={submitClick2} />}
-      {modal3 && passData && <DetailPopup onClose={() => { setDataUpdate(passData); setSelectedDistrict(""); setSelectedProvince(""); setSelectedWard(""); setEditing(false); openModal3(false); }} title={intl.formatMessage({ id: "Navbar.Title" })} className2="lg:w-fit" children={
+      {openSetting && passData && <DetailPopup onClose={() => { setDataUpdate(passData); setavatarUpload(""); setSelectedDistrict(""); setSelectedProvince(""); setSelectedWard(""); setEditing(false); setOpenSetting(false); }} title={intl.formatMessage({ id: "Navbar.Title" })} className2="lg:w-fit" children={
         <div className="flex flex-col gap-6">
           <div className="w-full flex justify-center">
             <div className="relative flex w-40 h-40 lg:w-60 lg:h-60 hover:cursor-pointer rounded-full overflow-hidden transition-all duration-500 cursor-pointer">
@@ -334,7 +345,7 @@ const Navbar = ({ }: Props) => {
             <div className="w-full flex justify-center">
               <button
                 onClick={loading ? () => { } : handleUploadAvatar}
-                className="linear w-full sm:w-2/3 border-2 rounded-xl py-[10px] text-base font-medium transition duration-200 dark:text-white flex justify-center place-items-center"
+                className="linear w-full sm:w-2/3 border-2 rounded-xl h-10 text-base font-medium transition duration-200 dark:text-white flex justify-center place-items-center"
               >
                 {loading ? <svg aria-hidden="true" className="w-20 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
@@ -548,8 +559,8 @@ const Navbar = ({ }: Props) => {
           <Dropdown
             button={
               <div className="avatar w-10 h-10 rounded-full">
-                {profilePicture && <Image
-                  src={profilePicture}
+                {profilePicture && <img
+                  src={avatarUpload ? URL.createObjectURL(avatarUpload) : (profilePicture ? profilePicture : '/img/avatars/avatar_4.jpg')}
                   alt="avatar"
                   width={19200}
                   height={10800}
@@ -572,7 +583,7 @@ const Navbar = ({ }: Props) => {
               </div>
               <div className="flex flex-col pb-3 px-3 -mt-4">
                 <button
-                  onClick={() => { openModal3(true) }}
+                  onClick={() => { setOpenSetting(true) }}
                   className="mt-3 text-sm font-medium text-navy-700 dark:text-white"
                 >
                   <FormattedMessage id="Navbar.Info" />

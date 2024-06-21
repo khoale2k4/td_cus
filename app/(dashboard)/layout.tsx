@@ -4,42 +4,25 @@ import "@/components/calendar/MiniCalendar.css";
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import SidebarProvider from "@/providers/SidebarProvider";
-import { usePathname, useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import MapExport from "./orders/component/MapExport";
-import { CollapseContext } from "./orders/context/CollapseContext";
-import { DestinationContext } from "./orders/context/DestinationContext";
-import { DistanceContext } from "./orders/context/DistanceContext";
-import { SourceContext } from "./orders/context/SourceContext";
+import CollapseProvider from "./orders/context/CollapseContext";
 import PassDataProvider from "@/providers/PassedData";
+import SourceProvider from "@/app/(dashboard)/orders/context/SourceContext";
+import DestinationProvider from "@/app/(dashboard)/orders/context/DestinationContext";
+import DistanceProvider from "@/app/(dashboard)/orders/context/DistanceContext";
+import SettingProvider from "@/providers/SettingProvider";
 const RootStructure = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const [source, setSource] = useState(null);
-  const [destination, setDestination] = useState(null);
-  const [distance, setDistance] = useState(0);
-  const route = useRouter();
-  useEffect(() => {
-    // const fetchData = async () => {
-    //   const loggedIn2 = await user.checkUserLoggedIn();
-    //   if (!loggedIn2) route.push("/");
-    // };
-    // fetchData();
-  }, []);
   return (
     <>
-      {/* {loggedIn ? */}
-      <>
-        {/* @ts-ignore */}
-        <DistanceContext.Provider value={{ distance, setDistance }}>
-          {/* @ts-ignore */}
-          <CollapseContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-            {/* @ts-ignore */}
-            <SourceContext.Provider value={{ source, setSource }}>
-              {/* @ts-ignore */}
-              <DestinationContext.Provider value={{ destination, setDestination }} >
-                <PassDataProvider>
-                  <SidebarProvider>
+      <DistanceProvider>
+        <CollapseProvider>
+          <SettingProvider>
+            <PassDataProvider>
+              <SidebarProvider>
+                <SourceProvider>
+                  <DestinationProvider>
                     <section className="flex h-full w-full">
                       <Sidebar />
 
@@ -73,15 +56,13 @@ const RootStructure = ({ children }: { children: React.ReactNode }) => {
                         )}
                       </div>
                     </section>
-                  </SidebarProvider>
-                </PassDataProvider >
-              </DestinationContext.Provider>
-            </SourceContext.Provider>
-          </CollapseContext.Provider>
-        </DistanceContext.Provider>
-      </>
-      {/* : <CustomLoadingElement2 />
-      } */}
+                  </DestinationProvider>
+                </SourceProvider>
+              </SidebarProvider>
+            </PassDataProvider >
+          </SettingProvider>
+        </CollapseProvider>
+      </DistanceProvider>
     </>
   );
 };

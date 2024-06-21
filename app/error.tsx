@@ -12,12 +12,14 @@ import { IntlProvider } from "react-intl";
 type LanguageMessages = {
     [key: string]: any;
 }
-const NotFound = () => {
+const ErrorHandle = () => {
     const route = useRouter()
     const languages: LanguageMessages = {
         vi: require('@/language/vi.json'),
         en: require('@/language/en.json')
     };
+
+    const pathname = usePathname();
     const searchParams = useSearchParams();
 
     const locale = searchParams.get('locale') || 'vi';
@@ -36,12 +38,12 @@ const NotFound = () => {
                                 <main className="mx-[12px] h-full flex-none transition-all xl:ml-[313px]">
                                     {/* Routes */}
                                     <div className="h-full">
-
+                                        {/* <Navbar /> */}
                                         <div className="pt-5s mx-auto mb-auto h-full p-2">
                                             <div className="grid h-full grid-cols-1 gap-5">
                                                 <Card className="w-full h-full bg-red-500 flex justify-center place-items-center px-2">
-                                                    <h1 className="text-4xl font-bold text-red-500 uppercase">404</h1>
-                                                    <h2 className="text-2xl font-bold text-red-500 mt-2">Trang không khả dụng</h2>
+                                                    <h1 className="text-4xl font-bold text-red-500 uppercase">Lỗi hệ thống</h1>
+                                                    <h2 className="text-2xl font-bold text-red-500 mt-2">Vui lòng liên hệ CSKH để được hỗ trợ</h2>
                                                     <motion.button
                                                         whileHover={{ scale: 1.05 }}
                                                         whileTap={{ scale: 0.9 }}
@@ -67,4 +69,4 @@ const NotFound = () => {
     );
 };
 
-export default NotFound;
+export default ErrorHandle;
