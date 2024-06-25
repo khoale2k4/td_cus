@@ -41,7 +41,7 @@ const AuthPage: FC<Props> = () => {
   const authOperation = new AuthOperation();
   const [otp, setshowOtp] = useState(false)
   const emailRegex = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9._-]{1,255}\.[a-zA-Z]{2,4}$/;
-  const phoneNumberRegex = /^[0-9]{1,10}$/;
+  const phoneNumberRegex = /^[0-9]{9,11}$/;
 
   const handleCheckField = () => {
     if (!email || !phoneNumber) {
