@@ -108,7 +108,8 @@ const Navbar = ({ }: Props) => {
       setPassData(response.data);
       setDataUpdate(response.data);
       setUsername(response.data.account.email);
-      setProfilePicture(`${imgURL}${response.data.id}`)
+      const response2 = await getinfo.getAvatar({ customerId: response.data.id })
+      setProfilePicture(response2 ? `${imgURL}${response.data.id}` : "/img/avatars/avatar_4.jpg")
     }
 
     if ((!!response.error) || (response.error == undefined)) {
