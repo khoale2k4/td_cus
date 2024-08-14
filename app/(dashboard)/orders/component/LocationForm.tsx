@@ -170,7 +170,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
         <div className={`flex flex-col w-full gap-2 ${type == "destination" ? "pb-48" : ""}`}>
             <div className="flex flex-col w-full gap-2 p-4 bg-white dark:bg-[#242526] rounded-xl shadow">
                 <h1 className="w-full md:text-lg text-center font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans mb-2">
-                    {type === 'source' ? "Nhập thông tin người gửi" : "Nhập thông tin người nhận"}
+                    {type === 'source' ? intl.formatMessage({ id: "Orders.Form1.Title2" }) : intl.formatMessage({ id: "Orders.Form1.Title3" })}
                 </h1>
                 <div className="flex gap-2">
                     <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${name ? "border-navy-800" : "border-gray-500"}`}>
@@ -181,7 +181,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             type="text"
-                            placeholder={"Họ và tên"}
+                            placeholder={intl.formatMessage({ id: "Orders.Form1.Info" })}
                             className={`block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white`}
                         />
                     </div>
@@ -193,7 +193,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             type="text"
-                            placeholder={"Số điện thoại"}
+                            placeholder={intl.formatMessage({ id: "Orders.Form1.Info2" })}
                             className={`block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white`}
                         />
                     </div>
@@ -207,7 +207,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
                         value={detailAddress}
                         onChange={(e) => setDetailAddress(e.target.value)}
                         type="text"
-                        placeholder={"Địa chỉ chi tiết"}
+                        placeholder={intl.formatMessage({ id: "Orders.Form1.Info3" })}
                         className={`block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white`}
                     />
                 </div>

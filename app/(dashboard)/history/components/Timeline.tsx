@@ -2,6 +2,7 @@
 import Card from "@/components/card";
 import { useEffect, useState } from "react";
 import { LuBox } from "react-icons/lu";
+import { FormattedMessage } from "react-intl";
 interface JourneyItem {
     time: string;
     title: string;
@@ -26,7 +27,7 @@ const JourneyTimeline = ({ journey }: { journey: JourneyItem[] }) => {
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2Z" />
                             </svg>
                         </span>
-                        {index == journey.length - 1 && <>
+                        {index == 0 && <>
                             <span className={`absolute flex items-center justify-center w-2.5 h-2.5 bg-green-500 rounded-full start-2 animate-ping`} />
                             <span className={`absolute flex items-center justify-center w-2.5 h-2.5 border-[1px] bg-green-500 dark:border-[#242526] border-white rounded-full start-2`} />
                         </>}
@@ -38,7 +39,7 @@ const JourneyTimeline = ({ journey }: { journey: JourneyItem[] }) => {
                     <span className="absolute flex items-center justify-center w-8 h-8 rounded-full -start-4 text-red-500 dark:text-white bg-red-100 dark:bg-red-500">
                         <LuBox />
                     </span>
-                    <h3 className="flex items-center mb-1 pt-1 font-semibold text-gray-900 dark:text-white">Đơn hàng được tạo mới</h3>
+                    <h3 className="flex items-center mb-1 pt-1 font-semibold text-gray-900 dark:text-white"><FormattedMessage id="Timeline.Info" /></h3>
                 </li>
             </ol> : <div className="flex justify-center place-items-center w-full h-full gap-2 p-4 rounded-xl">
                 <svg aria-hidden="true" className="w-20 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

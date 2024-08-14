@@ -3,15 +3,9 @@ import { FormattedMessage, useIntl } from "react-intl";
 import DetailPopup from "@/components/popup";
 import JourneyTimeline from "./Timeline";
 
-
 interface DetailOrderProps {
     onClose: () => void;
     dataInitial: any;
-}
-
-interface JourneyItem {
-    time: string;
-    title: string;
 }
 
 const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
@@ -28,63 +22,62 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                     <div className="flex flex-col gap-2">
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Tên người gửi</strong>
+                                <strong><FormattedMessage id="History.NameSender" /></strong>
                                 :</div> {dataInitial.nameSender}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>SĐT người gửi</strong>
+                                <strong><FormattedMessage id="History.PhoneNumSender" /></strong>
                                 :</div> {dataInitial.phoneNumberSender}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Tên người nhận</strong>
+                                <strong><FormattedMessage id="History.NameReceiver" /></strong>
                                 :</div> {dataInitial.nameReceiver}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>SĐT người nhận</strong>
+                                <strong><FormattedMessage id="History.PhoneNumReceiver" /></strong>
                                 :</div> {dataInitial.phoneNumberReceiver}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Địa chỉ gửi</strong>
+                                <strong><FormattedMessage id="History.SenderAddr" /></strong>
                                 :</div> {`${dataInitial.detailSource}, ${dataInitial.wardSource}, ${dataInitial.districtSource}, ${dataInitial.provinceSource}`}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Địa chỉ nhận</strong>
+                                <strong><FormattedMessage id="History.ReceiverAddr" /></strong>
                                 :</div> {`${dataInitial.detailDest}, ${dataInitial.wardDest}, ${dataInitial.districtDest}, ${dataInitial.provinceDest}`}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Khối lượng (g)</strong>
+                                <strong><FormattedMessage id="History.Mass" /></strong>
                                 :</div> {dataInitial.mass}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Chiều cao (cm)</strong>
+                                <strong><FormattedMessage id="History.Height" /></strong>
                                 :</div> {dataInitial.height}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Chiều rộng (cm)</strong>
+                                <strong><FormattedMessage id="History.Width" /></strong>
                                 :</div> {dataInitial.width}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Chiều dài (cm)</strong>
+                                <strong><FormattedMessage id="History.Length" /></strong>
                                 :</div> {dataInitial.length}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>COD</strong>
+                                <strong><FormattedMessage id="History.COD" /></strong>
                                 :</div> {dataInitial.cod}</div>
                         <div className='flex gap-2'>
                             <div className='w-32 min-w-[128px] flex justify-between'>
-                                <strong>Loại dịch vụ</strong>
+                                <strong><FormattedMessage id="History.ServiceType" /></strong>
                                 :</div>
-                            {dataInitial.serviceType == "CPN" ?
+                            {dataInitial.serviceType === "CPN" ?
                                 intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery1' })
-                                : dataInitial.serviceType == "TTk" ?
+                                : dataInitial.serviceType === "TTk" ?
                                     intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery3' })
                                     :
                                     intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' })}
                         </div>
                     </div>
                 </div>
-            </div>} onClose={onClose} title={"Thông tin đơn hàng"} />
-
+            </div>} onClose={onClose} title={intl.formatMessage({ id: "History.Detail.Title" })} />
     );
 };
 

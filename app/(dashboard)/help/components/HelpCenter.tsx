@@ -3,64 +3,66 @@ import React from 'react';
 import Card from '@/components/card';
 import { FaInbox, FaCog, FaPlug, FaWhatsapp, FaSms, FaQuestionCircle } from 'react-icons/fa';
 import { useSettingContext } from '@/providers/SettingProvider';
+import { useIntl } from 'react-intl';
 
-const sections = [
-    {
-        title: "Tính năng",
-        items: [
-            { id: 1, name: "Chương trình ưu đãi" },
-            { id: 2, name: "Các kênh hỗ trợ khách hàng" },
-            { id: 3, name: "Giới thiệu khách hàng" },
-        ],
-        icon: FaInbox
-    },
-    {
-        title: "Thông tin",
-        items: [
-            { id: 4, name: "Quy trình vận hành đơn hàng" },
-            { id: 5, name: "Phương thức thanh toán và chính sách trả trước" },
-            { id: 6, name: "Bản giá dịch vụ" },
-            { id: 7, name: "Điều khoản và chính sách" },
-        ],
-        icon: FaPlug
-    },
-    {
-        title: "Hotline",
-        items: [
-            { id: 8, name: "Hỗ trợ nhanh" },
-        ],
-        icon: FaWhatsapp
-    },
-    {
-        title: "Trò chuyện & hỗ trợ",
-        items: [
-            { id: 9, name: "Trò chuyện ngay" },
-            { id: 10, name: "Gửi yêu cầu trợ giúp" },
-        ],
-        icon: FaSms
-    },
-    {
-        title: "Khác",
-        items: [
-            { id: 11, name: "Các vấn đề khác" },
-        ],
-        icon: FaQuestionCircle
-    },
-    {
-        title: "Cài đặt",
-        items: [
-            { id: 12, name: "Cài đặt tài khoản" }
-        ],
-        icon: FaCog
-    },
-];
 
 const HelpCenter = () => {
     const { openSetting, setOpenSetting } = useSettingContext();
+    const intl = useIntl();
+    const sections = [
+        {
+            title: intl.formatMessage({ id: "Help.Title1" }),
+            items: [
+                { id: 1, name: intl.formatMessage({ id: "Help.Title1.Info1" }) },
+                { id: 2, name: intl.formatMessage({ id: "Help.Title1.Info2" }) },
+                { id: 3, name: intl.formatMessage({ id: "Help.Title1.Info3" }) },
+            ],
+            icon: FaInbox
+        },
+        {
+            title: intl.formatMessage({ id: "Help.Title2" }),
+            items: [
+                { id: 4, name: intl.formatMessage({ id: "Help.Title2.Info1" }) },
+                { id: 5, name: intl.formatMessage({ id: "Help.Title2.Info2" }) },
+                { id: 6, name: intl.formatMessage({ id: "Help.Title2.Info3" }) },
+                { id: 7, name: intl.formatMessage({ id: "Help.Title2.Info4" }) },
+            ],
+            icon: FaPlug
+        },
+        {
+            title: intl.formatMessage({ id: "Help.Title3" }),
+            items: [
+                { id: 8, name: intl.formatMessage({ id: "Help.Title3.Info1" }) },
+            ],
+            icon: FaWhatsapp
+        },
+        {
+            title: intl.formatMessage({ id: "Help.Title4" }),
+            items: [
+                { id: 9, name: intl.formatMessage({ id: "Help.Title4.Info1" }) },
+                { id: 10, name: intl.formatMessage({ id: "Help.Title4.Info2" }) },
+            ],
+            icon: FaSms
+        },
+        {
+            title: intl.formatMessage({ id: "Help.Title5" }),
+            items: [
+                { id: 11, name: intl.formatMessage({ id: "Help.Title5.Info1" }) },
+            ],
+            icon: FaQuestionCircle
+        },
+        {
+            title: intl.formatMessage({ id: "Help.Title6" }),
+            items: [
+                { id: 12, name: intl.formatMessage({ id: "Help.Title6.Info1" }) }
+            ],
+            icon: FaCog
+        },
+    ];
 
     const handleItemClick = (itemId: number) => {
         const selectedItem = sections.flatMap(section => section.items).find(item => item.id === itemId);
-        if (selectedItem && selectedItem.name === "Cài đặt tài khoản") {
+        if (selectedItem && selectedItem.name === intl.formatMessage({ id: "Help.Title6.Info1" })) {
             setOpenSetting(true);
         }
     };

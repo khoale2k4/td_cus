@@ -15,9 +15,10 @@ import { Variants, motion, useAnimation } from "framer-motion";
 import cloudData from '@/data/cloud.json';
 import bikeData from '@/data/lottie.json';
 import dynamic from "next/dynamic";
-import { AuthOperation } from "@/TDLib/main";
+import { AuthOperation, LoginOption } from "@/TDLib/main";
 import OTPField from "@/components/otp";
 import DetailPopup from "@/components/popup";
+import RegisterPopup from "@/components/register";
 const Lottie = dynamic(() => import('lottie-react'), {
   ssr: false,
 });
@@ -42,16 +43,18 @@ const AuthPage: FC<Props> = () => {
   const [otp, setshowOtp] = useState(false)
   const emailRegex = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9._-]{1,255}\.[a-zA-Z]{2,4}$/;
   const phoneNumberRegex = /^[0-9]{1,10}$/;
+  const [displayRole, setDisplayRole] = useState(role);
+  const [openRegister, setOpenRegister] = useState(false)
 
   const handleCheckField = () => {
     if (!email || !phoneNumber) {
       setError(true);
-      setMessage(intl.formatMessage({ id: "Login.Message1" }));
+      setMessage(displayRole == 1 ? intl.formatMessage({ id: "Login.Message1" }) : intl.formatMessage({ id: "Login.Message4" }));
       setModal(true);
       return true;
-    } else if (!emailRegex.test(email) || !phoneNumberRegex.test(phoneNumber)) {
+    } else if ((!emailRegex.test(email) || !phoneNumberRegex.test(phoneNumber)) && displayRole == 1) {
       setError(true);
-      setMessage("Vui lòng nhập đúng định dạng email và số điện thoại.");
+      setMessage(intl.formatMessage({ id: "Login.Message5" }));
       setModal(true);
       return true;
     }
@@ -66,13 +69,28 @@ const AuthPage: FC<Props> = () => {
   const handleSignUpButton = async () => {
     if (handleCheckField()) return;
     setLoading(true)
-    const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
-    if (!response.error && !response.error?.error) {
-      setshowOtp(true)
+    if (displayRole == 1) {
+      const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
+      if (!response.error && !response.error?.error) {
+        setshowOtp(true)
+      } else {
+        setMessage(intl.formatMessage({ id: "Login.Message6" }))
+        setModal(true)
+        setLoading(false)
+      }
     } else {
-      setMessage("Gửi OTP thất bại, vui lòng thử lại sau.")
-      setModal(true)
-      setLoading(false)
+      const response = await authOperation.login({ username: email.trim(), password: phoneNumber.trim() }, LoginOption["BUSINESS"])
+      console.log(response)
+      if (!response.error && !response.error?.error) {
+        setMessage(intl.formatMessage({ id: "Login.Message8" }))
+        setModal(true)
+        setLoading(false)
+      } else {
+        setError(true)
+        setMessage(intl.formatMessage({ id: "Login.Message9" }))
+        setModal(true)
+        setLoading(false)
+      }
     }
   };
 
@@ -81,6 +99,20 @@ const AuthPage: FC<Props> = () => {
     if (!error) {
       route.push("/orders");
     } else setError(false);
+  };
+
+  const handleChangeRole = () => {
+    if (loading) return;
+    setIsAnimated(!isAnimated);
+    setEmail("")
+    setPhoneNumber("")
+    setRole(prevRole => {
+      const newRole = prevRole === 1 ? 2 : 1;
+      setTimeout(() => {
+        setDisplayRole(newRole);
+      }, 500);
+      return newRole;
+    });
   };
 
   useEffect(() => {
@@ -113,9 +145,15 @@ const AuthPage: FC<Props> = () => {
         {otp && <DetailPopup onClose={() => { setLoading(false); setshowOtp(false) }} title="Nhập OTP" className2="sm:w-fit">
           <div className="flex flex-col gap-4">
             <OTPField email={email} phoneNumber={phoneNumber} setMessage={setMessage} setModal={setModal} setError={setError} />
-            <div className="text-center">Vui lòng kiểm tra email !</div>
+            <div className="text-center"><FormattedMessage id="Login.Message7" /></div>
           </div>
         </DetailPopup>}
+        {
+          openRegister && <RegisterPopup onClose={() => {
+            setLoading(false)
+            setOpenRegister(false)
+          }} />
+        }
         <main className={`mx-auto min-h-screen`}>
           <div className="relative flex h-screen lg:p-8 xl:p-16">
             <div className={`mx-auto min-h-full h-full w-full relative rounded-xl bg-white dark:!bg-[#242526]`}>
@@ -140,19 +178,17 @@ const AuthPage: FC<Props> = () => {
                         </div>
                       </h4>
                       <p className="pl-1 text-base text-gray-600">
-                        <FormattedMessage id="Login.Login2" />
+                        {displayRole == 1 ? <FormattedMessage id="Login.Login2" /> : <FormattedMessage id="Login.Login3" />}
                       </p>
                     </div>
 
                     <div
-                      onClick={() => { setIsAnimated(!isAnimated) }}
+                      onClick={handleChangeRole}
                       className="flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-white border hover:cursor-pointer dark:bg-[#3a3b3c]">
-                      <button
-                        className="flex items-center gap-2 h-[50px]"
-                      >
+                      <button className="flex items-center gap-2 h-[50px]">
                         <Image src="/Logo.png" alt="Your image" width={20} height={20} />
                         <span className="text-[14px] font-medium text-[#000000] dark:text-white font-sans focus:outline-none">
-                          {role == 1 ? <FormattedMessage id="Login.Role" /> : <FormattedMessage id="Login.Role2" />}
+                          {displayRole == 1 ? <FormattedMessage id="Login.Role" /> : <FormattedMessage id="Login.Role2" />}
                         </span>
                       </button>
                     </div>
@@ -166,15 +202,14 @@ const AuthPage: FC<Props> = () => {
                     </div>
                     <div className="flex items-center place-items-center">
                       <p className="text-base w-full text-center font-bold dark:text-white font-sans">
-                        {" "}
-                        {role == 1 ? <FormattedMessage id="Login.Role3" /> : <FormattedMessage id="Login.Role4" />}{" "}
+                        <FormattedMessage id="Login.Role3" />
                       </p>
                     </div>
                     {/* email */}
                     <InputField
                       variant="auth"
-                      label={intl.formatMessage({ id: "Login.Box1" })}
-                      placeholder={intl.formatMessage({ id: "Login.PlaceHolder" })}
+                      label={displayRole == 1 ? intl.formatMessage({ id: "Login.Box1" }) : intl.formatMessage({ id: "Login.Box3" })}
+                      placeholder={displayRole == 1 ? intl.formatMessage({ id: "Login.PlaceHolder" }) : intl.formatMessage({ id: "Login.PlaceHolder3" })}
                       id="email"
                       type="text"
                       value={email}
@@ -183,14 +218,28 @@ const AuthPage: FC<Props> = () => {
                     />
                     <InputField
                       variant="auth"
-                      label={intl.formatMessage({ id: "Login.Box2" })}
-                      placeholder={intl.formatMessage({ id: "Login.PlaceHolder2" })}
+                      label={displayRole == 1 ? intl.formatMessage({ id: "Login.Box2" }) : intl.formatMessage({ id: "Login.Box4" })}
+                      placeholder={displayRole == 1 ? intl.formatMessage({ id: "Login.PlaceHolder2" }) : intl.formatMessage({ id: "Login.PlaceHolder4" })}
                       id="phoneNumber"
-                      type="text"
+                      type={displayRole == 1 ? 'text' : 'password'}
                       value={phoneNumber}
-                      setValue={handlePhoneNumberChange}
+                      setValue={displayRole == 1 ? handlePhoneNumberChange : setPhoneNumber}
                       className="bg-white dark:!bg-[#3a3b3c]"
                     />
+                    {displayRole == 2 && <div className="flex justify-start -mb-5">
+
+                      <button
+                        className={`text-sm font-medium text-[#000000] hover:text-gray-700 dark:text-white underline`}
+                        onClick={() => {
+                          if (!loading) {
+                            setOpenRegister(true)
+                            setLoading(true)
+                          }
+                        }}
+                      >
+                        <FormattedMessage id="Login.Login4" />
+                      </button>
+                    </div>}
                     <div className="flex gap-3 mt-4">
 
                       <button
