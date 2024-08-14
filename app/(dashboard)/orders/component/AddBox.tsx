@@ -5,7 +5,7 @@ import { useCollapseContext } from '../context/CollapseContext';
 import { PassDataContext, usePassDataContext } from '@/providers/PassedData';
 import { useRouter } from 'next/navigation';
 import { Button } from "@nextui-org/react";
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import SearchBox from './LocationForm';
 import { AdministrativeOperation, OrdersOperation } from '@/TDLib/main'; // Import AdministrativeOperation
 import { Variants, motion } from 'framer-motion';
@@ -120,7 +120,7 @@ const AddPanel: React.FC = () => {
                 selectedDistrict: passData.district ? passData.district : "",
                 phoneNumber: passData.account.phoneNumber ? passData.account.phoneNumber : "",
                 selectedProvince: passData.province ? passData.province : "",
-                selectedWard: passData.ward ? passData.ward : ""
+                selectedWard: passData.ward ? passData.ward : passData.town ? passData.town : ""
             })
             setFirstLoad(false)
         }
@@ -151,7 +151,7 @@ const AddPanel: React.FC = () => {
             provinceSource: sourceInfo.selectedProvince
         })
         if (response.error || response.error.error) {
-            setMessage(response.message ? response.message : "Đã có lỗi xảy ra khi tính toán chi phí, nếu lỗi này lặp lại nhiều lần vui lòng liên hệ CSKH.")
+            setMessage(response.message ? response.message : response.error.message ?? intl.formatMessage({ id: "Orders.Message" }))
             setOpenError(true)
         } else {
             setFee(response.data)
@@ -186,12 +186,12 @@ const AddPanel: React.FC = () => {
         })
         if (response.error || response.error.error) {
             setOpenSubmit(false)
-            setMessage(response.error.message ? response.error.message : (response.message ? response.message : "Đã có lỗi xảy ra khi tạo mới đơn hàng, nếu lỗi này lặp lại nhiều lần vui lòng liên hệ CSKH."))
+            setMessage(response.error.message ? response.error.message : (response.message ? response.message : intl.formatMessage({ id: "Orders.Message13" })))
             setOpenError(true)
             if (response.message == "Xin lỗi quý khách. Khu vực của quý khách hiện chưa có shipper nào phục vụ." || response.error.message == "Xin lỗi quý khách. Khu vực của quý khách hiện chưa có shipper nào phục vụ.") setCurrentForm(0)
         } else {
             setOpenSubmit(false)
-            setMessage("Tạo mới đơn hàng thành công")
+            setMessage(intl.formatMessage({ id: "Orders.Message2" }))
             setOpenError(true)
             setCurrentForm(0)
         }
@@ -208,32 +208,32 @@ const AddPanel: React.FC = () => {
                 const REGEX_PHONE_NUMBER = /^[0-9]{1,10}$/;
 
                 if (!REGEX_NAME.test(sourceInfo.name)) {
-                    setMessage("Vui lòng nhập đúng định dạng họ và tên người gửi.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message3" }));
                     setOpenError(true);
                     return;
                 }
 
                 if (!REGEX_PHONE_NUMBER.test(sourceInfo.phoneNumber)) {
-                    setMessage("Vui lòng nhập đúng định dạng số điện thoại người gửi.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message4" }));
                     setOpenError(true);
                     return;
                 }
 
                 if (!REGEX_NAME.test(destinationInfo.name)) {
-                    setMessage("Vui lòng nhập đúng định dạng họ và tên người nhận.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message5" }));
                     setOpenError(true);
                     return;
                 }
 
                 if (!REGEX_PHONE_NUMBER.test(destinationInfo.phoneNumber)) {
-                    setMessage("Vui lòng nhập đúng định dạng số điện thoại người nhận.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message6" }));
                     setOpenError(true);
                     return;
                 }
 
                 setCurrentForm(1);
             } else {
-                setMessage("Vui lòng điền đầy đủ các thông tin.");
+                setMessage(intl.formatMessage({ id: "Orders.Message7" }));
                 setOpenError(true);
                 return;
             }
@@ -242,19 +242,19 @@ const AddPanel: React.FC = () => {
                 handleCalculateFee()
             } else {
                 if (formData.mass === 0) {
-                    setMessage("Vui lòng nhập khối lượng.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message8" }));
                 } else if (formData.length === 0) {
-                    setMessage("Vui lòng nhập chiều dài.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message9" }));
                 } else if (formData.width === 0) {
-                    setMessage("Vui lòng nhập chiều rộng.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message10" }));
                 } else if (formData.height === 0) {
-                    setMessage("Vui lòng nhập chiều cao.");
+                    setMessage(intl.formatMessage({ id: "Orders.Message11" }));
                 } else
                     setOpenError(true);
                 return;
             }
         } else if (currentForm === 2) {
-            setMessage("Xác nhận tạo đơn hàng mới?")
+            setMessage(intl.formatMessage({ id: "Orders.Message12" }))
             setOpenSubmit(true)
         }
     };
@@ -339,28 +339,28 @@ const AddPanel: React.FC = () => {
                                     transition={{ duration: 0.5 }} className="flex flex-col w-full gap-2 pb-12">
                                     <div className="flex flex-col w-full justify-center place-items-center gap-2 p-4 bg-white dark:bg-[#242526] rounded-xl shadow">
                                         <h1 className="w-full md:text-lg uppercase text-center font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans mb-2">
-                                            Xác nhận thông tin đơn hàng
+                                            <FormattedMessage id="Orders.Form3.Title" />
                                         </h1>
                                         <div className={`flex flex-col items-center relative w-[210px] mb-2`}>
                                             <Image src="/Logo_horizontal.png" alt="Your image" width={210} height={210} />
                                         </div>
                                         <h1 className="w-full md:text-lg flex gap-2 font-bold place-items-center justify-center text-center text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans mb-2">
-                                            <div className='text-[#74bc42]'>Chi phí:</div>{parseFloat(fee).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                            <div className='text-[#74bc42]'><FormattedMessage id="fee" />:</div>{parseFloat(fee).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                         </h1>
                                         <div className="w-full text-[#4b4b4b] dark:text-white">
                                             <div className="flex flex-col gap-2">
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Tên người gửi</strong>:</div> {sourceInfo.name}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>SĐT người gửi</strong>:</div> {sourceInfo.phoneNumber}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Tên người nhận</strong>:</div> {destinationInfo.name}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>SĐT người nhận</strong>:</div> {destinationInfo.phoneNumber}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Địa chỉ gửi</strong>:</div> {`${sourceInfo.detailAddress}, ${sourceInfo.selectedWard}, ${sourceInfo.selectedDistrict}, ${sourceInfo.selectedProvince}`}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Địa chỉ nhận</strong>:</div> {`${destinationInfo.detailAddress}, ${destinationInfo.selectedWard}, ${destinationInfo.selectedDistrict}, ${destinationInfo.selectedProvince}`}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Khối lượng (g)</strong>:</div> {formData.mass}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Chiều cao (cm)</strong>:</div> {formData.height}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Chiều rộng (cm)</strong>:</div> {formData.width}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Chiều dài (cm)</strong>:</div> {formData.length}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>COD</strong>:</div> {formData.COD}</div>
-                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong>Loại dịch vụ</strong>:</div> {formData.selectedOption === 0 ?
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.NameSender" /></strong>:</div> {sourceInfo.name}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.PhoneNumSender" /></strong>:</div> {sourceInfo.phoneNumber}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.NameReceiver" /></strong>:</div> {destinationInfo.name}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.PhoneNumReceiver" /></strong>:</div> {destinationInfo.phoneNumber}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.SenderAddr" /></strong>:</div> {`${sourceInfo.detailAddress}, ${sourceInfo.selectedWard}, ${sourceInfo.selectedDistrict}, ${sourceInfo.selectedProvince}`}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.ReceiverAddr" /></strong>:</div> {`${destinationInfo.detailAddress}, ${destinationInfo.selectedWard}, ${destinationInfo.selectedDistrict}, ${destinationInfo.selectedProvince}`}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.Mass" /></strong>:</div> {formData.mass}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.Height" /></strong>:</div> {formData.height}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.Width" /></strong>:</div> {formData.width}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.Length" /></strong>:</div> {formData.length}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.COD" /></strong>:</div> {formData.COD}</div>
+                                                <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.ServiceType" /></strong>:</div> {formData.selectedOption === 0 ?
                                                     intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery1' })
                                                     : formData.selectedOption === 1 ?
                                                         intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery3' })
@@ -399,7 +399,7 @@ const AddPanel: React.FC = () => {
                             {loading ? <svg aria-hidden="true" className="w-20 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
                                 <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                            </svg> : currentForm != 2 ? <>Xác nhận thông tin</> : <>Tạo đơn hàng</>}
+                            </svg> : currentForm != 2 ? <FormattedMessage id="Orders.Button1" /> : <FormattedMessage id="Orders.Button1" />}
                         </Button>
                     </div>
                 </div>
@@ -413,7 +413,7 @@ const AddPanel: React.FC = () => {
                     <div className='absolute w-full top-0 h-1/3 bg-white dark:bg-[#242526] sm:hidden'></div>
                     <FaAngleDoubleLeft className={`absolute bg-white text-navy-800 dark:text-gray-300 dark:bg-[#242526] h-10 text-sm ${isCollapsed ? "-rotate-90 sm:rotate-180" : "rotate-90 sm:rotate-0 mb-2 sm:mb-0 sm:pr-3 sm:-right-1 sm:w-[45%]"}`} />
                 </Button>
-            </div>
+            </div >
         </>
     );
 };

@@ -14,6 +14,7 @@ const OTPField: FC<OptFieldProps> = ({ phoneNumber, email, setMessage, setModal,
     const [activeOTPIndex, setActiveOTPIndex] = useState<number>(0);
     const authOperation = new AuthOperation();
     const inputRef = useRef<HTMLInputElement>(null)
+    const intl = useIntl()
     const handleOnKeyDown = (
         { key }: React.KeyboardEvent<HTMLInputElement>, index: number) => {
         currentOTPIndex = index
@@ -39,13 +40,14 @@ const OTPField: FC<OptFieldProps> = ({ phoneNumber, email, setMessage, setModal,
             if (!otp1.some((element) => element === "")) {
                 let CheckOtp = otp1.join("");
                 const verify = await authOperation.verifyOtp({ email: email, otp: CheckOtp, phoneNumber: phoneNumber })
+                console.log(verify)
                 if (!verify.error && !verify.error.error) {
-                    setMessage("Xác thực thành công!")
+                    setMessage(intl.formatMessage({ id: "OTP.Message" }))
                     setModal(true)
                 }
                 else {
                     setError(true)
-                    setMessage("Mã OTP không khớp, vui lòng nhập lại!")
+                    setMessage(intl.formatMessage({ id: "OTP.Message2" }))
                     setModal(true)
                     setOtp(new Array(4).fill(""))
                 }

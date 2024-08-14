@@ -134,10 +134,10 @@ const DetailForm: React.FC<DetailFormProps> = ({
             transition={{ duration: 0.5 }} className="flex flex-col w-full gap-2 pb-12">
             <div className="flex flex-col w-full gap-2 p-4 bg-white dark:bg-[#242526] rounded-xl shadow">
                 <h1 className="w-full md:text-lg text-center font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans mb-2">
-                    Chi tiết đơn hàng
+                    <FormattedMessage id="Orders.Form2.Title" />
                 </h1>
                 <h1 className="w-full px-1 sm:text-base text-left text-sm font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans">
-                    Nhập số tiền thu hộ (COD)
+                    <FormattedMessage id="Orders.Form2.Message" />
                 </h1>
                 <div className={`flex items-center rounded-full text-navy-800 bg-[#F0F2F5] dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${COD ? "border-navy-800" : "border-gray-500"}`}>
                     <p className="pl-4 pr-3 text-xl">
@@ -152,7 +152,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                     />
                 </div>
                 <h1 className="w-full px-1 sm:text-base mt-2 text-left text-sm font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans">
-                    Chọn loại hình chuyển phát
+                    <FormattedMessage id="Orders.Form2.Message2" />
                 </h1>
                 <div className="flex flex-col gap-2 w-full">
                     <Select
@@ -173,11 +173,11 @@ const DetailForm: React.FC<DetailFormProps> = ({
                     />
                 </div>
                 <h1 className="w-full px-1 sm:text-base mt-2 text-left text-sm font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans">
-                    Nhập thông tin kiện hàng
+                    <FormattedMessage id="Orders.Form2.Message3" />
                 </h1>
                 <div className="flex flex-col sm:flex-row justify-center place-items-center font-sans font-medium text-[#4b4b4b] dark:text-white">
                     <label htmlFor="mass" className="pb-1 px-1 text-sm leading-5 peer-placeholder-shown:text-sm whitespace-nowrap sm:w-40 text-left w-full">
-                        Khối lượng (g)
+                        <FormattedMessage id="Orders.Form2.Message4" />
                     </label>
                     <div className="relative self-center w-full my-2">
                         <input id="mass" name="mass" type="text" value={mass} onChange={(e) => handleInputChange(e, 'mass')} className="bg-[#F0F2F5] dark:bg-[#3a3b3c] h-10 rounded-full self-center w-full cursor-default text-center dark:text-white" placeholder="Value" />
@@ -192,7 +192,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                 </div>
                 <div className="flex flex-col sm:flex-row justify-center place-items-center font-sans font-medium text-[#4b4b4b] dark:text-white">
                     <label htmlFor="length" className="pb-1 px-1 text-sm leading-5 peer-placeholder-shown:text-sm whitespace-nowrap sm:w-40 text-left w-full">
-                        Chiều dài (cm)
+                        <FormattedMessage id="Orders.Form2.Message5" />
                     </label>
                     <div className="relative self-center w-full my-2">
                         <input id="length" name="length" type="text" value={length} onChange={(e) => handleInputChange(e, 'length')} className="bg-[#F0F2F5] dark:bg-[#3a3b3c] h-10 rounded-full self-center w-full cursor-default text-center dark:text-white" placeholder="Value" />
@@ -207,7 +207,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                 </div>
                 <div className="flex flex-col sm:flex-row justify-center place-items-center font-sans font-medium text-[#4b4b4b] dark:text-white">
                     <label htmlFor="width" className="pb-1 px-1 text-sm leading-5 peer-placeholder-shown:text-sm whitespace-nowrap sm:w-40 text-left w-full">
-                        Chiều rộng (cm)
+                        <FormattedMessage id="Orders.Form2.Message6" />
                     </label>
                     <div className="relative self-center w-full my-2">
                         <input id="width" name="width" type="text" value={width} onChange={(e) => handleInputChange(e, 'width')} className="bg-[#F0F2F5] dark:bg-[#3a3b3c] h-10 rounded-full self-center w-full cursor-default text-center dark:text-white" placeholder="Value" />
@@ -222,7 +222,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                 </div>
                 <div className="flex flex-col sm:flex-row justify-center place-items-center font-sans font-medium text-[#4b4b4b] dark:text-white">
                     <label htmlFor="height" className="pb-1 px-1 text-sm leading-5 peer-placeholder-shown:text-sm whitespace-nowrap sm:w-40 text-left w-full">
-                        Chiều cao (cm)
+                        <FormattedMessage id="Orders.Form2.Message7" />
                     </label>
                     <div className="relative self-center w-full my-2">
                         <input id="height" name="height" type="text" value={height} onChange={(e) => handleInputChange(e, 'height')} className="bg-[#F0F2F5] dark:bg-[#3a3b3c] h-10 rounded-full self-center w-full cursor-default text-center dark:text-white" placeholder="Value" />

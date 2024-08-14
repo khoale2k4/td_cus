@@ -19,7 +19,7 @@ import { usePassDataContext } from "@/providers/PassedData";
 import NotiPopup from "../notification";
 import SubmitPopup from "../submit";
 import DetailPopup from "../popup";
-import { AdministrativeOperation, CustomerOperation } from "@/TDLib/main";
+import { AdministrativeOperation, BusinessOperation, CustomerOperation } from "@/TDLib/main";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { Button } from "@nextui-org/react";
 import { FaPen } from "react-icons/fa";
@@ -46,6 +46,7 @@ const Navbar = ({ }: Props) => {
   const [modal, openModal] = useState(false)
   const [modal2, openModal2] = useState(false)
   const { openSetting, setOpenSetting } = useSettingContext()
+  const [canUpload, setCanUpload] = useState(false)
   const [modal4, openModal4] = useState(false)
   const [modal5, openModal5] = useState(false)
   const [avatarUpload, setavatarUpload] = useState<File | "">("");
@@ -93,6 +94,7 @@ const Navbar = ({ }: Props) => {
     setLoading(true)
     const response = await customerOperation.updateAvatar({ avatar: avatarUpload })
     if (!response.error && !response.error?.error) {
+
       setProfilePicture(`${imgURL}${passData.id}`)
       setavatarUpload("")
     }
@@ -101,18 +103,28 @@ const Navbar = ({ }: Props) => {
 
   const checkUserLoggedIn = async () => {
     const getinfo = new CustomerOperation()
+    const getinfo2 = new BusinessOperation()
     const response = await getinfo.getAuthenticatedCustomerInfo();
-
+    const response2 = await getinfo2.getAuthenticatedInfo()
+    console.log("response2", response2)
     if (!!response.error || response.error?.error || response.error == undefined) console.log(response)
     else if (!!response.data) {
       setPassData(response.data);
       setDataUpdate(response.data);
       setUsername(response.data.account.email);
       const response2 = await getinfo.getAvatar({ customerId: response.data.id })
-      setProfilePicture(response2 ? `${imgURL}${response.data.id}` : "/img/avatars/avatar_4.jpg")
+      setProfilePicture(response2.error == "" ? "/img/avatars/avatar_4.jpg" : `${imgURL}${response.data.id}`)
+      setCanUpload(true)
     }
 
-    if ((!!response.error) || (response.error == undefined)) {
+    if (!!response2.error || response2.error?.error || response2.error == undefined) console.log(response2)
+    else if (!!response2.data) {
+      setPassData(response2.data);
+      setDataUpdate(response2.data);
+      setUsername(response2.data.account.email);
+      setProfilePicture("/img/avatars/avatar_4.jpg")
+    }
+    if (((!!response.error) || (response.error == undefined)) && ((!!response2.error) || (response2.error == undefined))) {
       setMessage(intl.formatMessage({ id: "Navbar.Message" }))
       openModal(true)
     }
@@ -236,10 +248,10 @@ const Navbar = ({ }: Props) => {
 
   const submitClick = () => {
     if ((selectedProvince || selectedDistrict || selectedWard) && !(selectedProvince && selectedDistrict && selectedWard)) {
-      setMessage("Vui lòng chọn đầy đủ thành phố, quận, phường.")
+      setMessage(intl.formatMessage({ id: "Login.Message10" }))
       openModal4(true);
     } else if ((dataUpdate.fullname != passData.fullname) || (selectedProvince && selectedDistrict && selectedWard) || (dataUpdate.detailAddress != passData.detailAddress)) {
-      setMessage("Xác nhận cập nhật thông tin cá nhân?")
+      setMessage(intl.formatMessage({ id: "Login.Message11" }))
       openModal5(true);
     } else {
       setEditing(false)
@@ -273,11 +285,11 @@ const Navbar = ({ }: Props) => {
       setSelectedWard("")
       setEditing(false)
       openModal5(false)
-      setMessage("Cập nhật thông tin thành công.")
+      setMessage(intl.formatMessage({ id: "Login.Message12" }))
       openModal4(true);
     } else {
       openModal5(false)
-      setMessage("Cập nhật thông tin thất bại, vui lòng thử lại sau.")
+      setMessage(intl.formatMessage({ id: "Login.Message13" }))
       openModal4(true);
     }
   }
@@ -327,7 +339,7 @@ const Navbar = ({ }: Props) => {
                 src={avatarUpload ? URL.createObjectURL(avatarUpload) : (profilePicture ? profilePicture : '/img/avatars/avatar_4.jpg')}
               // onClick={() => setModalIsOpen(true)}
               />
-              <label className="absolute w-full h-20px py-2.5 bottom-0 inset-x-0 bg-[#000000]/50 
+              {canUpload && <label className="absolute w-full h-20px py-2.5 bottom-0 inset-x-0 bg-[#000000]/50 
                   text-white text-2xl flex items-center hover:cursor-pointer justify-center 
                   active:scale-150 transition-all ease-in-out duration-500">
                 <RiImageEditLine />
@@ -339,7 +351,7 @@ const Navbar = ({ }: Props) => {
                     setavatarUpload(file);
                   }}
                 />
-              </label>
+              </label>}
             </div>
           </div>
           {avatarUpload &&
@@ -351,17 +363,17 @@ const Navbar = ({ }: Props) => {
                 {loading ? <svg aria-hidden="true" className="w-20 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-red-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
                   <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                </svg> : <div className="flex gap-2 justify-center place-items-center"><IoCloudUploadOutline />Xác nhận tải lên</div>}
+                </svg> : <div className="flex gap-2 justify-center place-items-center"><IoCloudUploadOutline /><FormattedMessage id="Login.Message14" /></div>}
               </button>
             </div>
           }
 
           <div className="flex flex-row gap-3 text-[#000000] dark:text-white px-1">
             <div className="w-32 h-full flex-col flex gap-1">
-              <p className="whitespace-nowrap flex flex-row justify-between gap-2">
+              {canUpload && <p className="whitespace-nowrap flex flex-row justify-between gap-2">
                 <span className="font-semibold"><FormattedMessage id="Navbar.Info8" /></span>
                 <span className="font-semibold">:</span>
-              </p>
+              </p>}
               <p className="whitespace-nowrap flex flex-row justify-between gap-2">
                 <span className="font-semibold"><FormattedMessage id="Navbar.Info1" /></span>
                 <span className="font-semibold">:</span>
@@ -376,7 +388,7 @@ const Navbar = ({ }: Props) => {
               </p>
             </div>
             <div className="w-full h-full flex-col flex gap-1 mb-4">
-              <p className="whitespace-nowrap flex flex-row gap-2 relative">
+              {canUpload && <p className="whitespace-nowrap flex flex-row gap-2 relative">
                 {editing ? <input
                   type="text"
                   className="focus:outline-none dark:bg-[#242526] w-full"
@@ -384,14 +396,14 @@ const Navbar = ({ }: Props) => {
                   onChange={(e) => {
                     setDataUpdate({ ...dataUpdate, fullname: e.target.value })
                   }}
-                /> : (passData.fullname ? passData.fullname : "Chưa có thông tin")}
+                /> : (passData.fullname ? passData.fullname : <FormattedMessage id="Login.Message15" />)}
                 {editing && <span className="absolute bg-[#000000] dark:bg-gray-100 h-[1px] bottom-0 w-full" />}
-              </p>
+              </p>}
               <p className="whitespace-nowrap flex flex-row gap-2">
-                {passData.account.email ? passData.account.email : "Chưa có thông tin"}
+                {passData.account.email ? passData.account.email : <FormattedMessage id="Login.Message15" />}
               </p>
               <p className="flex flex-col sm:flex-row sm:gap-2">
-                {passData.account.phoneNumber ? passData.account.phoneNumber : "Chưa có thông tin"}
+                {passData.account.phoneNumber ? passData.account.phoneNumber : <FormattedMessage id="Login.Message15" />}
               </p>
               {editing ?
                 <div className="flex flex-col gap-3">
@@ -457,7 +469,7 @@ const Navbar = ({ }: Props) => {
                 </div>
                 :
                 <p className="flex flex-col">
-                  {(passData.detailAddress || passData.ward || passData.district || passData.province) ? `${passData.detailAddress}, ${passData.ward}, ${passData.district}, ${passData.province}` : "Không có thông tin"}
+                  {(passData.detailAddress || passData.ward || passData.town || passData.district || passData.province) ? `${passData.detailAddress}, ${passData.ward ? passData.ward : passData.town}, ${passData.district}, ${passData.province}` : "Không có thông tin"}
                 </p>
               }
             </div>
@@ -466,14 +478,14 @@ const Navbar = ({ }: Props) => {
         </div>
       }
         button={
-          <div className="w-full flex bottom-0 bg-white pt-2 dark:bg-[#242526] gap-2">
+          canUpload ? <div className="w-full flex bottom-0 bg-white pt-2 dark:bg-[#242526] gap-2">
             <Button
               onClick={editing ? submitClick : () => { setEditing(true) }}
               className="rounded-lg lg:h-11 w-full text-green-500 border-green-500 hover:border-green-600 bg-transparent hover:text-white border-2 hover:bg-green-600 hover:shadow-md flex sm:gap-2"
             >
-              <FaPen /> {editing ? "Cập nhật" : "Chỉnh sửa"}
+              <FaPen /> {editing ? <FormattedMessage id="Login.Message16" /> : <FormattedMessage id="Login.Message17" />}
             </Button>
-          </div>
+          </div> : <></>
         }
       />}
 
