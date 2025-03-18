@@ -23,8 +23,7 @@ export interface SendingOtp {
 }
 
 export interface VerifyingOtp {
-    phoneNumber: String,
-    email: String,
+    id: String,
     otp: String,
 }
 
@@ -47,16 +46,18 @@ export enum LoginOption {
     CUSTOMER = "CUSTOMER"
 }
 
+const host = "https://api.tdlogistics.net.vn/v3";
+
 export class AuthOperation {
     private baseUrl: String;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/auth";
+        this.baseUrl = host + "/auth";
     }
 
     async sendOtp(payload: SendingOtp) {
         try {
-            const response = await axios.post(`${this.baseUrl}/otp/send`, payload);
+            const response = await axios.post(`${this.baseUrl}/customer/login`, payload);
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
             console.log("Error sending otp: ", error?.response?.data);
@@ -130,7 +131,7 @@ export class AccountOperation {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/accounts";
+        this.baseUrl = host + "/accounts";
     }
 
     async updateInfo(accountId: string, payload: UpdateAccountPayload) {
@@ -208,19 +209,27 @@ export class CustomerOperation {
     private baseUrl: String;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/customers";
+        this.baseUrl = host + "/customer";
     }
 
-    async getAuthenticatedCustomerInfo() {
+    async getAuthenticatedCustomerInfo(token: string) {
         try {
             const response = await axios.get(`${this.baseUrl}/`, {
-                withCredentials: true
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error getting authenticated customer info: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error getting authenticated customer info: ", error.response?.data);
+                console.error("Request that caused the error: ", error.request);
+                return { error: error.response?.data, request: error.request, status: error.response ? error.response.status : null };
+            } else {
+                console.log("Error getting authenticated customer info: ", error);
+                return { error: error, request: null, status: null };
+            }
         }
     }
 
@@ -284,6 +293,30 @@ export class CustomerOperation {
     }
 }
 
+export class MapOperation{
+    async getCoordinates(address: string, ggmapkey: string): Promise<{ lat: number; lng: number } | null> {
+        try {
+            const response = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
+                params: {
+                    address,
+                    key: ggmapkey,
+                },
+            });
+
+            if (response.data.status === "OK") {
+                const location = response.data.results[0].geometry.location;
+                return { lat: location.lat, lng: location.lng };
+            } else {
+                console.error("Lỗi khi lấy tọa độ:", response.data.status);
+                return null;
+            }
+        } catch (error) {
+            console.error("Lỗi API Google Geocoding:", error);
+            return null;
+        }
+    }
+}
+
 export interface CheckingExistOrderCriteria {
     orderId: string,
 }
@@ -299,6 +332,24 @@ export interface GettingOrdersCriteria {
     districtDest?: string,
     wardDest?: string,
     serviceType?: string,
+}
+
+export interface SearchPayload {
+    criteria: SearchCriteria[],
+    addition: SearchAddition
+}
+
+export interface SearchAddition {
+    sort: [string, 'ASC' | 'DESC'][],
+    page: number,
+    size: number,
+    group: string[]
+}
+
+export interface SearchCriteria {
+    field: string;
+    operator: '~' | '!~' | '=' | '!=' | 'isSet' | 'isNotSet' | '<' | '<=' | '>' | '>=';
+    value?: any;
 }
 
 export interface CreatingOrderByUserInformation {
@@ -325,6 +376,38 @@ export interface CreatingOrderByUserInformation {
     cod: number,
     serviceType: string,
 }
+
+
+export interface OrderDTO {
+    nameSender: string;
+    phoneNumberSender: string;
+    nameReceiver: string;
+    phoneNumberReceiver: string;
+    fromMass: number;
+    toMass: number;
+    mass: number;
+    height: number;
+    width: number;
+    length: number;
+    provinceSource: string;
+    districtSource: string;
+    wardSource: string;
+    detailSource: string;
+    provinceDest: string;
+    districtDest: string;
+    wardDest: string;
+    detailDest: string;
+    longSource: number;
+    latSource: number;
+    longDestination: number;
+    latDestination: number;
+    cod: number;
+    serviceType: string;
+    goodType: string;
+    receiverWillPay: boolean;
+    deliverDoorToDoor: boolean;
+}
+
 
 
 export interface CreatingOrderByAdminAndAgencyInformation {
@@ -371,10 +454,12 @@ export interface CancelingOrderCriteria {
 }
 
 export interface CalculateFeePayload {
-    serviceType: string,
-    provinceSource: string,
-    provinceDest: string,
-    mass: number
+    serviceType: string;
+    cod: number;
+    latSource: number,
+    longSource: number,
+    latDestination: number,
+    longDestination: number
 }
 
 export interface UpdatingOrderImageParams {
@@ -410,27 +495,42 @@ export interface UpdatingOrderSignaturePayload {
 export class OrdersOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/orders";
+        this.baseUrl = host + "/order";
     }
 
-    async create(payload: CreatingOrderByUserInformation) {
-        try {
-            const response = await axios.post(`${this.baseUrl}/create`, payload, {
-                withCredentials: true,
-            });
-
-            return { error: response.data.error, data: response.data.data, message: response.data.message };
-        } catch (error: any) {
-            console.log("Error updating order: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+    async create(payload: OrderDTO, token: string) {
+            try {
+                const formData = new FormData();
+                formData.append("data", JSON.stringify(payload)); 
+        
+                const response = await axios.post(`${this.baseUrl}/create`, formData, {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: "Bearer " + token,
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+        
+                return { error: response.data.error, message: response.data.message, data: response.data.data };
+            } catch (error: any) {
+                console.log("Error creating agency: ", error?.response?.data);
+                console.error("Request that caused the error: ", error?.request);
+                return { 
+                    error: error?.response?.data, 
+                    request: error?.request, 
+                    status: error.response ? error.response.status : null 
+                };
+            }
         }
-    }
+    
 
-    async get(payload: GettingOrdersCriteria) {
+    async get(payload: SearchPayload, token: String) {
         try {
             const response = await axios.post(`${this.baseUrl}/search`, payload, {
                 withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token
+                }
             });
 
             return { error: response.data.error, data: response.data.data, message: response.data.message };
@@ -483,10 +583,13 @@ export class OrdersOperation {
         }
     }
 
-    async calculateFee(payload: CalculateFeePayload) {
+    async calculateFee(payload: CalculateFeePayload, token: string) {
         try {
-            const response = await axios.post(`${this.baseUrl}/calculate_fee`, payload, {
+            const response = await axios.post(`${this.baseUrl}/fee/calculate`, payload, {
                 withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
@@ -571,7 +674,7 @@ export interface AdministrativePayload {
 export class AdministrativeOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/administrative";
+        this.baseUrl = "https://api.tdlogistics.net.vn/v3/administrative";
     }
 
     async get(conditions: AdministrativePayload) {
@@ -688,7 +791,7 @@ export class StaffOperation {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/staffs";
+        this.baseUrl = host + "/staffs";
     }
 
     // ROLE: any
@@ -944,7 +1047,7 @@ export class TransportPartnerStaffOperation {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/partner_staffs";
+        this.baseUrl = host + "/partner_staffs";
     }
 
     async getAuthenticatedStaffInfo() {
@@ -1158,7 +1261,7 @@ export class TransportPartnerOperation {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/transport_partners";
+        this.baseUrl = host + "/transport_partners";
     }
 
     async createByAdmin(payload: CreatingTransportPartnerByAdminPayload) {
@@ -1309,7 +1412,7 @@ export class VehicleOperation {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/vehicles";
+        this.baseUrl = host + "/vehicles";
     }
 
     async createByAdmin(payload: CreatingVehicleByAdminPayload) {
@@ -1531,13 +1634,16 @@ export class AgencyOperation {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/agencies";
+        this.baseUrl = host + "/agencies";
     }
 
-    async create(payload: CreatingAgencyPayload) {
+    async create(payload: CreatingAgencyPayload, token: String) {
         try {
             const response = await axios.post(`${this.baseUrl}/create`, payload, {
                 withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token
+                }
             });
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
@@ -1626,7 +1732,7 @@ export interface UndertakingShipmentInfo {
 export class ShipmentsOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/shipments";
+        this.baseUrl = host + "/shipments";
     }
 
     async check(condition: ShipmentID) {
@@ -1862,7 +1968,7 @@ export interface DeletingShipperTasksCondition {
 export class ShippersOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/tasks/shippers";
+        this.baseUrl = host + "/tasks/shippers";
     }
 
     // ROLE: AGENCY_MANAGER, AGENCY_HUMAN_RESOURCE_MANAGER
@@ -1989,7 +2095,7 @@ export interface GettingHistoryInfo {
 export class DriversOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/tasks/drivers";
+        this.baseUrl = host + "/tasks/drivers";
     }
 
     // ROLE: ADMIN, MANAGER, HUMAN_RESOURCE_MANAGER, AGENCY_MANAGER, AGENCY_HUMAN_RESOURCE_MANAGER
@@ -2155,7 +2261,7 @@ export interface BusinessId {
 export class BusinessOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api2.tdlogistics.net.vn/v2/business";
+        this.baseUrl = host + "/business";
     }
 
 
@@ -2193,10 +2299,13 @@ export class BusinessOperation {
     }
 
     // ROLE: BUSINESS
-    async getAuthenticatedInfo() {
+    async getAuthenticatedInfo(token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/`, {
                 withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
 
             const data = response.data;

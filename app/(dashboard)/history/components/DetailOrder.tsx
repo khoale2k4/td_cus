@@ -10,7 +10,7 @@ interface DetailOrderProps {
 
 const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
     const intl = useIntl()
-    const parseJourney = [...dataInitial.journey].reverse().map((item: string) => {
+    const parseJourney = [...dataInitial.journies].reverse().map((item: string) => {
         const [time, title] = item.split(': ');
         return { time, title };
     });

@@ -60,7 +60,7 @@ const Navbar = ({ }: Props) => {
   const [selectedDistrict, setSelectedDistrict] = useState<any>("");
   const [selectedWard, setSelectedWard] = useState<any>("");
   const adminOperation = new AdministrativeOperation();
-  const imgURL = "https://api2.tdlogistics.net.vn/v2/customers/avatar/get?customerId="
+  const imgURL = "https://api.tdlogistics.net.vn/v2/customers/avatar/get?customerId="
   const getActiveRoute = (routes: any) => {
     let activeRoute = "orders";
     for (let i = 0; i < routes.length; i++) {
@@ -79,6 +79,7 @@ const Navbar = ({ }: Props) => {
   const handleLogout = async () => {
     const action = new CustomerOperation()
     // await action.logout()
+    localStorage.removeItem("token");
     route.push("/");
   };
 
@@ -103,11 +104,13 @@ const Navbar = ({ }: Props) => {
 
   const checkUserLoggedIn = async () => {
     const getinfo = new CustomerOperation()
-    const getinfo2 = new BusinessOperation()
-    const response = await getinfo.getAuthenticatedCustomerInfo();
-    const response2 = await getinfo2.getAuthenticatedInfo()
-    console.log("response2", response2)
-    if (!!response.error || response.error?.error || response.error == undefined) console.log(response)
+    // const getinfo2 = new BusinessOperation()
+    const token = localStorage.getItem("token") || "";
+    const response = await getinfo.getAuthenticatedCustomerInfo(token);
+    // const response2 = await getinfo2.getAuthenticatedInfo(token);
+    // console.log("response2", response2)
+    console.log("response", response)
+    if (!response.error) console.log(response)
     else if (!!response.data) {
       setPassData(response.data);
       setDataUpdate(response.data);
@@ -117,17 +120,17 @@ const Navbar = ({ }: Props) => {
       setCanUpload(true)
     }
 
-    if (!!response2.error || response2.error?.error || response2.error == undefined) console.log(response2)
-    else if (!!response2.data) {
-      setPassData(response2.data);
-      setDataUpdate(response2.data);
-      setUsername(response2.data.account.email);
-      setProfilePicture("/img/avatars/avatar_4.jpg")
-    }
-    if (((!!response.error) || (response.error == undefined)) && ((!!response2.error) || (response2.error == undefined))) {
-      setMessage(intl.formatMessage({ id: "Navbar.Message" }))
-      openModal(true)
-    }
+    // if (!response2.error || response2.error == undefined) console.log(response2)
+    // else if (!!response2.data) {
+    //   setPassData(response2.data);
+    //   setDataUpdate(response2.data);
+    //   setUsername(response2.data.account.email);
+    //   setProfilePicture("/img/avatars/avatar_4.jpg")
+    // }
+    // if (((!!response.error) || (response.error == undefined)) && ((!!response2.error) || (response2.error == undefined))) {
+    //   setMessage(intl.formatMessage({ id: "Navbar.Message" }))
+    //   openModal(true)
+    // }
   }
 
   const handleInputChange = (key: string, value: string) => {

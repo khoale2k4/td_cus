@@ -9,7 +9,17 @@ const HistoryTable = () => {
     const [data, setData] = useState<any>(null);
 
     const handleFetchData = async () => {
-        const response = await orderOperation.get({})
+        const token = localStorage.getItem('token');
+        const response = await orderOperation.get({
+            addition: {
+                sort: [],
+                page: 1,
+                size: 10,
+                group: []
+            },
+            criteria: [
+            ]
+        }, token)
         console.log(response)
         if (response.data) {
             setData(response.data)

@@ -2,15 +2,14 @@ import React, { FC, useState, useRef, useEffect, useContext } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { AuthOperation } from "@/TDLib/main";
 interface OptFieldProps {
-    phoneNumber: string;
-    email: string;
+    id: string;
     setMessage: any;
     setModal: any;
     setError: any;
 }
 let currentOTPIndex: number = 0;
-const OTPField: FC<OptFieldProps> = ({ phoneNumber, email, setMessage, setModal, setError }) => {
-    const [otp1, setOtp] = useState<string[]>(new Array(4).fill(""));
+const OTPField: FC<OptFieldProps> = ({ id, setMessage, setModal, setError }) => {
+    const [otp1, setOtp] = useState<string[]>(new Array(6).fill(""));
     const [activeOTPIndex, setActiveOTPIndex] = useState<number>(0);
     const authOperation = new AuthOperation();
     const inputRef = useRef<HTMLInputElement>(null)
@@ -39,17 +38,18 @@ const OTPField: FC<OptFieldProps> = ({ phoneNumber, email, setMessage, setModal,
         const verify = async () => {
             if (!otp1.some((element) => element === "")) {
                 let CheckOtp = otp1.join("");
-                const verify = await authOperation.verifyOtp({ email: email, otp: CheckOtp, phoneNumber: phoneNumber })
+                const verify = await authOperation.verifyOtp({ id: id, otp: CheckOtp })
                 console.log(verify)
-                if (!verify.error && !verify.error.error) {
+                if (!verify.error) {
                     setMessage(intl.formatMessage({ id: "OTP.Message" }))
                     setModal(true)
+                    localStorage.setItem("token", verify.data.token)
                 }
                 else {
                     setError(true)
                     setMessage(intl.formatMessage({ id: "OTP.Message2" }))
                     setModal(true)
-                    setOtp(new Array(4).fill(""))
+                    setOtp(new Array(6).fill(""))
                 }
             }
         }

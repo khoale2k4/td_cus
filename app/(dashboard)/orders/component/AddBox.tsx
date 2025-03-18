@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@nextui-org/react";
 import { FormattedMessage, useIntl } from 'react-intl';
 import SearchBox from './LocationForm';
-import { AdministrativeOperation, OrdersOperation } from '@/TDLib/main'; // Import AdministrativeOperation
+import { AdministrativeOperation, MapOperation, OrdersOperation } from '@/TDLib/main'; // Import AdministrativeOperation
 import { Variants, motion } from 'framer-motion';
 import NotiPopup from '@/components/notification';
 import DetailForm from './DetailForm';
@@ -144,25 +144,35 @@ const AddPanel: React.FC = () => {
 
     const handleCalculateFee = async () => {
         setLoading(true)
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const map = new MapOperation();
+        const sourceCoor = await map.getCoordinates(sourceInfo.detailAddress + sourceInfo.selectedWard + sourceInfo.selectedDistrict + sourceInfo.selectedProvince, token);
+        setSource(sourceCoor)
+        const destCoor = await map.getCoordinates(destinationInfo.detailAddress + destinationInfo.selectedWard + destinationInfo.selectedDistrict + destinationInfo.selectedProvince, token);
+        setSource(destCoor)
         const response = await orderOperation.calculateFee({
-            serviceType: formData.selectedOption == 0 ? "CPN" : (formData.selectedOption == 1 ? "TTK" : "HTT"),
-            mass: formData.mass,
-            provinceDest: destinationInfo.selectedProvince,
-            provinceSource: sourceInfo.selectedProvince
-        })
-        if (response.error || response.error.error) {
+            serviceType: formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : "HTT"),
+            latSource: sourceCoor?.lat ?? 10.01344,
+            longSource: sourceCoor?.lng ?? 106.13123,
+            latDestination: destCoor?.lat ?? 10.0123231,
+            longDestination: destCoor?.lng ?? 106.424324,
+            cod: formData.COD
+        }, token)
+        if (response.error) {
             setMessage(response.message ? response.message : response.error.message ?? intl.formatMessage({ id: "Orders.Message" }))
             setOpenError(true)
         } else {
-            setFee(response.data)
+            setFee(response.data.value)
             setCurrentForm(2)
         }
         setLoading(false)
     };
 
     const handleCreateOrder = async () => {
+        const token = localStorage.getItem("token");
         const response = await orderOperation.create({
-            serviceType: formData.selectedOption == 0 ? "CPN" : (formData.selectedOption == 1 ? "TTK" : "HTT"),
+            serviceType:  formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : "HTT"),
             nameSender: sourceInfo.name,
             nameReceiver: destinationInfo.name,
             phoneNumberReceiver: destinationInfo.phoneNumber,
@@ -178,13 +188,24 @@ const AddPanel: React.FC = () => {
             districtDest: destinationInfo.selectedDistrict,
             wardDest: destinationInfo.selectedWard,
             detailDest: destinationInfo.detailAddress,
-            longSource: source.lng,
-            latSource: source.lat,
-            longDestination: destination.lng,
-            latDestination: destination.lat,
+
+            // "longSource": 107.271563,
+            // "latSource": 10.477812,
+            // "longDestination": 105.442062,
+            // "latDestination": 10.377187,
+            longSource: source?.lng ?? 107.271563,
+            latSource: source?.lat ?? 10.477812,
+            longDestination: destination?.lng ?? 105.442062,
+            latDestination: destination?.lat ?? 10.377187,
             cod: formData.COD,
-        })
-        if (response.error || response.error.error) {
+            phoneNumberSender: sourceInfo.phoneNumber,
+            fromMass: 0,
+            toMass: 0,
+            goodType: 'OTHER',
+            receiverWillPay: false,
+            deliverDoorToDoor: false
+        }, token??"");
+        if (response.error) {
             setOpenSubmit(false)
             setMessage(response.error.message ? response.error.message : (response.message ? response.message : intl.formatMessage({ id: "Orders.Message13" })))
             setOpenError(true)

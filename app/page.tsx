@@ -31,6 +31,7 @@ const AuthPage: FC<Props> = () => {
   const [role, setRole] = useState(1);
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [id, setId] = useState("");
   const route = useRouter();
   const [loading, setLoading] = useState(false)
   const intl = useIntl();
@@ -73,6 +74,7 @@ const AuthPage: FC<Props> = () => {
       const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
       if (!response.error && !response.error?.error) {
         setshowOtp(true)
+        setId(response.data.id)
       } else {
         setMessage(intl.formatMessage({ id: "Login.Message6" }))
         setModal(true)
@@ -144,7 +146,7 @@ const AuthPage: FC<Props> = () => {
         )}
         {otp && <DetailPopup onClose={() => { setLoading(false); setshowOtp(false) }} title="Nhập OTP" className2="sm:w-fit">
           <div className="flex flex-col gap-4">
-            <OTPField email={email} phoneNumber={phoneNumber} setMessage={setMessage} setModal={setModal} setError={setError} />
+            <OTPField id = {id} setMessage={setMessage} setModal={setModal} setError={setError} />
             <div className="text-center"><FormattedMessage id="Login.Message7" /></div>
           </div>
         </DetailPopup>}
