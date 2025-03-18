@@ -60,9 +60,13 @@ export class AuthOperation {
             const response = await axios.post(`${this.baseUrl}/customer/login`, payload);
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error sending otp: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -73,9 +77,13 @@ export class AuthOperation {
             });
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error verifying otp: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -87,9 +95,13 @@ export class AuthOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error login: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -101,9 +113,13 @@ export class AuthOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error login: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 }
@@ -142,9 +158,13 @@ export class AccountOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error updating account: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -156,9 +176,13 @@ export class AccountOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error updating password: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -170,9 +194,13 @@ export class AccountOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error updating password: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 }
@@ -241,9 +269,13 @@ export class CustomerOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error updating customer information: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -255,9 +287,13 @@ export class CustomerOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error searching customer information: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -272,9 +308,13 @@ export class CustomerOperation {
 
             return { error: response.data.error, message: response.data.message, data: response.data.data };
         } catch (error) {
-            console.log("Error updating avatar: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 
@@ -286,9 +326,13 @@ export class CustomerOperation {
 
             return response.data;
         } catch (error) {
-            console.log("Error getting avatar: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            if (axios.isAxiosError(error)) {
+                console.log("Error sending otp: ", error.response?.data);
+            } else {
+                console.log("Error sending otp: ", error);
+            }
+            console.error("Request that caused the error: ", (error as any)?.request);
+            return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
     }
 }

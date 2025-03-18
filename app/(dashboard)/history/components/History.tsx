@@ -9,7 +9,7 @@ const HistoryTable = () => {
     const [data, setData] = useState<any>(null);
 
     const handleFetchData = async () => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') ?? "";
         const response = await orderOperation.get({
             addition: {
                 sort: [],
