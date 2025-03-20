@@ -70,7 +70,6 @@ const AuthPage: FC<Props> = () => {
   const handleSignUpButton = async () => {
     if (handleCheckField()) return;
     setLoading(true)
-    if (displayRole == 1) {
       const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
       if (!response.error && !response.error?.error) {
         setshowOtp(true)
@@ -80,20 +79,6 @@ const AuthPage: FC<Props> = () => {
         setModal(true)
         setLoading(false)
       }
-    } else {
-      const response = await authOperation.login({ username: email.trim(), password: phoneNumber.trim() }, LoginOption["BUSINESS"])
-      console.log(response)
-      if (!response.error && !response.error?.error) {
-        setMessage(intl.formatMessage({ id: "Login.Message8" }))
-        setModal(true)
-        setLoading(false)
-      } else {
-        setError(true)
-        setMessage(intl.formatMessage({ id: "Login.Message9" }))
-        setModal(true)
-        setLoading(false)
-      }
-    }
   };
 
   const handleNotificationClose = async () => {
@@ -210,8 +195,8 @@ const AuthPage: FC<Props> = () => {
                     {/* email */}
                     <InputField
                       variant="auth"
-                      label={displayRole == 1 ? intl.formatMessage({ id: "Login.Box1" }) : intl.formatMessage({ id: "Login.Box3" })}
-                      placeholder={displayRole == 1 ? intl.formatMessage({ id: "Login.PlaceHolder" }) : intl.formatMessage({ id: "Login.PlaceHolder3" })}
+                      label={intl.formatMessage({ id: "Login.Box1" })}
+                      placeholder={intl.formatMessage({ id: "Login.PlaceHolder" })}
                       id="email"
                       type="text"
                       value={email}
@@ -220,12 +205,12 @@ const AuthPage: FC<Props> = () => {
                     />
                     <InputField
                       variant="auth"
-                      label={displayRole == 1 ? intl.formatMessage({ id: "Login.Box2" }) : intl.formatMessage({ id: "Login.Box4" })}
-                      placeholder={displayRole == 1 ? intl.formatMessage({ id: "Login.PlaceHolder2" }) : intl.formatMessage({ id: "Login.PlaceHolder4" })}
+                      label={intl.formatMessage({ id: "Login.Box2" })}
+                      placeholder={intl.formatMessage({ id: "Login.PlaceHolder2" })}
                       id="phoneNumber"
-                      type={displayRole == 1 ? 'text' : 'password'}
+                      type={'text'}
                       value={phoneNumber}
-                      setValue={displayRole == 1 ? handlePhoneNumberChange : setPhoneNumber}
+                      setValue={ handlePhoneNumberChange }
                       className="bg-white dark:!bg-[#3a3b3c]"
                     />
                     {displayRole == 2 && <div className="flex justify-start -mb-5">

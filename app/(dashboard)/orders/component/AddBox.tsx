@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@nextui-org/react";
 import { FormattedMessage, useIntl } from 'react-intl';
 import SearchBox from './LocationForm';
-import { AdministrativeOperation, MapOperation, OrdersOperation } from '@/TDLib/main'; // Import AdministrativeOperation
+import { AdministrativeOperation, CargoInsuranceOperation, GiftOrderTopicOperation, MapOperation, OrdersOperation, ShippingBillOperation } from '@/TDLib/main'; // Import AdministrativeOperation
 import { Variants, motion } from 'framer-motion';
 import NotiPopup from '@/components/notification';
 import DetailForm from './DetailForm';
@@ -15,6 +15,7 @@ import Image from 'next/image';
 import SubmitPopup from '@/components/submit';
 import { useSourceContext } from '../context/SourceContext';
 import { useDestinationContext } from '../context/DestinationContext';
+import Switch from '@/components/switch';
 
 interface PersonalInfo {
     name: string;
@@ -29,20 +30,20 @@ const AddPanel: React.FC = () => {
     const { passData, setPassData } = usePassDataContext()
     const { isCollapsed, setIsCollapsed } = useCollapseContext();
     const [sourceInfo, setSourceInfo] = useState<PersonalInfo>({
-        name: '',
-        phoneNumber: '',
-        detailAddress: '',
-        selectedWard: '',
-        selectedDistrict: '',
-        selectedProvince: '',
+        name: 'kh le',
+        phoneNumber: '0708103015',
+        detailAddress: 'ktx',
+        selectedWard: 'Xã Nậm Chạc',
+        selectedDistrict: 'Quận Ba Đình',
+        selectedProvince: 'Thành phố Hà Nội',
     });
     const [destinationInfo, setDestinationInfo] = useState<PersonalInfo>({
-        name: '',
-        phoneNumber: '',
-        detailAddress: '',
-        selectedWard: '',
-        selectedDistrict: '',
-        selectedProvince: '',
+        name: 'le kh',
+        phoneNumber: '0708103015',
+        detailAddress: 'xtk',
+        selectedWard: 'Xã Nậm Chạc',
+        selectedDistrict: 'Quận Ba Đình',
+        selectedProvince: 'Thành phố Hà Nội',
     });
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -54,18 +55,41 @@ const AddPanel: React.FC = () => {
     const [openError, setOpenError] = useState(false)
     const [openSubmit, setOpenSubmit] = useState(false)
     const adminOperation = new AdministrativeOperation();
-    const orderOperation = new OrdersOperation()
+    const orderOperation = new OrdersOperation();
+    const shippingBillOperation = new ShippingBillOperation();
+    const cargoInsuranceOperation = new CargoInsuranceOperation();
     const [fee, setFee] = useState<any>(null)
     const { source, setSource } = useSourceContext()
     const { destination, setDestination } = useDestinationContext()
     const [formData, setFormData] = useState({
         selectedOption: 0,
-        length: 0,
-        width: 0,
-        height: 0,
-        mass: 0,
-        COD: 0,
+        length: 1,
+        width: 1,
+        height: 1,
+        mass: 1,
+        COD: 10000,
     });
+    const [additionData, setAdditionData] = useState({
+        insurance: false,
+        doorToDoor: false,
+        gift: false,
+        receiverWillPay: false,
+        isBulkyGood: false,
+    });
+    const [giftData, setGiftData] = useState({
+        id: "",
+        name: "",
+    });
+    const [insuranceData, setInsuranceData] = useState({
+        companyName: "KhoaCompany", 
+        companyAddress: "ktx khu A", 
+        companyPhone: "0708103015", 
+        companyEmail: "levodangkhoatg2@gmail.com", 
+        companyTaxCode: "123321"
+    });
+
+    const [images, setImages] = useState<File[]>([]);
+
     const [firstLoad, setFirstLoad] = useState(true)
     const [loading, setLoading] = useState(false)
     const intl = useIntl()
@@ -73,6 +97,22 @@ const AddPanel: React.FC = () => {
     const handleFormDataChange = (newData: any) => {
         setFormData((prevData) => ({ ...prevData, ...newData }));
     };
+
+    const handleAdditionDataChange = (newData: any) => {
+        setAdditionData((prevData) => ({ ...prevData, ...newData }));
+    };
+
+    const handleGiftDataChange = (newData: any) => {
+        setGiftData((prevData) => ({ ...prevData, ...newData }));
+    }
+
+    const handleInsuranceDataChange = (newData: any) => {
+        setInsuranceData((prevData) => ({ ...prevData, ...newData }));
+    }
+
+    const handleImagesChange = (newData: any) => {
+        setImages([...images, newData]);
+    }
 
     const fetchProvinces = async () => {
         const response = await adminOperation.get({});
@@ -118,7 +158,7 @@ const AddPanel: React.FC = () => {
                 name: passData.fullname ? passData.fullname : "",
                 detailAddress: passData.detailAddress ? passData.detailAddress : "",
                 selectedDistrict: passData.district ? passData.district : "",
-                phoneNumber: passData.account.phoneNumber ? passData.account.phoneNumber : "",
+                phoneNumber: passData.phoneNumber ? passData.phoneNumber : "",
                 selectedProvince: passData.province ? passData.province : "",
                 selectedWard: passData.ward ? passData.ward : passData.town ? passData.town : ""
             })
@@ -169,9 +209,47 @@ const AddPanel: React.FC = () => {
         setLoading(false)
     };
 
+    const handleShippingBillButton = async (save: Boolean) => {
+        // console.log(passData)
+        const token = localStorage.getItem("token") ?? "";
+        if (save) {
+            const shippingBillResponse = await shippingBillOperation.create({
+                companyName: insuranceData.companyName,
+                companyAddress: insuranceData.companyAddress,
+                email: insuranceData.companyEmail,
+                taxCode: insuranceData.companyTaxCode
+            }, token);
+
+            console.log((shippingBillResponse))
+            // thông báo kết quả tạo hoá đơn cước phí
+            setMessage(shippingBillResponse.message);
+            setOpenError(true);
+        } else {
+            const shippingBillResponse = await shippingBillOperation.getByCustomerId(passData.id, token);
+            if(shippingBillResponse.success) {
+                const shippingBillData = shippingBillResponse.data;
+                console.log({...shippingBillData, companyTaxCode: shippingBillData.taxCode, companyEmail: shippingBillData.email});
+                handleInsuranceDataChange({...shippingBillData, companyTaxCode: shippingBillData.taxCode, companyEmail: shippingBillData.email});
+            }
+        }
+    }
+
     const handleCreateOrder = async () => {
-        const token = localStorage.getItem("token");
-        const response = await orderOperation.create({
+        const token = localStorage.getItem("token") ?? "";
+
+        console.log("additionData.insurance", additionData.insurance)
+        var shippingBillId = "";
+        if (additionData.insurance) {
+            const shippingBillResponse = await shippingBillOperation.create({
+                companyName: insuranceData.companyName,
+                companyAddress: insuranceData.companyAddress,
+                email: insuranceData.companyEmail,
+                taxCode: insuranceData.companyTaxCode
+            }, token);
+            shippingBillId = shippingBillResponse.data.id;
+        }
+
+        const orderResponse = await orderOperation.create({
             serviceType:  formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : "HTT"),
             nameSender: sourceInfo.name,
             nameReceiver: destinationInfo.name,
@@ -188,11 +266,6 @@ const AddPanel: React.FC = () => {
             districtDest: destinationInfo.selectedDistrict,
             wardDest: destinationInfo.selectedWard,
             detailDest: destinationInfo.detailAddress,
-
-            // "longSource": 107.271563,
-            // "latSource": 10.477812,
-            // "longDestination": 105.442062,
-            // "latDestination": 10.377187,
             longSource: source?.lng ?? 107.271563,
             latSource: source?.lat ?? 10.477812,
             longDestination: destination?.lng ?? 105.442062,
@@ -202,14 +275,25 @@ const AddPanel: React.FC = () => {
             fromMass: 0,
             toMass: 0,
             goodType: 'OTHER',
-            receiverWillPay: false,
-            deliverDoorToDoor: false
+            receiverWillPay: additionData.receiverWillPay,
+            deliverDoorToDoor: additionData.doorToDoor,
+            isBulkyGood: additionData.isBulkyGood,
+            note: "",
         }, token??"");
-        if (response.error) {
+        console.log(orderResponse.data.id)
+        if (additionData.insurance) {
+            const cargoInsuranceResponse = await cargoInsuranceOperation.create({
+                hasDeliveryCare: true,
+                note: "",
+                shippingBillId: shippingBillId
+            }, orderResponse.data.id, token);
+            console.log(cargoInsuranceResponse)
+        }
+        if (orderResponse.error) {
             setOpenSubmit(false)
-            setMessage(response.error.message ? response.error.message : (response.message ? response.message : intl.formatMessage({ id: "Orders.Message13" })))
+            setMessage(orderResponse.error.message ? orderResponse.error.message : (orderResponse.message ? orderResponse.message : intl.formatMessage({ id: "Orders.Message13" })))
             setOpenError(true)
-            if (response.message == "Xin lỗi quý khách. Khu vực của quý khách hiện chưa có shipper nào phục vụ." || response.error.message == "Xin lỗi quý khách. Khu vực của quý khách hiện chưa có shipper nào phục vụ.") setCurrentForm(0)
+            if (orderResponse.message == "Xin lỗi quý khách. Khu vực của quý khách hiện chưa có shipper nào phục vụ." || orderResponse.error.message == "Xin lỗi quý khách. Khu vực của quý khách hiện chưa có shipper nào phục vụ.") setCurrentForm(0)
         } else {
             setOpenSubmit(false)
             setMessage(intl.formatMessage({ id: "Orders.Message2" }))
@@ -350,7 +434,16 @@ const AddPanel: React.FC = () => {
                                 </motion.div>}
                             {currentForm == 1 && <DetailForm
                                 formData={formData}
+                                additionData={additionData}
                                 setFormData={handleFormDataChange}
+                                setAdditionData={handleAdditionDataChange}
+                                giftData={giftData}
+                                setGiftData={handleGiftDataChange}
+                                insuranceData={insuranceData}
+                                setInsuranceData={handleInsuranceDataChange}
+                                images={images}
+                                setImages={handleImagesChange}
+                                shippingBillButton={handleShippingBillButton}
                             />}
                             {currentForm == 2 &&
                                 <motion.div variants={tabContentVariants}

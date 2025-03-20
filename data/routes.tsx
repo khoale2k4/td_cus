@@ -15,6 +15,12 @@ const routes = [
     icon: <FaHistory className="h-5 w-5" />,
   },
   {
+    name: "Khách hàng doanh nghiệp",
+    layout: "/dashboard",
+    path: "business",
+    icon: <FaHeadset className="h-5 w-5" />,
+  },
+  {
     name: "Hỗ trợ",
     layout: "/dashboard",
     path: "help",

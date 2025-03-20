@@ -37,6 +37,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
     const toolRoutes = routes.filter((route: { path: string }) => route.path === "orders");
     const managementRoutes = routes.filter((route: { path: string }) => route.path === "history");
     const helpRoutes = routes.filter((route: { path: string }) => route.path === "help");
+    const businessRoutes = routes.filter((route: { path: string}) => route.path === "business")
 
     const renderLinks = (routes: any, startIndex: number, headerId: string) => (
       <div>
@@ -80,7 +81,8 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
       <>
         {renderLinks(toolRoutes, 0, "routes.orders2")}
         {renderLinks(managementRoutes, 1, "routes.manage")}
-        {renderLinks(helpRoutes, 2, "routes.helpcenter")}
+        {renderLinks(businessRoutes, 2, "routes.business")}
+        {renderLinks(helpRoutes, 3, "routes.helpcenter")}
       </>
     );
   };

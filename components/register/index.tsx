@@ -12,11 +12,22 @@ import SubmitPopup from "../submit";
 import NotiPopup from "../notification";
 import { useRouter } from "next/navigation";
 
+type BusinessData = {
+    id: string;
+    name: string;
+    taxCode: string;
+    province: string;
+    district: string;
+    ward: string;
+    file: string;
+} | null;
+
 interface RegisterPopupProps {
     onClose: () => void;
+    data: BusinessData;
 }
 
-const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
+const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
     const [currentForm, setCurrentForm] = useState(0)
     const [loading, setLoading] = useState(false)
     const [checkError, setCheckError] = useState(false)
@@ -51,22 +62,37 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
     });
 
     const [businessInfo, setBusinessInfo] = useState<any>({
-        businessName: "",
-        email: "",
-        phoneNumber: "",
-        taxNumber: "",
-        detailAddress: "",
+        name: "",
+        // email: "",
+        // phoneNumber: "",
+        taxCode: "",
+        // detailAddress: "",
         province: "",
         district: "",
         town: "",
-        bank: "",
-        bin: ""
+        // bank: "",
+        // bin: ""
     });
 
     const [accountInfo, setAccountInfo] = useState<any>({
         username: "",
         password: ""
     });
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            // console.log(imageUrl)
+            setSelectedImage(imageUrl);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setSelectedImage(null);
+    };
+
 
     const styles = {
         control: (provided: any, state: any) => ({
@@ -175,29 +201,29 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
     };
 
     const fields: Array<{ id: keyof CreateBusiness, type: string, label: string, onChange?: (value: string) => void }> = [
-        { id: "userFullname", type: "text", label: "AddBus.UserFullName" },
-        { id: "userPhoneNumber", type: "text", label: "AddBus.UserPhoneNumber", onChange: handlePhoneNumberChange2 },
-        { id: "userEmail", type: "text", label: "AddBus.UserEmail" },
-        { id: "userDateOfBirth", type: "date", label: "AddBus.UserDateOfBirth" },
-        { id: "userCccd", type: "text", label: "AddBus.UserCccd" },
-        { id: "userDetailAddress", type: "text", label: "AddBus.UserDetailAddress" },
-        { id: "userBank", type: "text", label: "AddBus.UserBank" },
-        { id: "userBin", type: "text", label: "AddBus.UserBin" },
+        // { id: "userFullname", type: "text", label: "AddBus.UserFullName" },
+        // { id: "userPhoneNumber", type: "text", label: "AddBus.UserPhoneNumber", onChange: handlePhoneNumberChange2 },
+        // { id: "userEmail", type: "text", label: "AddBus.UserEmail" },
+        // { id: "userDateOfBirth", type: "date", label: "AddBus.UserDateOfBirth" },
+        // { id: "userCccd", type: "text", label: "AddBus.UserCccd" },
+        // { id: "userDetailAddress", type: "text", label: "AddBus.UserDetailAddress" },
+        // { id: "userBank", type: "text", label: "AddBus.UserBank" },
+        // { id: "userBin", type: "text", label: "AddBus.UserBin" },
     ];
 
     const fields2: Array<{ id: keyof CreateBusiness, type: string, label: string, onChange?: (value: string) => void }> = [
-        { id: "businessName", type: "text", label: "AddBus.BusinessName" },
-        { id: "email", type: "text", label: "AddBus.Email" },
-        { id: "phoneNumber", type: "text", label: "AddBus.PhoneNumber", onChange: handlePhoneNumberChange },
-        { id: "taxNumber", type: "text", label: "AddBus.TaxNumber" },
-        { id: "detailAddress", type: "text", label: "AddBus.DetailAddress" },
-        { id: "bank", type: "text", label: "AddBus.Bank" },
-        { id: "bin", type: "text", label: "AddBus.Bin" },
+        { id: "name", type: "text", label: "AddBus.BusinessName" },
+        // { id: "email", type: "text", label: "AddBus.Email" },
+        // { id: "phoneNumber", type: "text", label: "AddBus.PhoneNumber", onChange: handlePhoneNumberChange },
+        { id: "taxCode", type: "text", label: "AddBus.TaxNumber" },
+        { id: "address", type: "text", label: "AddBus.DetailAddress" },
+        // { id: "bank", type: "text", label: "AddBus.Bank" },
+        // { id: "bin", type: "text", label: "AddBus.Bin" },
     ];
 
     const fields3: Array<{ id: keyof CreateBusiness, type: string, label: string, onChange?: (value: string) => void }> = [
-        { id: "username", type: "text", label: "AddBus.Username" },
-        { id: "password", type: "password", label: "AddBus.Password" },
+        // { id: "username", type: "text", label: "AddBus.Username" },
+        // { id: "password", type: "password", label: "AddBus.Password" },
     ];
 
     const handleChange = (field: keyof CreateBusiness, value: string | number) => {
@@ -211,97 +237,104 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
     };
 
     const handleButtonClick = async () => {
-        if (currentForm === 0) {
-            if (Object.values(businessInfo).some(value => value === "")) {
-                setMessage(intl.formatMessage({ id: "Register.Message" }))
-                setOpenError(true)
-                setCheckError(true)
-                return
-            } else if (!phoneNumberRegex.test(businessInfo.phoneNumber)) {
-                setMessage(intl.formatMessage({ id: "Register.Message2" }))
-                setOpenError(true)
-                setCheckError(true)
-                return
-            } else {
-                setCheckError(false)
-                setCurrentForm(1)
-            }
-        } else if (currentForm === 1) {
-            if (Object.values(userInfo).some(value => value === "")) {
-                setMessage(intl.formatMessage({ id: "Register.Message" }))
-                setOpenError(true)
-                setCheckError(true)
-                return
-            } else if (!phoneNumberRegex.test(userInfo.userPhoneNumber)) {
-                setMessage(intl.formatMessage({ id: "Register.Message2" }))
-                setOpenError(true)
-                setCheckError(true)
+        console.log(businessInfo, Object.values(businessInfo))
+        // if (currentForm === 0) {
+        //     if (Object.values(businessInfo).some(value => value === "")) {
+        //         setMessage(intl.formatMessage({ id: "Register.Message" }))
+        //         setOpenError(true)
+        //         setCheckError(true)
+        //         return
+        //     } else {
+        //         setCheckError(false)
+        //         setCurrentForm(1)
+        //     }
+        // } else if (currentForm === 1) {
+        //     if (Object.values(userInfo).some(value => value === "")) {
+        //         setMessage(intl.formatMessage({ id: "Register.Message" }))
+        //         setOpenError(true)
+        //         setCheckError(true)
+        //         return
+        //     } else if (!phoneNumberRegex.test(userInfo.userPhoneNumber)) {
+        //         setMessage(intl.formatMessage({ id: "Register.Message2" }))
+        //         setOpenError(true)
+        //         setCheckError(true)
 
-                return
-            } else if (!emailRegex.test(userInfo.userEmail)) {
-                setMessage(intl.formatMessage({ id: "Register.Message3" }))
+        //         return
+        //     } else if (!emailRegex.test(userInfo.userEmail)) {
+        //         setMessage(intl.formatMessage({ id: "Register.Message3" }))
+        //         setOpenError(true)
+        //         setCheckError(true)
+        //         return
+        //     } else {
+        //         setCheckError(false)
+        //         setCurrentForm(2)
+        //     }
+        // } else {
+        // if (Object.values(accountInfo).some(value => value === "")) {
+        //     setMessage(intl.formatMessage({ id: "Register.Message" }))
+        //     setOpenError(true)
+        //     setCheckError(true)
+        //     return
+        // } else if (!usernameRegex.test(accountInfo.username)) {
+        //     setMessage(intl.formatMessage({ id: "Register.Message4" }))
+        //     setOpenError(true)
+        //     setCheckError(true)
+        //     return
+        // } else {
+        setCheckError(false)
+        const token = localStorage.getItem("token") ?? ""
+        console.log(selectedImage)
+        const responseBlob = await fetch(selectedImage ?? "");
+        const imageBlob = await responseBlob.blob();
+        const info: CreateBusiness = {
+            // userFullname: userInfo.userFullname,
+            // userPhoneNumber: userInfo.userPhoneNumber,
+            // userEmail: userInfo.userEmail,
+            // userDateOfBirth: userInfo.userDateOfBirth,
+            // userCccd: userInfo.userCccd,
+            // userProvince: userInfo.userProvince,
+            // userDistrict: userInfo.userDistrict,
+            // userTown: userInfo.userTown,
+            // userDetailAddress: userInfo.userDetailAddress,
+            // userBin: userInfo.userBin,
+            // userBank: userInfo.userBank,
+            // username: accountInfo.username,
+            // password: accountInfo.password,
+            name: businessInfo.name,
+            // email: businessInfo.email,
+            // phoneNumber: businessInfo.phoneNumber,
+            taxCode: businessInfo.taxCode,
+            province: businessInfo.province,
+            district: businessInfo.district,
+            town: businessInfo.town,
+            address: businessInfo.detailAddress,
+            // bin: businessInfo.bin,
+            // bank: businessInfo.bank
+        };
+        const businessOp = new BusinessOperation();
+        const authOperation = new AuthOperation();
+        if (data) { 
+            const response = await businessOp.update(data.id, info, imageBlob, token)
+            console.log(response)
+            if (response.error) {
+                setMessage(response.message ?? response.error.message)
                 setOpenError(true)
-                setCheckError(true)
-                return
-            } else {
-                setCheckError(false)
-                setCurrentForm(2)
-            }
-        } else {
-            if (Object.values(accountInfo).some(value => value === "")) {
-                setMessage(intl.formatMessage({ id: "Register.Message" }))
-                setOpenError(true)
-                setCheckError(true)
-                return
-            } else if (!usernameRegex.test(accountInfo.username)) {
-                setMessage(intl.formatMessage({ id: "Register.Message4" }))
-                setOpenError(true)
-                setCheckError(true)
-                return
-            } else {
-                setCheckError(false)
-                const info: CreateBusiness = {
-                    userFullname: userInfo.userFullname,
-                    userPhoneNumber: userInfo.userPhoneNumber,
-                    userEmail: userInfo.userEmail,
-                    userDateOfBirth: userInfo.userDateOfBirth,
-                    userCccd: userInfo.userCccd,
-                    userProvince: userInfo.userProvince,
-                    userDistrict: userInfo.userDistrict,
-                    userTown: userInfo.userTown,
-                    userDetailAddress: userInfo.userDetailAddress,
-                    userBin: userInfo.userBin,
-                    userBank: userInfo.userBank,
-                    username: accountInfo.username,
-                    password: accountInfo.password,
-                    businessName: businessInfo.businessName,
-                    email: businessInfo.email,
-                    phoneNumber: businessInfo.phoneNumber,
-                    taxNumber: businessInfo.taxNumber,
-                    province: businessInfo.province,
-                    district: businessInfo.district,
-                    town: businessInfo.town,
-                    detailAddress: businessInfo.detailAddress,
-                    bin: businessInfo.bin,
-                    bank: businessInfo.bank
-                };
-                const businessOp = new BusinessOperation();
-                const authOperation = new AuthOperation();
-                const response = await businessOp.createByBusiness(info)
-                console.log(response)
-                if (response.error) {
-                    setMessage(response.message ?? response.error.message)
-                    setOpenError(true)
-                    return;
-                } else {
-                    const response2 = await authOperation.login({ username: accountInfo.username.trim(), password: accountInfo.password.trim() }, LoginOption["BUSINESS"])
-                    if (response2) {
-                        setMessage(intl.formatMessage({ id: "Register.Message5" }))
-                        setOpenError2(true)
-                    }
-                }
+                return;
             }
         }
+        else {
+            const response = await businessOp.signUp(info, imageBlob, token)
+            console.log(response)
+            if (response.error) {
+                setMessage(response.message ?? response.error.message)
+                setOpenError(true)
+                return;
+            }
+        }
+        router.refresh()
+
+        // }
+        // }
     };
 
     const handleButtonClick2 = () => {
@@ -398,7 +431,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                                     />
                                 </p>
                                 {
-                                    id == "detailAddress" &&
+                                    id == "address" &&
                                     <>
                                         <Select
                                             id="city"
@@ -406,7 +439,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                                                 id: "OrderForm.LocationForm.SelectProvince",
                                             })}
                                             aria-label=".form-select-sm"
-                                            className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
+                                            className={"flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white"}
                                             value={businessInfo.province ? { value: businessInfo.province, label: businessInfo.province } : null}
                                             onChange={(e) => { fetchDistricts(e?.value) }}
                                             //@ts-ignore
@@ -421,7 +454,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                                                 id: "OrderForm.LocationForm.SelectDistrict",
                                             })}
                                             aria-label=".form-select-sm"
-                                            className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
+                                            className={"flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white"}
                                             value={businessInfo.district ? { value: businessInfo.district, label: businessInfo.district } : null}
                                             onChange={(e) => { fetchWards(businessInfo.province, e?.value) }}
                                             //@ts-ignore
@@ -439,7 +472,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                                                 id: "OrderForm.LocationForm.SelectWard",
                                             })}
                                             aria-label=".form-select-sm"
-                                            className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
+                                            className={"flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white"}
                                             value={businessInfo.town ? { value: businessInfo.town, label: businessInfo.town } : null}
                                             onChange={(e) => setBusinessInfo({ ...businessInfo, town: e?.value })}
                                             //@ts-ignore
@@ -452,7 +485,35 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                                 }
                             </div>
                         ))}
+
+                        <div className="flex flex-col gap-4 mt-4">
+                            <label className="font-bold text-lg text-[#000000] dark:text-white">
+                                <FormattedMessage id="Register.UploadImage" />
+                            </label>
+                            {!selectedImage && <label className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer w-max">
+                                <span>Chọn File giấy phép kinh doanh</span>
+                                <input
+                                    type="file"
+                                    accept="application/pdf"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                />
+                            </label>}
+
+                            {selectedImage && (
+                                <div className="relative w-32 h-32 border rounded-lg overflow-hidden">
+                                    <img src={selectedImage} alt="Xem trước ảnh" className="w-full h-full object-cover" />
+                                    <button
+                                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                                        onClick={handleRemoveImage}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </motion.div>
+
                 )}
             </AnimatePresence>
             <AnimatePresence initial={false}>
@@ -486,57 +547,57 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose }) => {
                                     />
                                 </p>
                                 {
-                                    id == "userDetailAddress" &&
-                                    <>
-                                        <Select
-                                            id="city2"
-                                            placeholder={intl.formatMessage({
-                                                id: "OrderForm.LocationForm.SelectProvince",
-                                            })}
-                                            aria-label=".form-select-sm"
-                                            className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
-                                            value={userInfo.userProvince ? { value: userInfo.userProvince, label: userInfo.userProvince } : null}
-                                            onChange={(e) => { fetchDistricts2(e?.value) }}
-                                            //@ts-ignore
-                                            options={provinces?.map((city) => ({ value: city, label: city }))}
-                                            isSearchable
-                                            components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                            styles={styles}
-                                        />
-                                        <Select
-                                            id="district2"
-                                            placeholder={intl.formatMessage({
-                                                id: "OrderForm.LocationForm.SelectDistrict",
-                                            })}
-                                            aria-label=".form-select-sm"
-                                            className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
-                                            value={userInfo.userDistrict ? { value: userInfo.userDistrict, label: userInfo.userDistrict } : null}
-                                            onChange={(e) => { fetchWards2(userInfo.userProvince, e?.value) }}
-                                            //@ts-ignore
-                                            options={districts2?.map((district) => ({
-                                                value: district,
-                                                label: district,
-                                            }))}
-                                            isSearchable
-                                            components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                            styles={styles}
-                                        />
-                                        <Select
-                                            id="ward2"
-                                            placeholder={intl.formatMessage({
-                                                id: "OrderForm.LocationForm.SelectWard",
-                                            })}
-                                            aria-label=".form-select-sm"
-                                            className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
-                                            value={userInfo.userTown ? { value: userInfo.userTown, label: userInfo.userTown } : null}
-                                            onChange={(e) => setUserInfo({ ...userInfo, userTown: e?.value })}
-                                            //@ts-ignore
-                                            options={wards2?.map((ward) => ({ value: ward, label: ward }))}
-                                            isSearchable
-                                            components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                                            styles={styles}
-                                        />
-                                    </>
+                                    // id == "userDetailAddress" &&
+                                    // <>
+                                    //     <Select
+                                    //         id="city2"
+                                    //         placeholder={intl.formatMessage({
+                                    //             id: "OrderForm.LocationForm.SelectProvince",
+                                    //         })}
+                                    //         aria-label=".form-select-sm"
+                                    //         className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
+                                    //         value={userInfo.userProvince ? { value: userInfo.userProvince, label: userInfo.userProvince } : null}
+                                    //         onChange={(e) => { fetchDistricts2(e?.value) }}
+                                    //         //@ts-ignore
+                                    //         options={provinces?.map((city) => ({ value: city, label: city }))}
+                                    //         isSearchable
+                                    //         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                    //         styles={styles}
+                                    //     />
+                                    //     <Select
+                                    //         id="district2"
+                                    //         placeholder={intl.formatMessage({
+                                    //             id: "OrderForm.LocationForm.SelectDistrict",
+                                    //         })}
+                                    //         aria-label=".form-select-sm"
+                                    //         className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
+                                    //         value={userInfo.userDistrict ? { value: userInfo.userDistrict, label: userInfo.userDistrict } : null}
+                                    //         onChange={(e) => { fetchWards2(userInfo.userProvince, e?.value) }}
+                                    //         //@ts-ignore
+                                    //         options={districts2?.map((district) => ({
+                                    //             value: district,
+                                    //             label: district,
+                                    //         }))}
+                                    //         isSearchable
+                                    //         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                    //         styles={styles}
+                                    //     />
+                                    //     <Select
+                                    //         id="ward2"
+                                    //         placeholder={intl.formatMessage({
+                                    //             id: "OrderForm.LocationForm.SelectWard",
+                                    //         })}
+                                    //         aria-label=".form-select-sm"
+                                    //         className={`flex items-center h-10 text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full rounded-xl bg-white`}
+                                    //         value={userInfo.userTown ? { value: userInfo.userTown, label: userInfo.userTown } : null}
+                                    //         onChange={(e) => setUserInfo({ ...userInfo, userTown: e?.value })}
+                                    //         //@ts-ignore
+                                    //         options={wards2?.map((ward) => ({ value: ward, label: ward }))}
+                                    //         isSearchable
+                                    //         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                    //         styles={styles}
+                                    //     />
+                                    // </>
                                 }
                             </div>
                         ))}

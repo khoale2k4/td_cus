@@ -61,6 +61,7 @@
     "routes.history": "Order history",
     "routes.helpcenter": "Support",
     "routes.help": "Customer service",
+    "routes.business": "Business service",
     "Map.Message": "Please allow the browser to access location information to use this feature.",
     "OrderForm.LocationForm.SelectProvince": "Select province",
     "OrderForm.LocationForm.SelectDistrict": "Select district",
@@ -150,6 +151,11 @@
     "Orders.Form2.Message5": "Length (cm)",
     "Orders.Form2.Message6": "Width (cm)",
     "Orders.Form2.Message7": "Height (cm)",
+    "Orders.Form2.Insurance": "Insurance (requires invoice)",
+    "Orders.Form2.DoorToDoor": "Door to door delivery",
+    "Orders.Form2.ReceiverWillPay": "Receiver will pay",
+    "Orders.Form2.IsBulkyGood": "Bulky goods",
+    "Orders.Form2.IsGift": "Gift order",
     "Orders.Form3.Title": "Confirm order information",
     "Register.Title": "Register a business account",
     "Register.Title2": "Business information",
@@ -162,6 +168,7 @@
     "Register.Message5": "Account created successfully!",
     "Register.Button1": "Confirm information",
     "Register.Button2": "Create account",
+    "Register.UploadImage": "Upload file",
     "OTP.Message": "Authentication successful!",
     "OTP.Message2": "OTP code does not match, please try again!"
 }

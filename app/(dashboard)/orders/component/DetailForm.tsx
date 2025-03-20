@@ -2,9 +2,14 @@
 import Select from "react-select";
 import { useThemeContext } from "@/providers/ThemeProvider";
 import { FormattedMessage, useIntl } from "react-intl";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus, FaRegCommentDots } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { Variants, motion } from 'framer-motion';
+import Switch from "@/components/switch";
+import { MdCardGiftcard, MdDelete, MdEmail, MdImage, MdNote, MdPhonelinkRing, MdSave, MdUpload } from "react-icons/md";
+import { IoBusiness, IoLocationSharp } from "react-icons/io5";
+import { GiftOrderTopicOperation } from "@/TDLib/main";
+import { useEffect, useState } from "react";
 interface DetailFormProps {
     formData: {
         selectedOption: number;
@@ -14,13 +19,45 @@ interface DetailFormProps {
         mass: number;
         COD: number;
     };
+    additionData: {
+        insurance: boolean;
+        doorToDoor: boolean;
+        gift: boolean;
+        receiverWillPay: boolean;
+        isBulkyGood: boolean;
+    };
+    insuranceData: {
+        companyName: string;
+        companyAddress: string;
+        companyPhone: string;
+        companyEmail: string;
+        companyTaxCode: string;
+    };
+    giftData: {
+        id: string;
+        name: string;
+    };
+    images: File[];
+
     setFormData: (data: Partial<DetailFormProps['formData']>) => void;
+    setAdditionData: (data: Partial<DetailFormProps['additionData']>) => void;
+    setInsuranceData: (data: Partial<DetailFormProps['insuranceData']>) => void;
+    setGiftData: (data: Partial<DetailFormProps['giftData']>) => void;
+    setImages: (images: ((prev: File[]) => File[]) | File[]) => void;
+    shippingBillButton: (save: boolean) => void;
 }
 
 const DetailForm: React.FC<DetailFormProps> = ({
-    formData, setFormData
+    formData, additionData, insuranceData, giftData, images, setFormData, setAdditionData, setInsuranceData, setGiftData, setImages, shippingBillButton
 }) => {
     const { selectedOption, length, width, height, mass, COD } = formData;
+    const { insurance, doorToDoor, gift, isBulkyGood, receiverWillPay } = additionData;
+    const { id, name } = giftData;
+    const { companyName, companyAddress, companyPhone, companyEmail, companyTaxCode } = insuranceData;
+    const giftOrderTopicOperation = new GiftOrderTopicOperation();
+    const [giftTopics, setGiftTopics] = useState<DetailFormProps['giftData'][]>([]);
+    const imagesList = images;
+
     const suggestion = [1, 10000, 100000, 1000000];
     const intl = useIntl();
     const { theme } = useThemeContext();
@@ -120,11 +157,46 @@ const DetailForm: React.FC<DetailFormProps> = ({
         setFormData({ [key]: parseInt(value) || 0 });
     };
 
+    const handleSwitchChange = (key: keyof DetailFormProps['additionData']) => {
+        setAdditionData({ [key]: !additionData[key] });
+    };
+
+    const handleGiftChange = (key: keyof DetailFormProps['giftData']) => {
+        setGiftData({ [key]: giftData[key] });
+    };
+
+    const handleRemoveImage = (index: number) => {
+        setImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
     const tabContentVariants: Variants = {
         initial: { x: 20, opacity: 0 },
         enter: { x: 0, opacity: 1 },
         exit: { x: 20, opacity: 0 },
     };
+
+    const handleFileChange = () => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        console.log(file);
+        if (file) {
+            if (images.length < 2) {
+                setImages([...images, file]);
+            }
+        }
+    };
+
+    const fetchGiftTopics = async () => {
+        const token = localStorage.getItem("token") ?? "";
+        const response = await giftOrderTopicOperation.findAll(token);
+        // console.log(response.data);
+        if (response.success) {
+            setGiftTopics(response.data)
+        }
+    }
+
+    useEffect(() => {
+        fetchGiftTopics();
+    }, [gift])
 
     return (
         <motion.div variants={tabContentVariants}
@@ -235,6 +307,192 @@ const DetailForm: React.FC<DetailFormProps> = ({
                         </button>
                     </div>
                 </div>
+                <h1 className="w-full px-1 sm:text-base mt-2 text-left text-sm font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans">
+                    <FormattedMessage id="Orders.Form2.Message3" />
+                </h1>
+                <h1 className="text-lg font-bold text-center dark:text-white">
+                    <FormattedMessage id="Orders.Form2.Title" />
+                </h1>
+
+                <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium dark:text-white">
+                            <FormattedMessage id="Orders.Form2.Insurance" />
+                        </span>
+                        <Switch checked={insurance} onChange={() => handleSwitchChange('insurance')} />
+                    </div>
+
+                    {insurance && (
+                        <div className="flex flex-col gap-2 w-full p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyName ? "border-navy-800" : "border-gray-500"}`}>
+                                <p className="pl-4 pr-3 text-xl">
+                                    <IoBusiness className={`h-4 w-4 dark:text-white ${companyName ? "text-[#4b4b4b]" : "text-gray-400"}`} />
+                                </p>
+                                <input
+                                    value={companyName}
+                                    onChange={(e) => setInsuranceData({ companyName: e.target.value })}
+                                    type="text"
+                                    placeholder="Tên công ty bảo hiểm"
+                                    className="block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white"
+                                />
+                            </div>
+
+                            <div className={`flex items-center rounded-tr-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyAddress ? "border-navy-800" : "border-gray-500"}`}>
+                                <p className="pl-4 pr-3 text-xl">
+                                    <IoLocationSharp className={`h-4 w-4 dark:text-white ${companyAddress ? "text-[#4b4b4b]" : "text-gray-400"}`} />
+                                </p>
+                                <input
+                                    value={companyAddress}
+                                    onChange={(e) => setInsuranceData({ companyAddress: e.target.value })}
+                                    type="text"
+                                    placeholder="Địa chỉ công ty"
+                                    className="block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white"
+                                />
+                            </div>
+
+                            <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyPhone ? "border-navy-800" : "border-gray-500"}`}>
+                                <p className="pl-4 pr-3 text-xl">
+                                    <MdPhonelinkRing className={`h-4 w-4 dark:text-white ${companyPhone ? "text-[#4b4b4b]" : "text-gray-400"}`} />
+                                </p>
+                                <input
+                                    value={companyPhone}
+                                    onChange={(e) => setInsuranceData({ companyPhone: e.target.value })}
+                                    type="text"
+                                    placeholder="Số điện thoại"
+                                    className="block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white"
+                                />
+                            </div>
+
+                            <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyPhone ? "border-navy-800" : "border-gray-500"}`}>
+                                <p className="pl-4 pr-3 text-xl">
+                                    <IoBusiness className={`h-4 w-4 dark:text-white ${companyTaxCode ? "text-[#4b4b4b]" : "text-gray-400"}`} />
+                                </p>
+                                <input
+                                    value={companyTaxCode}
+                                    onChange={(e) => setInsuranceData({ companyTaxCode: e.target.value })}
+                                    type="text"
+                                    placeholder="Mã số thuế"
+                                    className="block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white"
+                                />
+                            </div>
+
+                            <div className={`flex items-center rounded-tr-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyEmail ? "border-navy-800" : "border-gray-500"}`}>
+                                <p className="pl-4 pr-3 text-xl">
+                                    <MdEmail className={`h-4 w-4 dark:text-white ${companyEmail ? "text-[#4b4b4b]" : "text-gray-400"}`} />
+                                </p>
+                                <input
+                                    value={companyEmail}
+                                    onChange={(e) => setInsuranceData({ companyEmail: e.target.value })}
+                                    type="email"
+                                    placeholder="Email"
+                                    className="block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white"
+                                />
+                            </div>
+
+                            <div className="flex flex-col items-center gap-4 mt-4">
+                                {imagesList.length < 2 && (
+                                    <label className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer">
+                                        <MdUpload className="h-5 w-5" />
+                                        <span>Thêm ảnh</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={handleFileChange}
+                                        />
+                                    </label>
+                                )}
+
+                                <div className="flex gap-4">
+                                    {imagesList.map((file, index) => (
+                                        <div key={index} className="flex flex-col items-center">
+                                            <img
+                                                src={file instanceof Blob ? URL.createObjectURL(file) : ''}
+                                                alt={`Ảnh ${index + 1}`}
+                                                className="w-32 h-32 object-cover rounded-lg border"
+                                            />
+                                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                                {file.name}
+                                            </p>
+                                            <button
+                                                className="mt-2 bg-red-500 text-white px-2 py-1 rounded-lg"
+                                                onClick={() => handleRemoveImage(index)}
+                                            >
+                                                <MdDelete className="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <div className="flex flex-row items-center gap-4 mt-4">
+                                        <button
+                                            onClick={() => { shippingBillButton(true) }}
+                                            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all"
+                                        >
+                                            <MdSave className="h-5 w-5" />
+                                            <span>Lưu hoá đơn</span>
+                                        </button>
+
+                                        <button
+                                            onClick={() => { shippingBillButton(false) }}
+                                            className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-all"
+                                        >
+                                            <MdImage className="h-5 w-5" />
+                                            <span>Tải hoá đơn</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
+
+
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium dark:text-white">
+                            <FormattedMessage id="Orders.Form2.DoorToDoor" />
+                        </span>
+                        <Switch checked={doorToDoor} onChange={() => handleSwitchChange('doorToDoor')} />
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium dark:text-white">
+                            <FormattedMessage id="Orders.Form2.ReceiverWillPay" />
+                        </span>
+                        <Switch checked={receiverWillPay} onChange={() => handleSwitchChange('receiverWillPay')} />
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium dark:text-white">
+                            <FormattedMessage id="Orders.Form2.IsBulkyGood" />
+                        </span>
+                        <Switch checked={isBulkyGood} onChange={() => handleSwitchChange('isBulkyGood')} />
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium dark:text-white">
+                            <FormattedMessage id="Orders.Form2.IsGift" />
+                        </span>
+                        <Switch checked={gift} onChange={() => handleSwitchChange('gift')} />
+                    </div>
+                    {gift && (
+                        <div className="flex flex-col gap-2 w-full p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <div className="flex flex-wrap gap-3">
+                                {giftTopics.map((topic) => (
+                                    <button
+                                        key={topic.id}
+                                        onClick={() => setGiftData(topic)}
+                                        className={`px-4 py-2 rounded-lg border transition-all ${name === topic.name
+                                            ? "bg-blue-500 text-white border-blue-500"
+                                            : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+                                            }`}
+                                    >
+                                        {topic.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+
             </div>
         </motion.div>
     );

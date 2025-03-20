@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef, useEffect, useContext } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { AuthOperation } from "@/TDLib/main";
+import { AuthOperation, BusinessOperation } from "@/TDLib/main";
 interface OptFieldProps {
     id: string;
     setMessage: any;

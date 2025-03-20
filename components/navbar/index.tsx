@@ -110,14 +110,34 @@ const Navbar = ({ }: Props) => {
     // const response2 = await getinfo2.getAuthenticatedInfo(token);
     // console.log("response2", response2)
     console.log("response", response)
-    if (!response.error) console.log(response)
-    else if (!!response.data) {
+    if (!response.error) {
       setPassData(response.data);
-      setDataUpdate(response.data);
-      setUsername(response.data.account.email);
-      const response2 = await getinfo.getAvatar({ customerId: response.data.id })
-      setProfilePicture(response2.error == "" ? "/img/avatars/avatar_4.jpg" : `${imgURL}${response.data.id}`)
-      setCanUpload(true)
+      // setDataUpdate(response.data);
+      setUsername(response.data.email);
+      // const response2 = await getinfo.getAvatar({ customerId: response.data.id })
+      // setProfilePicture(response2.error == "" ? "/img/avatars/avatar_4.jpg" : `${imgURL}${response.data.id}`)
+      // setCanUpload(true)
+      const busOp = new BusinessOperation();
+      const isBusiness = await busOp.searchBusinesses(
+        {
+          addition: {
+            sort: [],
+            page: 1,
+            size: 1,
+            group: []
+          },
+          criteria: [
+          ]
+        }
+        , token);
+      console.log("business", isBusiness.data.length > 0)
+      if(isBusiness.data.length) {
+        localStorage.setItem("isBussiness", "1")
+      } else {
+        localStorage.removeItem("isBussiness")
+      }
+    }
+    else if (!!response.data) {
     }
 
     // if (!response2.error || response2.error == undefined) console.log(response2)
@@ -403,10 +423,10 @@ const Navbar = ({ }: Props) => {
                 {editing && <span className="absolute bg-[#000000] dark:bg-gray-100 h-[1px] bottom-0 w-full" />}
               </p>}
               <p className="whitespace-nowrap flex flex-row gap-2">
-                {passData.account.email ? passData.account.email : <FormattedMessage id="Login.Message15" />}
+                {passData.email ? passData.email : <FormattedMessage id="Login.Message15" />}
               </p>
               <p className="flex flex-col sm:flex-row sm:gap-2">
-                {passData.account.phoneNumber ? passData.account.phoneNumber : <FormattedMessage id="Login.Message15" />}
+                {passData.phoneNumber ? passData.phoneNumber : <FormattedMessage id="Login.Message15" />}
               </p>
               {editing ?
                 <div className="flex flex-col gap-3">

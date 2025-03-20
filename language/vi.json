@@ -61,6 +61,7 @@
     "routes.history": "Lịch sử đơn hàng",
     "routes.helpcenter": "Hỗ trợ",
     "routes.help": "CSKH",
+    "routes.business": "Doanh nghiệp",
     "Map.Message": "Vui lòng cho phép trình duyệt truy cập thông tin vị trí để sử dụng chức năng này.",
     "OrderForm.LocationForm.SelectProvince": "Chọn tỉnh",
     "OrderForm.LocationForm.SelectDistrict": "Chọn quận",
@@ -150,7 +151,13 @@
     "Orders.Form2.Message5": "Chiều dài (cm)",
     "Orders.Form2.Message6": "Chiều rộng (cm)",
     "Orders.Form2.Message7": "Chiều cao (cm)",
+    "Orders.Form2.Insurance": "Bảo hiểm (cần xuất hoá đơn)",
+    "Orders.Form2.DoorToDoor": "Giao tận cửa",
+    "Orders.Form2.ReceiverWillPay": "Người nhận trả",
+    "Orders.Form2.IsBulkyGood": "Đơn hàng cồng kềnh",
+    "Orders.Form2.IsGift": "Đơn hàng quà tặng",
     "Orders.Form3.Title": "Xác nhận thông tin đơn hàng",
+
     "Register.Title": "Đăng ký tài khoản doanh nghiệp",
     "Register.Title2": "Thông tin doanh nghiệp",
     "Register.Title3": "Thông tin người đại diện doanh nghiệp",
@@ -162,6 +169,7 @@
     "Register.Message5": "Tạo tài khoản thành công !",
     "Register.Button1": "Xác nhận thông tin",
     "Register.Button2": "Tạo tài khoản",
+    "Register.UploadImage": "Tải file",
     "OTP.Message": "Xác thực thành công!",
     "OTP.Message2": "Mã OTP không khớp, vui lòng nhập lại!"
 }

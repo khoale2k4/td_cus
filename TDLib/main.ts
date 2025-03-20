@@ -46,7 +46,7 @@ export enum LoginOption {
     CUSTOMER = "CUSTOMER"
 }
 
-const host = "https://api.tdlogistics.net.vn/v3";
+const host = "http://localhost:3000/v3";
 
 export class AuthOperation {
     private baseUrl: String;
@@ -121,6 +121,204 @@ export class AuthOperation {
             console.error("Request that caused the error: ", (error as any)?.request);
             return { error: (error as any)?.response?.data, request: (error as any)?.request, status: (error as any).response ? (error as any).response.status : null };
         }
+    }
+}
+
+export interface AssignBusinessToAgencyDto {
+    businessId: string;
+    agencyId: string;
+}
+
+export interface CreateBusiness {
+    // Business Representor
+    // userFullname: string;
+    // userPhoneNumber: string;
+    // userEmail: string;
+    // userDateOfBirth: Date;
+    // userCccd: string;
+    // userProvince: string;
+    // userDistrict: string;
+    // userTown: string;
+    // userDetailAddress: string;
+    // userBin: string;
+    // userBank: string;
+    // username: string;
+    // password: string;
+
+    // Business information
+    // Created by admin needs agencyId, while agency does not
+    // agencyId?: string; // Optional if only needed by admin
+    // businessName: string;
+    // email: string;
+    // phoneNumber: string;
+    name: string;
+    taxCode: string;
+    province: string;
+    district: string;
+    town: string;
+    address?: string;
+    // bin: string;
+    // bank: string;
+}
+
+export interface BusinessUser {
+    // Identifiers
+    uuid?: string;
+    businessId?: string;
+    agencyId?: string;
+
+    // Business Information
+    businessName?: string;
+    taxNumber?: string;
+    province?: string;
+    district?: string;
+    town?: string;
+    detailAddress?: string;
+    bin?: string;
+    bank?: string;
+
+    // Other Fields
+    debit?: number;
+    active?: boolean;
+    approved?: boolean;
+    representor?: BusinessRepresentor;
+}
+
+
+export interface BusinessRepresentor {
+    id?: number;
+    businessId?: string;
+    uuid?: string;
+    fullName?: string;
+    phoneNumber?: string;
+    email?: string;
+    dateOfBirth?: Date;
+    cccd?: string;
+    province?: string;
+    district?: string;
+    town?: string;
+    detailAddress?: string;
+    bin?: string;
+    bank?: string;
+    businessUser?: BusinessUser;
+}
+
+export interface BusinessId {
+    businessId: String;
+}
+
+export interface GetLicenseFileDto {
+    fileId: String;
+}
+
+export class BusinessOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = `${host}/business`;
+    }
+
+    async signUp(payload: CreateBusiness, imageFile: File | Blob, token: string) {
+        try {
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(payload));
+    
+            formData.append("file", imageFile);
+    
+            const response = await axios.post(`${this.baseUrl}/signup`, formData, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+    
+            return response.data;
+        } catch (error) {
+            console.error("Error signing up business:", error);
+            return this.handleError(error);
+        }
+    }
+
+    async update(id: string, payload: CreateBusiness, imageFile: File | Blob, token: string) {
+        try {
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(payload));
+    
+            formData.append("file", imageFile);
+    
+            const response = await axios.post(`${this.baseUrl}/update/${id}`, formData, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+    
+            return response.data;
+        } catch (error) {
+            console.error("Error signing up business:", error);
+            return this.handleError(error);
+        }
+    }
+    
+
+    async searchBusinesses(payload: SearchPayload, token: string) {
+        try {
+            const response = await axios.post(`${this.baseUrl}/search`, payload, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error searching businesses:", error);
+            return this.handleError(error);
+        }
+    }
+
+    async assignToAgency(payload: AssignBusinessToAgencyDto) {
+        try {
+            const response = await axios.post(`${this.baseUrl}/agency/assign`, payload, {
+                withCredentials: true
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error assigning business to agency:", error);
+            return this.handleError(error);
+        }
+    }
+
+    async getLicenseFile(payload: GetLicenseFileDto, token: string): Promise<Blob | null> {
+        try {
+            const response = await axios.get(`${this.baseUrl}/license/download/${payload.fileId}`, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token
+                },
+                responseType: "blob"
+            });
+    
+            if (response.data instanceof Blob) {
+                return response.data;
+            } else {
+                console.error("Response is not a Blob:", response.data);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error getting business license:", error);
+            return null;
+        }
+    }
+    
+
+    private handleError(error: any) {
+        return {
+            error: error.response?.data || error.message,
+            request: error.request,
+            status: error.response ? error.response.status : null
+        };
     }
 }
 
@@ -337,6 +535,297 @@ export class CustomerOperation {
     }
 }
 
+export interface CreateShippingBillDto {
+    companyName: string;
+    companyAddress: string;
+    taxCode: string;
+    email: string;
+}
+
+export class ShippingBillOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = host + '/shipping_bill';
+    }
+
+    async create(dto: CreateShippingBillDto, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, dto, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error creating shipping bill: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async getByCustomerId(customerId: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/customer/get`, {
+                params: { customerId },
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error fetching shipping bill by customer: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async search(payload: SearchPayload, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error searching shipping bills: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+}
+
+export interface CreateGiftOrderTopicDto {
+    name: string;
+}
+
+export class GiftOrderTopicOperation {
+    private baseUrl: string;
+    constructor() {
+        this.baseUrl = host + '/gift_order_topic';
+    }
+
+    // ADMIN
+    async create(payload: CreateGiftOrderTopicDto, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error searching accounts: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async findAll(token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/get`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error searching accounts: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+}
+
+export interface ImageChangeStatusDto {
+    id: string;
+    isChanged: boolean;
+}
+
+export interface UpdateCargoInsuranceDto {
+    note: string;
+    hasDeliveryCare: boolean;
+    shippingBillId: string;
+    areImagesChanged: ImageChangeStatusDto[];
+}
+
+export interface CreateCargoInsuranceDto {
+    note: string;
+    hasDeliveryCare: boolean;
+    shippingBillId: string;
+}
+
+export class CargoInsuranceOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = host + '/cargo_insurance';
+    }
+
+    async getByCustomerId(orderId: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/order/get/${orderId}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error fetching cargo insurance: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async update(updateDto: UpdateCargoInsuranceDto, id: string, token: string, files?: File[]) {
+        try {
+            const formData = new FormData();
+
+            // Append all fields from updateDto to formData
+            Object.keys(updateDto).forEach((key) => {
+                formData.append(key, (updateDto as any)[key]);
+            });
+
+            // If there are files, append them to formData
+            if (files && files.length > 0) {
+                files.forEach((file) => formData.append("file", file));
+            }
+
+            const response: AxiosResponse = await axios.put(`${this.baseUrl}/update/${id}`, formData, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error updating cargo insurance: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async create(payload: CreateCargoInsuranceDto, orderId: string, token: string, files?: File[]) {
+        try {
+            const formData = new FormData();
+
+            // Append all fields from payload to formData
+            Object.keys(payload).forEach((key) => {
+                formData.append(key, (payload as any)[key]);
+            });
+
+            // If there are files, append them to formData
+            if (files && files.length > 0) {
+                files.forEach((file) => formData.append("file", file));
+            }
+
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create/${orderId}`, formData, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error creating cargo insurance: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+}
+
 export class MapOperation{
     async getCoordinates(address: string, ggmapkey: string): Promise<{ lat: number; lng: number } | null> {
         try {
@@ -450,6 +939,8 @@ export interface OrderDTO {
     goodType: string;
     receiverWillPay: boolean;
     deliverDoorToDoor: boolean;
+    isBulkyGood: boolean;
+    note: string;
 }
 
 
@@ -703,6 +1194,23 @@ export class OrdersOperation {
             return response.data;
         } catch (error: any) {
             console.log("Error getting order signature: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async getOrderJourney(id: string, token: string) {
+        try {
+            const response = await axios.get(`${this.baseUrl}/shipper/current_journey/${id}`, {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return { error: response.data.error, data: response.data.data, message: response.data.message };
+        } catch (error: any) {
+            console.log("Error getting order journey: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -2225,237 +2733,3 @@ export class DriversOperation {
 
 //Business
 
-export interface CreateBusiness {
-    // Business Representor
-    userFullname: string;
-    userPhoneNumber: string;
-    userEmail: string;
-    userDateOfBirth: Date;
-    userCccd: string;
-    userProvince: string;
-    userDistrict: string;
-    userTown: string;
-    userDetailAddress: string;
-    userBin: string;
-    userBank: string;
-    username: string;
-    password: string;
-
-    // Business information
-    // Created by admin needs agencyId, while agency does not
-    agencyId?: string; // Optional if only needed by admin
-    businessName: string;
-    email: string;
-    phoneNumber: string;
-    taxNumber: string;
-    province: string;
-    district: string;
-    town: string;
-    detailAddress: string;
-    bin: string;
-    bank: string;
-}
-
-export interface BusinessUser {
-    // Identifiers
-    uuid?: string;
-    businessId?: string;
-    agencyId?: string;
-
-    // Business Information
-    businessName?: string;
-    taxNumber?: string;
-    province?: string;
-    district?: string;
-    town?: string;
-    detailAddress?: string;
-    bin?: string;
-    bank?: string;
-
-    // Other Fields
-    debit?: number;
-    active?: boolean;
-    approved?: boolean;
-    representor?: BusinessRepresentor;
-}
-
-
-export interface BusinessRepresentor {
-    id?: number;
-    businessId?: string;
-    uuid?: string;
-    fullName?: string;
-    phoneNumber?: string;
-    email?: string;
-    dateOfBirth?: Date;
-    cccd?: string;
-    province?: string;
-    district?: string;
-    town?: string;
-    detailAddress?: string;
-    bin?: string;
-    bank?: string;
-    businessUser?: BusinessUser;
-}
-
-export interface BusinessId {
-    businessId: String;
-}
-
-export class BusinessOperation {
-    private baseUrl: string;
-    constructor() {
-        this.baseUrl = host + "/business";
-    }
-
-
-    // ROLE: BUSINESS USER
-    async createByBusiness(info: CreateBusiness) {
-        try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, info, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error creating new tasks: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: MANAGER, TELLER, ADMIN
-    // Create business by admin
-    async approve(info: CreateBusiness) {
-        try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/approve`, info, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error creating new tasks: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: BUSINESS
-    async getAuthenticatedInfo(token: string) {
-        try {
-            const response: AxiosResponse = await axios.get(`${this.baseUrl}/`, {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            const data = response.data;
-            return { error: data.error, data: data.data, message: data.message };
-        } catch (error: any) {
-            console.log("Error getting tasks: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: ADMIN, MANAGER, TELLER, AGENCY_MANAGER, AGENCY_TELLER, BUSINESS, HUMAN_RESOURCE_MANAGER, COMPLAINTS_SOLVER
-    async findBusinessUser(payload: BusinessUser) {
-        try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error confirming completed task: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: ADMIN, MANAGER, TELLER, AGENCY_MANAGER, AGENCY_TELLER, BUSINESS, HUMAN_RESOURCE_MANAGER, COMPLAINTS_SOLVER
-    async findBusinessRepresentor(payload: BusinessRepresentor) {
-        try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/representor/search`, payload, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error confirming completed task: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: ADMIN, MANAGER, TELLER, AGENCY_MANAGER, AGENCY_TELLER
-    async updateBusinessUser(payload: BusinessUser) {
-        try {
-            const response: AxiosResponse = await axios.put(`${this.baseUrl}/update`, payload, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error confirming completed task: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: ADMIN, MANAGER, TELLER, AGENCY_MANAGER, AGENCY_TELLER
-    async updateBusinessRepresentor(payload: BusinessRepresentor) {
-        try {
-            const response: AxiosResponse = await axios.put(`${this.baseUrl}/representor/update`, payload, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error confirming completed task: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-
-
-    // ROLE: ADMIN, MANAGER, TELLER, AGENCY_MANAGER, AGENCY_TELLER
-    async deleteBusinessUser(params: BusinessId) {
-        try {
-            const response: AxiosResponse = await axios.delete(`${this.baseUrl}/delete?businessId=${params.businessId}`, {
-                withCredentials: true,
-            });
-
-            const data = response.data;
-            return { error: data.error, message: data.message };
-        } catch (error: any) {
-            console.log("Error deleting task: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-        }
-    }
-
-    // ROLE: ADMIN, MANAGER, TELLER, AGENCY_MANAGER, AGENCY_TELLER
-    // async updateContact(payload: BusinessRepresentor) {
-    // 	try {
-    // 		const response: AxiosResponse = await axios.put(`${this.baseUrl}/representor/update`, payload, {
-    // 			withCredentials: true,
-    // 		});
-
-    // 		const data = response.data;
-    // 		return { error: data.error, message: data.message };
-    // 	} catch (error: any) {
-    // 		console.log("Error confirming completed task: ", error?.response?.data);
-    //         console.error("Request that caused the error: ", error?.request);
-    //         return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
-    // 	}
-    // }
-}

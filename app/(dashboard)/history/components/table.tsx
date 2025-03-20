@@ -24,10 +24,16 @@ import DetailOrder from "./DetailOrder";
 type Props = {
     columnsData: any[];
     tableData: any[];
+    nextPage: () => void;
+    previousPage: () => void;
+    gotoPage: (page: number) => void;
 };
 
 const CheckTable = (props: Props) => {
-    const { columnsData, tableData } = props;
+    const { columnsData, tableData,
+        nextPage,
+        previousPage,
+        gotoPage, } = props;
     const [openModal, setOpenModal] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [openError2, setOpenError2] = useState(false);
@@ -58,9 +64,6 @@ const CheckTable = (props: Props) => {
         prepareRow,
         canPreviousPage,
         canNextPage,
-        nextPage,
-        previousPage,
-        gotoPage,
         pageCount,
         state: { pageIndex },
         setGlobalFilter,
@@ -119,18 +122,18 @@ const CheckTable = (props: Props) => {
                     <input
                         type="string"
                         value={currentPageInput}
-                        onChange={handlePageInputChange}
+                        onChange={() => gotoPage(currentPageInput)}
                         className="w-10 text-center focus:outline-none font-semibold dark:bg-[#3A3B3C] bg-lightPrimary dark:text-white flex items-center rounded-full"
                     />
                     <Button className={`flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 text-navy-800 dark:text-white  border 
             border-gray-200 dark:!border-none hover:bg-gray-100 dark:bg-[#3A3B3C] dark:hover:bg-white/20 dark:active:bg-white/10
-              linear justify-center rounded-full font-bold transition duration-200`} onClick={() => previousPage()} disabled={!canPreviousPage}>
+              linear justify-center rounded-full font-bold transition duration-200`} onClick={() => previousPage()}>
                         <MdNavigateBefore className="w-6 h-6" />
                     </Button>
 
                     <Button className={`flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 text-navy-800 dark:text-white  border 
             border-gray-200 dark:!border-none hover:bg-gray-100 dark:bg-[#3A3B3C] dark:hover:bg-white/20 dark:active:bg-white/10
-              linear justify-center rounded-full font-bold transition duration-200`} onClick={() => nextPage()} disabled={!canNextPage}>
+              linear justify-center rounded-full font-bold transition duration-200`} onClick={() => nextPage()}>
                         <MdNavigateNext className="w-6 h-6" />
                     </Button>
                 </div>
