@@ -1171,9 +1171,9 @@ export class OrdersOperation {
         }
     }
 
-    async getImages(params: GettingOrderSignatureParams) {
+    async getImages(orderId: string) {
         try {
-            const response = await axios.get(`${this.baseUrl}/image/get?orderId=${params.orderId}&type=${params.type}`, {
+            const response = await axios.get(`${this.baseUrl}/image/download?${orderId}`, {
                 withCredentials: true,
             });
 

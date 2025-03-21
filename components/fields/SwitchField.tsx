@@ -23,7 +23,7 @@ const SwitchField = (props: Props) => {
         <p className={`text-base text-gray-600`}>{desc}</p>
       </label>
       <div>
-        <Switch id={id} />
+        <Switch id={id} checked={false} onChange={() => {}}/>
       </div>
     </div>
   );
