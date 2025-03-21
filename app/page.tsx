@@ -137,9 +137,9 @@ const AuthPage: FC<Props> = () => {
         </DetailPopup>}
         {
           openRegister && <RegisterPopup onClose={() => {
-            setLoading(false)
-            setOpenRegister(false)
-          }} />
+            setLoading(false);
+            setOpenRegister(false);
+          } } data={null} />
         }
         <main className={`mx-auto min-h-screen`}>
           <div className="relative flex h-screen lg:p-8 xl:p-16">
@@ -169,7 +169,7 @@ const AuthPage: FC<Props> = () => {
                       </p>
                     </div>
 
-                    <div
+                    {/* <div
                       onClick={handleChangeRole}
                       className="flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-white border hover:cursor-pointer dark:bg-[#3a3b3c]">
                       <button className="flex items-center gap-2 h-[50px]">
@@ -178,8 +178,8 @@ const AuthPage: FC<Props> = () => {
                           {displayRole == 1 ? <FormattedMessage id="Login.Role" /> : <FormattedMessage id="Login.Role2" />}
                         </span>
                       </button>
-                    </div>
-                    <div className="flex items-center gap-3">
+                    </div> */}
+                    {/* <div className="flex items-center gap-3">
                       <div className="h-px w-full bg-gray-200" />
                       <p className="text-base text-gray-600 dark:text-white">
                         {" "}
@@ -191,7 +191,7 @@ const AuthPage: FC<Props> = () => {
                       <p className="text-base w-full text-center font-bold dark:text-white font-sans">
                         <FormattedMessage id="Login.Role3" />
                       </p>
-                    </div>
+                    </div> */}
                     {/* email */}
                     <InputField
                       variant="auth"

@@ -30,20 +30,20 @@ const AddPanel: React.FC = () => {
     const { passData, setPassData } = usePassDataContext()
     const { isCollapsed, setIsCollapsed } = useCollapseContext();
     const [sourceInfo, setSourceInfo] = useState<PersonalInfo>({
-        name: 'kh le',
-        phoneNumber: '0708103015',
-        detailAddress: 'ktx',
-        selectedWard: 'Xã Nậm Chạc',
-        selectedDistrict: 'Quận Ba Đình',
-        selectedProvince: 'Thành phố Hà Nội',
+        name: '',
+        phoneNumber: '',
+        detailAddress: '',
+        selectedWard: '',
+        selectedDistrict: '',
+        selectedProvince: '',
     });
     const [destinationInfo, setDestinationInfo] = useState<PersonalInfo>({
-        name: 'le kh',
-        phoneNumber: '0708103015',
-        detailAddress: 'xtk',
-        selectedWard: 'Xã Nậm Chạc',
-        selectedDistrict: 'Quận Ba Đình',
-        selectedProvince: 'Thành phố Hà Nội',
+        name: '',
+        phoneNumber: '',
+        detailAddress: '',
+        selectedWard: '',
+        selectedDistrict: '',
+        selectedProvince: '',
     });
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);

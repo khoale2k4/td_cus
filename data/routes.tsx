@@ -1,5 +1,6 @@
 import { FaHeadset, FaHistory } from "react-icons/fa";
 import { FiPackage } from "react-icons/fi";
+import { IoBusiness } from "react-icons/io5";
 
 const routes = [
   {
@@ -18,7 +19,7 @@ const routes = [
     name: "Khách hàng doanh nghiệp",
     layout: "/dashboard",
     path: "business",
-    icon: <FaHeadset className="h-5 w-5" />,
+    icon: <IoBusiness className="h-5 w-5" />,
   },
   {
     name: "Hỗ trợ",

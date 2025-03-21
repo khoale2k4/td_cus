@@ -46,7 +46,7 @@ export enum LoginOption {
     CUSTOMER = "CUSTOMER"
 }
 
-const host = "http://localhost:3000/v3";
+const host = "https://api.tdlogistics.net.vn/v3";
 
 export class AuthOperation {
     private baseUrl: String;

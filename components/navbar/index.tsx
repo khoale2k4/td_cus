@@ -130,7 +130,8 @@ const Navbar = ({ }: Props) => {
           ]
         }
         , token);
-      console.log("business", isBusiness.data.length > 0)
+      // console.log("business", isBusiness.data.length > 0)
+      if(!isBusiness.data) return;
       if(isBusiness.data.length) {
         localStorage.setItem("isBussiness", "1")
       } else {
