@@ -1226,7 +1226,7 @@ export interface AdministrativePayload {
 export class AdministrativeOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = "https://api.tdlogistics.net.vn/v3/administrative";
+        this.baseUrl = host + "/administrative";
     }
 
     async get(conditions: AdministrativePayload) {

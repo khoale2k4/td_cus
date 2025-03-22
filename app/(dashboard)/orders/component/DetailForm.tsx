@@ -404,7 +404,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                                 )}
 
                                 <div className="flex gap-4">
-                                    {imagesList.map((file, index) => (
+                                    {/* {imagesList.map((file, index) => (
                                         <div key={index} className="flex flex-col items-center">
                                             <img
                                                 src={file instanceof Blob ? URL.createObjectURL(file) : ''}
@@ -421,7 +421,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                                                 <MdDelete className="h-5 w-5" />
                                             </button>
                                         </div>
-                                    ))}
+                                    ))} */}
                                     <div className="flex flex-row items-center gap-4 mt-4">
                                         <button
                                             onClick={() => { shippingBillButton(true) }}

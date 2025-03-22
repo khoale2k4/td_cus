@@ -37,7 +37,7 @@ const HistoryTable = () => {
         <div className="flex flex-col gap-4">
             {data ? (
                 <>
-                    <CheckTable columnsData={columnsData} tableData={data} previousPage={() => setPage((prev) => Math.max(prev - 1, 1))} nextPage={() => setPage((prev) => prev + 1)} gotoPage={(page) => setPage(page)}/>
+                    <CheckTable columnsData={columnsData} tableData={data} previousPage={() => setPage((prev) => Math.max(prev - 1, 1))} nextPage={() => setPage((prev) => prev + 1)} gotoPage={(page) => setPage(page)} curPage={page}/>
                 </>
             ) : (
                 <Card className="h-full w-full text-red-500 flex justify-center items-center">

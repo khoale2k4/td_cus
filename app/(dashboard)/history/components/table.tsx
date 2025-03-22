@@ -27,13 +27,14 @@ type Props = {
     nextPage: () => void;
     previousPage: () => void;
     gotoPage: (page: number) => void;
+    curPage: number;
 };
 
 const CheckTable = (props: Props) => {
     const { columnsData, tableData,
         nextPage,
         previousPage,
-        gotoPage, } = props;
+        gotoPage, curPage} = props;
     const [openModal, setOpenModal] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [openError2, setOpenError2] = useState(false);
@@ -121,8 +122,8 @@ const CheckTable = (props: Props) => {
                 <div className="gap-2 h-full hidden lg:flex">
                     <input
                         type="string"
-                        value={currentPageInput}
-                        onChange={() => gotoPage(currentPageInput)}
+                        value={curPage}
+                        onChange={() => gotoPage(curPage)}
                         className="w-10 text-center focus:outline-none font-semibold dark:bg-[#3A3B3C] bg-lightPrimary dark:text-white flex items-center rounded-full"
                     />
                     <Button className={`flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 text-navy-800 dark:text-white  border 

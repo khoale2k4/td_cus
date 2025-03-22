@@ -33,17 +33,17 @@ const AddPanel: React.FC = () => {
         name: '',
         phoneNumber: '',
         detailAddress: '',
-        selectedWard: '',
-        selectedDistrict: '',
-        selectedProvince: '',
+        selectedWard: 'Thành phố Hồ Chí Minh',
+        selectedDistrict: 'Thành phố Thủ Đức',
+        selectedProvince: 'Phường Linh Trung',
     });
     const [destinationInfo, setDestinationInfo] = useState<PersonalInfo>({
         name: '',
         phoneNumber: '',
         detailAddress: '',
-        selectedWard: '',
-        selectedDistrict: '',
-        selectedProvince: '',
+        selectedWard: 'Thành phố Hồ Chí Minh',
+        selectedDistrict: 'Thành phố Thủ Đức',
+        selectedProvince: 'Phường Linh Trung',
     });
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -81,11 +81,11 @@ const AddPanel: React.FC = () => {
         name: "",
     });
     const [insuranceData, setInsuranceData] = useState({
-        companyName: "KhoaCompany", 
-        companyAddress: "ktx khu A", 
+        companyName: "", 
+        companyAddress: "", 
         companyPhone: "0708103015", 
         companyEmail: "levodangkhoatg2@gmail.com", 
-        companyTaxCode: "123321"
+        companyTaxCode: ""
     });
 
     const [images, setImages] = useState<File[]>([]);
@@ -280,7 +280,6 @@ const AddPanel: React.FC = () => {
             isBulkyGood: additionData.isBulkyGood,
             note: "",
         }, token??"");
-        console.log(orderResponse.data.id)
         if (additionData.insurance) {
             const cargoInsuranceResponse = await cargoInsuranceOperation.create({
                 hasDeliveryCare: true,

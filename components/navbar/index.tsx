@@ -111,9 +111,9 @@ const Navbar = ({ }: Props) => {
     // console.log("response2", response2)
     console.log("response", response)
     if (!response.error) {
-      setPassData(response.data);
+      // setPassData(response.data);
       // setDataUpdate(response.data);
-      setUsername(response.data.email);
+      // setUsername(response.data.email);
       // const response2 = await getinfo.getAvatar({ customerId: response.data.id })
       // setProfilePicture(response2.error == "" ? "/img/avatars/avatar_4.jpg" : `${imgURL}${response.data.id}`)
       // setCanUpload(true)
@@ -138,7 +138,8 @@ const Navbar = ({ }: Props) => {
         localStorage.removeItem("isBussiness")
       }
     }
-    else if (!!response.data) {
+    else {
+      route.push("/");
     }
 
     // if (!response2.error || response2.error == undefined) console.log(response2)

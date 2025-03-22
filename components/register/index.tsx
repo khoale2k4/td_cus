@@ -502,7 +502,6 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
 
                             {selectedImage && (
                                 <div className="relative w-32 h-32 border rounded-lg overflow-hidden">
-                                    <img src={selectedImage} alt="Xem trước ảnh" className="w-full h-full object-cover" />
                                     <button
                                         className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                                         onClick={handleRemoveImage}
