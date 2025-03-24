@@ -16,6 +16,7 @@ import SubmitPopup from '@/components/submit';
 import { useSourceContext } from '../context/SourceContext';
 import { useDestinationContext } from '../context/DestinationContext';
 import Switch from '@/components/switch';
+import VoucherPopup from './VoucherPopup';
 
 interface PersonalInfo {
     name: string;
@@ -69,6 +70,8 @@ const AddPanel: React.FC = () => {
         mass: 1,
         COD: 10000,
     });
+    const [voucherId, setVoucherId] = useState<string | null>(null);
+    const [openVoucher, setOpenVoucher] = useState(false);
     const [additionData, setAdditionData] = useState({
         insurance: false,
         doorToDoor: false,
@@ -81,10 +84,10 @@ const AddPanel: React.FC = () => {
         name: "",
     });
     const [insuranceData, setInsuranceData] = useState({
-        companyName: "", 
-        companyAddress: "", 
-        companyPhone: "0708103015", 
-        companyEmail: "levodangkhoatg2@gmail.com", 
+        companyName: "",
+        companyAddress: "",
+        companyPhone: "0708103015",
+        companyEmail: "levodangkhoatg2@gmail.com",
         companyTaxCode: ""
     });
 
@@ -192,12 +195,16 @@ const AddPanel: React.FC = () => {
         const destCoor = await map.getCoordinates(destinationInfo.detailAddress + destinationInfo.selectedWard + destinationInfo.selectedDistrict + destinationInfo.selectedProvince, token);
         setSource(destCoor)
         const response = await orderOperation.calculateFee({
-            serviceType: formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : "HTT"),
+            serviceType: formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : 'Chuyển phát hỏa tốc'),
             latSource: sourceCoor?.lat ?? 10.01344,
             longSource: sourceCoor?.lng ?? 106.13123,
             latDestination: destCoor?.lat ?? 10.0123231,
             longDestination: destCoor?.lng ?? 106.424324,
-            cod: formData.COD
+            cod: formData.COD,
+            mass: formData.mass,
+            provinceDest: destinationInfo.selectedProvince,
+            provinceSource: sourceInfo.selectedProvince,
+            voucherId: voucherId
         }, token)
         if (response.error) {
             setMessage(response.message ? response.message : response.error.message ?? intl.formatMessage({ id: "Orders.Message" }))
@@ -225,11 +232,12 @@ const AddPanel: React.FC = () => {
             setMessage(shippingBillResponse.message);
             setOpenError(true);
         } else {
+            console.log(passData);
             const shippingBillResponse = await shippingBillOperation.getByCustomerId(passData.id, token);
-            if(shippingBillResponse.success) {
+            if (shippingBillResponse.success) {
                 const shippingBillData = shippingBillResponse.data;
-                console.log({...shippingBillData, companyTaxCode: shippingBillData.taxCode, companyEmail: shippingBillData.email});
-                handleInsuranceDataChange({...shippingBillData, companyTaxCode: shippingBillData.taxCode, companyEmail: shippingBillData.email});
+                console.log({ ...shippingBillData, companyTaxCode: shippingBillData.taxCode, companyEmail: shippingBillData.email });
+                handleInsuranceDataChange({ ...shippingBillData, companyTaxCode: shippingBillData.taxCode, companyEmail: shippingBillData.email });
             }
         }
     }
@@ -250,7 +258,7 @@ const AddPanel: React.FC = () => {
         }
 
         const orderResponse = await orderOperation.create({
-            serviceType:  formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : "HTT"),
+            serviceType: formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : "HTT"),
             nameSender: sourceInfo.name,
             nameReceiver: destinationInfo.name,
             phoneNumberReceiver: destinationInfo.phoneNumber,
@@ -279,7 +287,7 @@ const AddPanel: React.FC = () => {
             deliverDoorToDoor: additionData.doorToDoor,
             isBulkyGood: additionData.isBulkyGood,
             note: "",
-        }, token??"");
+        }, token ?? "");
         if (additionData.insurance) {
             const cargoInsuranceResponse = await cargoInsuranceOperation.create({
                 hasDeliveryCare: true,
@@ -381,6 +389,9 @@ const AddPanel: React.FC = () => {
             {openError && (
                 <NotiPopup message={message} onClose={() => setOpenError(false)} />
             )}
+            {openVoucher && (
+                <VoucherPopup isOpen={openVoucher} onClose={() => setOpenVoucher(false)} onSelect={(id) => {setVoucherId(id); handleCalculateFee();}}/>
+            )}
             <div className={`relative ${isCollapsed ? 'w-full h-8 sm:w-8 sm:h-full' : ' w-full h-[calc(100dvh-158px)] md:h-[calc(100dvh-128px)] sm:w-2/3 md:w-[550px]'} sticky z-[40] duration-500 transition-colors-none ease-in-out`}>
                 <div className={`border-8 relative overflow-clip border-white dark:border-[#242526] shadow-xl shadow-shadow-500 dark:shadow-none rounded-xl sm:rounded-tr-none sm:rounded-l-xl duration-500 ${isCollapsed ? 'opacity-0 h-8' : 'opacity-100 h-[calc(100dvh-158px)] md:h-[calc(100dvh-126px)]'}`} style={{ transitionDelay: isCollapsed ? '0ms' : '200ms' }}>
                     <div className={`relative bg-white/10 backdrop-blur-sm dark:bg-[#1f1f1f4d] h-full rounded-[4px] sm:rounded-tr-none sm:rounded-l-[4px] duration-200 border-b-2 dark:border-b border-white/10 p-1.5 dark:border-white/30 flex flex-col gap-1.5 overflow-y-scroll no-scrollbar ${isCollapsed ? 'opacity-0' : 'opacity-100'}`} style={{ transitionDelay: isCollapsed ? '0ms' : '400ms' }}>
@@ -458,8 +469,16 @@ const AddPanel: React.FC = () => {
                                             <Image src="/Logo_horizontal.png" alt="Your image" width={210} height={210} />
                                         </div>
                                         <h1 className="w-full md:text-lg flex gap-2 font-bold place-items-center justify-center text-center text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans mb-2">
-                                            <div className='text-[#74bc42]'><FormattedMessage id="fee" />:</div>{parseFloat(fee).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                            <div className='text-[#74bc42]'><FormattedMessage id="fee" />:</div>
+                                            <span>{parseFloat(fee).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                                            <button
+                                                className="ml-4 px-2 py-1 text-white bg-red-400 rounded-md hover:bg-red-600 transition"
+                                                onClick={() => setOpenVoucher(true)}
+                                            >
+                                                <FormattedMessage id="ChooseVoucher" defaultMessage={voucherId??"Chọn voucher"} />
+                                            </button>
                                         </h1>
+
                                         <div className="w-full text-[#4b4b4b] dark:text-white">
                                             <div className="flex flex-col gap-2">
                                                 <div className='flex gap-2'><div className='w-32 min-w-[128px] flex justify-between'><strong><FormattedMessage id="History.NameSender" /></strong>:</div> {sourceInfo.name}</div>

@@ -42,6 +42,8 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
     const [message, setMessage] = useState("")
     const [openError, setOpenError] = useState(false)
     const [openError2, setOpenError2] = useState(false)
+    const [fileUrl, setFileUrl] = useState<string | null>(null);
+    const [fileInfo, setFileInfo] = useState<{ name: string; path: string } | null>(null);
     const [openSubmit, setOpenSubmit] = useState(false)
     const phoneNumberRegex = /^[0-9]{1,10}$/;
     const emailRegex = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9._-]{1,255}\.[a-zA-Z]{2,4}$/;
@@ -83,9 +85,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            // console.log(imageUrl)
-            setSelectedImage(imageUrl);
+            setSelectedImage(file.name);
         }
     };
 
@@ -502,12 +502,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
 
                             {selectedImage && (
                                 <div className="relative w-32 h-32 border rounded-lg overflow-hidden">
-                                    <button
-                                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                                        onClick={handleRemoveImage}
-                                    >
-                                        ✕
-                                    </button>
+                                    {selectedImage}
                                 </div>
                             )}
                         </div>

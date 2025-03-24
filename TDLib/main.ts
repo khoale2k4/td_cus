@@ -46,7 +46,7 @@ export enum LoginOption {
     CUSTOMER = "CUSTOMER"
 }
 
-const host = "https://api.tdlogistics.net.vn/v3";
+const host = "http://localhost:3000/v3";
 
 export class AuthOperation {
     private baseUrl: String;
@@ -991,10 +991,14 @@ export interface CancelingOrderCriteria {
 export interface CalculateFeePayload {
     serviceType: string;
     cod: number;
-    latSource: number,
-    longSource: number,
-    latDestination: number,
-    longDestination: number
+    provinceSource: string;
+    provinceDest: string;
+    latSource: number;
+    longSource: number;
+    latDestination: number;
+    longDestination: number;
+    voucherId: string | null;
+    mass: number;
 }
 
 export interface UpdatingOrderImageParams {
@@ -1226,7 +1230,8 @@ export interface AdministrativePayload {
 export class AdministrativeOperation {
     private baseUrl: string;
     constructor() {
-        this.baseUrl = host + "/administrative";
+        // this.baseUrl = host + "/administrative";
+        this.baseUrl = "https://api.tdlogistics.net.vn/v3/administrative";
     }
 
     async get(conditions: AdministrativePayload) {
@@ -2733,3 +2738,59 @@ export class DriversOperation {
 
 //Business
 
+export class VoucherOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = host + '/voucher';
+    }
+    async getVouchersByCustomer(page: number, size: number, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/get`, {
+                params: {
+                    page: page,
+                    size: size
+                },
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error fetching vouchers: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async search(payload: SearchPayload, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error searching vouchers: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+}

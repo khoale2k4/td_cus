@@ -111,7 +111,7 @@ const Navbar = ({ }: Props) => {
     // console.log("response2", response2)
     console.log("response", response)
     if (!response.error) {
-      // setPassData(response.data);
+      setPassData(response.data);
       // setDataUpdate(response.data);
       // setUsername(response.data.email);
       // const response2 = await getinfo.getAvatar({ customerId: response.data.id })
@@ -144,7 +144,7 @@ const Navbar = ({ }: Props) => {
 
     // if (!response2.error || response2.error == undefined) console.log(response2)
     // else if (!!response2.data) {
-    //   setPassData(response2.data);
+      // setPassData(response2.data);
     //   setDataUpdate(response2.data);
     //   setUsername(response2.data.account.email);
     //   setProfilePicture("/img/avatars/avatar_4.jpg")

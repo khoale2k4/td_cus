@@ -166,8 +166,13 @@ const DetailForm: React.FC<DetailFormProps> = ({
     };
 
     const handleRemoveImage = (index: number) => {
-        setImages((prev) => prev.filter((_, i) => i !== index));
+        setImages((prev) => {
+            const newImages = prev.filter((_, i) => i !== index);
+            console.log("Sau khi xóa:", newImages);
+            return [...newImages]; // Đảm bảo cập nhật state mới
+        });
     };
+
 
     const tabContentVariants: Variants = {
         initial: { x: 20, opacity: 0 },
@@ -175,12 +180,12 @@ const DetailForm: React.FC<DetailFormProps> = ({
         exit: { x: 20, opacity: 0 },
     };
 
-    const handleFileChange = () => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        console.log(file);
         if (file) {
+            console.log("File uploaded:", file);
             if (images.length < 2) {
-                setImages([...images, file]);
+                setImages((prev) => [...prev, file]); // Đảm bảo cập nhật state đúng cách
             }
         }
     };
@@ -350,7 +355,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                                 />
                             </div>
 
-                            <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyPhone ? "border-navy-800" : "border-gray-500"}`}>
+                            {/* <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyPhone ? "border-navy-800" : "border-gray-500"}`}>
                                 <p className="pl-4 pr-3 text-xl">
                                     <MdPhonelinkRing className={`h-4 w-4 dark:text-white ${companyPhone ? "text-[#4b4b4b]" : "text-gray-400"}`} />
                                 </p>
@@ -361,7 +366,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                                     placeholder="Số điện thoại"
                                     className="block h-full w-full rounded-r-full bg-[#F0F2F5] pr-4 text-sm font-sans font-medium text-[#4b4b4b] outline-none placeholder:!text-gray-400 dark:bg-[#3a3b3c] dark:text-white dark:placeholder:!text-white"
                                 />
-                            </div>
+                            </div> */}
 
                             <div className={`flex items-center rounded-tl-lg bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 ${companyPhone ? "border-navy-800" : "border-gray-500"}`}>
                                 <p className="pl-4 pr-3 text-xl">
@@ -389,56 +394,63 @@ const DetailForm: React.FC<DetailFormProps> = ({
                                 />
                             </div>
 
-                            <div className="flex flex-col items-center gap-4 mt-4">
-                                {imagesList.length < 2 && (
-                                    <label className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer">
-                                        <MdUpload className="h-5 w-5" />
-                                        <span>Thêm ảnh</span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={handleFileChange}
-                                        />
-                                    </label>
-                                )}
+                            <div className="flex flex-col items-center mt-4">
+                                <div className="flex flex-row items-center gap-4 mt-4">
+                                    {imagesList.map((file, index) => {
+                                        console.log("File:", file); // Kiểm tra giá trị của file
+                                        if (!(file instanceof Blob)) {
+                                            console.error(`File tại index ${index} không phải Blob hoặc File`);
+                                            return null;
+                                        }
 
-                                <div className="flex gap-4">
-                                    {/* {imagesList.map((file, index) => (
-                                        <div key={index} className="flex flex-col items-center">
-                                            <img
-                                                src={file instanceof Blob ? URL.createObjectURL(file) : ''}
-                                                alt={`Ảnh ${index + 1}`}
-                                                className="w-32 h-32 object-cover rounded-lg border"
+                                        const imageUrl = URL.createObjectURL(file);
+
+                                        return (
+                                            <div key={index} className="flex flex-col items-center">
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`Ảnh ${index + 1}`}
+                                                    className="w-32 h-32 object-cover rounded-lg border"
+                                                    onLoad={() => URL.revokeObjectURL(imageUrl)} // Giải phóng bộ nhớ
+                                                />
+                                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                                    {file.name}
+                                                </p>
+                                                <button
+                                                    className="mt-2 bg-red-500 text-white px-2 py-1 rounded-lg"
+                                                    onClick={() => handleRemoveImage(index)}
+                                                >
+                                                    <MdDelete className="h-5 w-5" />
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+
+
+                                    {/* {imagesList.length < 2 && (
+                                        <label className="flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer border border-gray-300 dark:border-gray-600 hover:border-blue-500 transition">
+                                            <MdUpload className="h-5 w-5" />
+                                            <span>Thêm ảnh</span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={handleFileChange}
                                             />
-                                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                                {file.name}
-                                            </p>
-                                            <button
-                                                className="mt-2 bg-red-500 text-white px-2 py-1 rounded-lg"
-                                                onClick={() => handleRemoveImage(index)}
-                                            >
-                                                <MdDelete className="h-5 w-5" />
-                                            </button>
-                                        </div>
-                                    ))} */}
-                                    <div className="flex flex-row items-center gap-4 mt-4">
-                                        <button
-                                            onClick={() => { shippingBillButton(true) }}
-                                            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all"
-                                        >
-                                            <MdSave className="h-5 w-5" />
-                                            <span>Lưu hoá đơn</span>
-                                        </button>
+                                        </label>
 
-                                        <button
-                                            onClick={() => { shippingBillButton(false) }}
-                                            className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-all"
-                                        >
-                                            <MdImage className="h-5 w-5" />
-                                            <span>Tải hoá đơn</span>
-                                        </button>
-                                    </div>
+                                    )} */}
+                                </div>
+
+                                <div className="flex flex-row items-center gap-4 mt-4">
+                                    <button onClick={() => { shippingBillButton(true) }} className="flex items-center gap-2 h-[50px]">
+                                        <MdSave className="h-5 w-5" />
+                                        <span>Lưu hoá đơn</span>
+                                    </button>
+                                    <button onClick={() => { shippingBillButton(false) }} className="flex items-center gap-2 h-[50px]">
+                                        <MdImage className="h-5 w-5" />
+                                        <span>Tải hoá đơn</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -458,7 +470,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                         </span>
                         <Switch checked={receiverWillPay} onChange={() => handleSwitchChange('receiverWillPay')} />
                     </div>
-                    
+
                     <div className="flex justify-between items-center">
                         <span className="text-sm font-medium dark:text-white">
                             <FormattedMessage id="Orders.Form2.IsBulkyGood" />

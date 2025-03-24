@@ -112,6 +112,7 @@ const BusinessPage = () => {
             } else {
                 setIsBusiness(false);
             }
+            console.log(fileUrl);
         } catch (error) {
             console.error("Lỗi khi lấy file:", error);
         } finally {
