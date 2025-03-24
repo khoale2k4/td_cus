@@ -34,17 +34,20 @@ const AddPanel: React.FC = () => {
         name: '',
         phoneNumber: '',
         detailAddress: '',
-        selectedWard: 'Thành phố Hồ Chí Minh',
-        selectedDistrict: 'Thành phố Thủ Đức',
-        selectedProvince: 'Phường Linh Trung',
+        // selectedWard: 'Thành phố Hồ Chí Minh',
+        // selectedDistrict: 'Thành phố Thủ Đức',
+        // selectedProvince: 'Phường Linh Trung',
+        selectedWard: '',
+        selectedDistrict: '',
+        selectedProvince: '',
     });
     const [destinationInfo, setDestinationInfo] = useState<PersonalInfo>({
         name: '',
         phoneNumber: '',
         detailAddress: '',
-        selectedWard: 'Thành phố Hồ Chí Minh',
-        selectedDistrict: 'Thành phố Thủ Đức',
-        selectedProvince: 'Phường Linh Trung',
+        selectedWard: '',
+        selectedDistrict: '',
+        selectedProvince: '',
     });
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -86,8 +89,8 @@ const AddPanel: React.FC = () => {
     const [insuranceData, setInsuranceData] = useState({
         companyName: "",
         companyAddress: "",
-        companyPhone: "0708103015",
-        companyEmail: "levodangkhoatg2@gmail.com",
+        companyPhone: "",
+        companyEmail: "",
         companyTaxCode: ""
     });
 
