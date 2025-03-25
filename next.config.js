@@ -2,7 +2,7 @@ module.exports = {
     i18n: {
         locales: ['vi', 'en'],
         defaultLocale: 'vi',
-        localDetection: false
+        localeDetection: false
     },
     eslint: {
         ignoreDuringBuilds: true,
