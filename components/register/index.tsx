@@ -20,6 +20,7 @@ type BusinessData = {
     district: string;
     ward: string;
     file: string;
+    fileInfo: { name: string; path: string } | null;
 } | null;
 
 interface RegisterPopupProps {
@@ -42,7 +43,6 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
     const [message, setMessage] = useState("")
     const [openError, setOpenError] = useState(false)
     const [openError2, setOpenError2] = useState(false)
-    const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [fileInfo, setFileInfo] = useState<{ name: string; path: string } | null>(null);
     const [openSubmit, setOpenSubmit] = useState(false)
     const phoneNumberRegex = /^[0-9]{1,10}$/;
@@ -85,7 +85,11 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setSelectedImage(file.name);
+            console.log("name", file.name);
+            const fileBlob = new Blob([file], { type: "application/pdf" });
+            const url = URL.createObjectURL(fileBlob);
+            setSelectedImage(url);
+            setFileInfo({ name: file.name, path: url });
         }
     };
 
@@ -313,7 +317,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
         };
         const businessOp = new BusinessOperation();
         const authOperation = new AuthOperation();
-        if (data) { 
+        if (data) {
             const response = await businessOp.update(data.id, info, imageBlob, token)
             console.log(response)
             if (response.error) {
@@ -501,10 +505,29 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
                             </label>}
 
                             {selectedImage && (
-                                <div className="relative w-32 h-32 border rounded-lg overflow-hidden">
-                                    {selectedImage}
+                                <div className="flex gap-3 mt-4">
+                                    {/* Nút tải xuống */}
+                                    <a
+                                        href={selectedImage}
+                                        download={fileInfo?.name ?? ""}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition-all"
+                                    >
+                                        📄 {fileInfo?.name ?? ""}
+                                    </a>
+
+                                    {/* Nút xóa */}
+                                    <button
+                                        onClick={() => {
+                                            setSelectedImage(null);
+                                            setFileInfo(null);
+                                        }}
+                                        className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-all"
+                                    >
+                                        Xóa
+                                    </button>
                                 </div>
                             )}
+
                         </div>
                     </motion.div>
 

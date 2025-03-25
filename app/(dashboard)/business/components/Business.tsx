@@ -15,6 +15,7 @@ type BusinessData = {
     district: string;
     ward: string;
     file: string;
+    fileInfo: { name: string; path: string } | null;
 } | null;
 
 const BusinessPage = () => {
@@ -43,43 +44,6 @@ const BusinessPage = () => {
                 token
             );
 
-            // {
-            //     "success": true,
-            //     "message": "Tìm kiếm khách hàng doanh nghiệp thành công",
-            //     "data": [
-            //         {
-            //             "id": "833caab0-91f3-419a-8a4b-d7e0de9f2e82",
-            //             "name": "khoa.letgkhmtk22",
-            //             "taxCode": "2222",
-            //             "province": "Thành phố Hà Nội",
-            //             "district": "Quận Hoàn Kiếm",
-            //             "ward": null,
-            //             "customerId": "a6b1e63d-5ae2-4de2-b613-52f6e5e8e4ea",
-            //             "agencyId": null,
-            //             "createdAt": "2025-03-19T23:53:25.000Z",
-            //             "updatedAt": "2025-03-19T23:53:25.000Z",
-            //             "customer": {
-            //                 "id": "a6b1e63d-5ae2-4de2-b613-52f6e5e8e4ea",
-            //                 "phoneNumber": "0708103015",
-            //                 "email": "levodangkhoatg2@gmail.com",
-            //                 "firstName": "Lê",
-            //                 "lastName": "Khoa",
-            //                 "avatar": null,
-            //                 "createdAt": "2025-03-01T03:25:54.000Z",
-            //                 "updatedAt": "2025-03-05T00:14:17.000Z"
-            //             },
-            //             "agency": null,
-            //             "license": {
-            //                 "id": "b2fad3b9-281a-497e-a4f7-45bbd4b5a2d8",
-            //                 "name": "1742428404818_blob",
-            //                 "path": "src/modules/storage/uploads/business_license/1742428404818_blob",
-            //                 "businessId": "833caab0-91f3-419a-8a4b-d7e0de9f2e82",
-            //                 "createdAt": "2025-03-19T23:53:25.000Z",
-            //                 "updatedAt": "2025-03-19T23:53:25.000Z"
-            //             }
-            //         }
-            //     ]
-            // }
 
             console.log("Business Data:", response.data);
 
@@ -92,6 +56,7 @@ const BusinessPage = () => {
                     setUpdateData({
                         name: businessData.name,
                         file: license.name,
+                        fileInfo: fileInfo,
                         id: businessData.id,
                         taxCode: businessData.taxCode,
                         district: "",
