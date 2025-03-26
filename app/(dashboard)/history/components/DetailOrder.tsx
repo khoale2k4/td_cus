@@ -18,7 +18,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ""
     });
-    const [shipper, setShipper] = useState<{id: string, fullName: string, phoneNumber: string} | null>(null);
+    const [shipper, setShipper] = useState<{id: string, fullname: string, phoneNumber: string} | null>(null);
     const [coordinates, setCoordinates] = useState<{ lat: number, lng: number }[]>([]);
     useEffect(() => {
         const handleFetchData = async () => {
@@ -70,7 +70,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
         return (<strong style={{ color: "red" }}><FormattedMessage id={id} />:</strong>);
     }
 
-    const getDetail = (id: string, data: string) => {
+    const getDetail = (id: string, data: string | null) => {
         return (
             <div className='flex gap-2'>
                 <div className='w-32 min-w-[128px] flex justify-between'>
@@ -145,7 +145,15 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
 
                             {getDivider({ vertical: true })}
                             {getTitle("History.Detail.Shipper")}
-                            {getDetail("History.Shipper", dataInitial.shipper)}
+                            {!shipper ? (
+                                getDetail("History.Shipper", null)
+                            ) : (
+                                <>
+                                    {getDetail("History.ShipperName", shipper.fullname)}
+                                    {getDetail("History.ShipperPhone", shipper.phoneNumber)}
+                                    {/* {getDetail("History.ShipperID", shipper.id)} */}
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
