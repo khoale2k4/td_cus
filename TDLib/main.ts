@@ -1123,6 +1123,34 @@ export class OrdersOperation {
         }
     }
 
+
+    async getShipperWhoTakenOrder(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/shipper/get/${id}`, {
+                withCredentials: true,
+                validateStatus: (status) => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status,
+            };
+        } catch (error: any) {
+            console.log("Error getting shipper who taken order: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
+        }
+    }
+
     async calculateFee(payload: CalculateFeePayload, token: string) {
         try {
             const response = await axios.post(`${this.baseUrl}/fee/calculate`, payload, {
