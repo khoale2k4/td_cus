@@ -140,6 +140,13 @@ const DetailForm: React.FC<DetailFormProps> = ({
         { value: 2, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' }) }
     ];
 
+    const typesOfPaymentMethod = [
+        { value: 0, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfPaymentMethod1' }) },
+        { value: 1, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfPaymentMethod2' }) },
+    ];
+
+    
+
     const increment = (key: keyof DetailFormProps['formData']) => {
         setFormData({ [key]: formData[key] + 1 });
     };
@@ -242,6 +249,27 @@ const DetailForm: React.FC<DetailFormProps> = ({
                         value={typesOfDelivery.find(option => option.value === selectedOption)}
                         onChange={handleSelectOption}
                         options={typesOfDelivery}
+                        formatOptionLabel={(option: { value: number, text: string }) => (
+                            <div className="flex items-center space-x-2">
+                                <span className="ml-2 text-sm font-medium">{option.text}</span>
+                            </div>
+                        )}
+                    />
+                </div>
+                <h1 className="w-full px-1 sm:text-base mt-2 text-left text-sm font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans">
+                    <FormattedMessage id="Orders.Form2.Message2" />
+                </h1>
+                <div className="flex flex-col gap-2 w-full">
+                    <Select
+                        id="locationSelect"
+                        instanceId="locationSelect"
+                        isSearchable={false}
+                        styles={styles}
+                        className={`flex items-center bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 px-1 rounded-full`}
+                        placeholder={intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery1' })}
+                        value={typesOfPaymentMethod.find(option => option.value === selectedOption)}
+                        onChange={handleSelectOption}
+                        options={typesOfPaymentMethod}
                         formatOptionLabel={(option: { value: number, text: string }) => (
                             <div className="flex items-center space-x-2">
                                 <span className="ml-2 text-sm font-medium">{option.text}</span>

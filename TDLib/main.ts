@@ -942,6 +942,7 @@ export interface OrderDTO {
     deliverDoorToDoor: boolean;
     isBulkyGood: boolean;
     note: string;
+    paymentMethod: 'BY_CASH' | 'BY_BANK_TRANSFER';
 }
 
 

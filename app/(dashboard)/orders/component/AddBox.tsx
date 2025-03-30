@@ -72,6 +72,7 @@ const AddPanel: React.FC = () => {
         height: 1,
         mass: 1,
         COD: 10000,
+        paymentMethod: 0
     });
     const [voucherId, setVoucherId] = useState<string | null>(null);
     const [openVoucher, setOpenVoucher] = useState(false);
@@ -193,9 +194,9 @@ const AddPanel: React.FC = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
         const map = new MapOperation();
-        const sourceCoor = await map.getCoordinates(sourceInfo.detailAddress + sourceInfo.selectedWard + sourceInfo.selectedDistrict + sourceInfo.selectedProvince, token);
+        const sourceCoor = await map.getCoordinates(sourceInfo.detailAddress + sourceInfo.selectedWard + sourceInfo.selectedDistrict + sourceInfo.selectedProvince, process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? "");
         setSource(sourceCoor)
-        const destCoor = await map.getCoordinates(destinationInfo.detailAddress + destinationInfo.selectedWard + destinationInfo.selectedDistrict + destinationInfo.selectedProvince, token);
+        const destCoor = await map.getCoordinates(destinationInfo.detailAddress + destinationInfo.selectedWard + destinationInfo.selectedDistrict + destinationInfo.selectedProvince, process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? "");
         setSource(destCoor)
         const response = await orderOperation.calculateFee({
             serviceType: formData.selectedOption == 0 ? "Siêu nhanh" : (formData.selectedOption == 1 ? "Siêu rẻ" : 'Chuyển phát hỏa tốc'),
@@ -290,6 +291,7 @@ const AddPanel: React.FC = () => {
             deliverDoorToDoor: additionData.doorToDoor,
             isBulkyGood: additionData.isBulkyGood,
             note: "",
+            paymentMethod: formData.selectedOption === 0?'BY_CASH':'BY_BANK_TRANSFER'
         }, token ?? "");
         if (additionData.insurance) {
             const cargoInsuranceResponse = await cargoInsuranceOperation.create({
