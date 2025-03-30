@@ -257,7 +257,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                     />
                 </div>
                 <h1 className="w-full px-1 sm:text-base mt-2 text-left text-sm font-bold text-[#4b4b4b] dark:text-white text-nowrap cursor-default font-sans">
-                    <FormattedMessage id="Orders.Form2.Message2" />
+                    <FormattedMessage id="Orders.Form2.Message8" />
                 </h1>
                 <div className="flex flex-col gap-2 w-full">
                     <Select
