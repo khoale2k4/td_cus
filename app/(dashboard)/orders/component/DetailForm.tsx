@@ -160,6 +160,10 @@ const DetailForm: React.FC<DetailFormProps> = ({
         setFormData({ selectedOption: selectedOption.value });
     };
 
+    const handleSelectPaymentMethod = (method: any) => {
+        setFormData({ paymentMethod: method.value });
+    }
+
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = event.target.value.replace(/\D/g, '');
         setFormData({ [key]: parseInt(value) || 0 });
@@ -269,7 +273,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                         className={`flex items-center bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 px-1 rounded-full`}
                         placeholder={intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery1' })}
                         value={typesOfPaymentMethod.find(option => option.value === paymentMethod)}
-                        onChange={handleSelectOption}
+                        onChange={handleSelectPaymentMethod}
                         options={typesOfPaymentMethod}
                         formatOptionLabel={(option: { value: number, text: string }) => (
                             <div className="flex items-center space-x-2">

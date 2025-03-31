@@ -312,8 +312,8 @@ const AddPanel: React.FC = () => {
             setOpenSubmit(false)
             setMessage(intl.formatMessage({ id: "Orders.Message2" }))
             setOpenError(true)
-            setQrCode(orderResponse.data.qrCode);
-            setCurrentForm(formData.selectedOption === 0 ? 0 : 4);
+            setQrCode(orderResponse.data.qrcode);
+            setCurrentForm(formData.paymentMethod === 0 ? 0 : 4);
         }
     };
 
