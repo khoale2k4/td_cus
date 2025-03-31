@@ -161,10 +161,12 @@ const AddPanel: React.FC = () => {
         };
     }, []);
 
+
     useEffect(() => {
+        console.log("passData add", passData);
         if (passData && firstLoad) {
             setSourceInfo({
-                name: passData.fullname ? passData.fullname : "",
+                name: passData.firstName ? passData.firstName + " " + passData.lastName : "",
                 detailAddress: passData.detailAddress ? passData.detailAddress : "",
                 selectedDistrict: passData.district ? passData.district : "",
                 phoneNumber: passData.phoneNumber ? passData.phoneNumber : "",

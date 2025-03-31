@@ -15,10 +15,11 @@ import { Variants, motion, useAnimation } from "framer-motion";
 import cloudData from '@/data/cloud.json';
 import bikeData from '@/data/lottie.json';
 import dynamic from "next/dynamic";
-import { AuthOperation, LoginOption } from "@/TDLib/main";
+import { AuthOperation, BusinessOperation, CustomerOperation, LoginOption, OrdersOperation } from "@/TDLib/main";
 import OTPField from "@/components/otp";
 import DetailPopup from "@/components/popup";
 import RegisterPopup from "@/components/register";
+import { usePassDataContext } from "@/providers/PassedData";
 const Lottie = dynamic(() => import('lottie-react'), {
   ssr: false,
 });
@@ -32,6 +33,7 @@ const AuthPage: FC<Props> = () => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [id, setId] = useState("");
+  const { passData, setPassData } = usePassDataContext()
   const route = useRouter();
   const [loading, setLoading] = useState(false)
   const intl = useIntl();
@@ -45,7 +47,8 @@ const AuthPage: FC<Props> = () => {
   const emailRegex = /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9._-]{1,255}\.[a-zA-Z]{2,4}$/;
   const phoneNumberRegex = /^[0-9]{1,10}$/;
   const [displayRole, setDisplayRole] = useState(role);
-  const [openRegister, setOpenRegister] = useState(false)
+  const [openRegister, setOpenRegister] = useState(false);
+  const orderOperation = new OrdersOperation();
 
   const handleCheckField = () => {
     if (!email || !phoneNumber) {
@@ -70,16 +73,96 @@ const AuthPage: FC<Props> = () => {
   const handleSignUpButton = async () => {
     if (handleCheckField()) return;
     setLoading(true)
-      const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
-      if (!response.error && !response.error?.error) {
-        setshowOtp(true)
-        setId(response.data.id)
-      } else {
-        setMessage(intl.formatMessage({ id: "Login.Message6" }))
-        setModal(true)
-        setLoading(false)
-      }
+    const response = await authOperation.sendOtp({ email: email.trim(), phoneNumber: phoneNumber.trim() })
+    if (!response.error && !response.error?.error) {
+      setshowOtp(true)
+      setId(response.data.id)
+    } else {
+      setMessage(intl.formatMessage({ id: "Login.Message6" }))
+      setModal(true)
+      setLoading(false)
+    }
   };
+
+  const checkUserLoggedIn = async () => {
+    const getinfo = new CustomerOperation()
+    // const getinfo2 = new BusinessOperation()
+    const token = localStorage.getItem("token") || "";
+    const response = await getinfo.getAuthenticatedCustomerInfo(token);
+    // const response2 = await getinfo2.getAuthenticatedInfo(token);
+    // console.log("response2", response2)
+    console.log("response", response)
+    if (!response.error) {
+      const orderRes = await orderOperation.get({
+        addition: {
+          sort: [["createdAt", "ASC"]],
+          page: 1,
+          size: 1,
+          group: []
+        },
+        criteria: [
+          {
+            field: "customerId",
+            operator: "=",
+            value: response.data.id
+          }
+        ]
+      }, token);
+      console.log(orderRes);
+      if (!orderRes.error) {
+        const order = orderRes.data[0];
+        const newPassData = {
+          town: order.wardSource,
+          province: order.provinceSource,
+          district: order.districtSource,
+          detailAddress: order.detailSource
+        };
+        console.log("newPassData", {...newPassData, ...response.data});
+        setPassData({...newPassData, ...response.data});
+      }
+      // setDataUpdate(response.data);
+      // setUsername(response.data.email);
+      // const response2 = await getinfo.getAvatar({ customerId: response.data.id })
+      // setProfilePicture(response2.error == "" ? "/img/avatars/avatar_4.jpg" : `${imgURL}${response.data.id}`)
+      // setCanUpload(true)
+      const busOp = new BusinessOperation();
+      const isBusiness = await busOp.searchBusinesses(
+        {
+          addition: {
+            sort: [],
+            page: 1,
+            size: 1,
+            group: []
+          },
+          criteria: [
+          ]
+        }
+        , token);
+      // console.log("business", isBusiness.data.length > 0)
+      if (!isBusiness.data) return;
+      if (isBusiness.data.length) {
+        localStorage.setItem("isBussiness", "1")
+      } else {
+        localStorage.removeItem("isBussiness")
+      }
+      route.push("/orders");
+    }
+    else {
+      route.push("/");
+    }
+
+    // if (!response2.error || response2.error == undefined) console.log(response2)
+    // else if (!!response2.data) {
+    // setPassData(response2.data);
+    //   setDataUpdate(response2.data);
+    //   setUsername(response2.data.account.email);
+    //   setProfilePicture("/img/avatars/avatar_4.jpg")
+    // }
+    // if (((!!response.error) || (response.error == undefined)) && ((!!response2.error) || (response2.error == undefined))) {
+    //   setMessage(intl.formatMessage({ id: "Navbar.Message" }))
+    //   openModal(true)
+    // }
+  }
 
   const handleNotificationClose = async () => {
     setModal(false);
@@ -117,6 +200,7 @@ const AuthPage: FC<Props> = () => {
   }, [email, phoneNumber]);
 
   useEffect(() => {
+    checkUserLoggedIn();
     setIsAnimated(true);
     return () => {
       setIsAnimated(false);
@@ -131,7 +215,7 @@ const AuthPage: FC<Props> = () => {
         )}
         {otp && <DetailPopup onClose={() => { setLoading(false); setshowOtp(false) }} title="Nhập OTP" className2="sm:w-fit">
           <div className="flex flex-col gap-4">
-            <OTPField id = {id} setMessage={setMessage} setModal={setModal} setError={setError} />
+            <OTPField id={id} setMessage={setMessage} setModal={setModal} setError={setError} />
             <div className="text-center"><FormattedMessage id="Login.Message7" /></div>
           </div>
         </DetailPopup>}
@@ -139,7 +223,7 @@ const AuthPage: FC<Props> = () => {
           openRegister && <RegisterPopup onClose={() => {
             setLoading(false);
             setOpenRegister(false);
-          } } data={null} />
+          }} data={null} />
         }
         <main className={`mx-auto min-h-screen`}>
           <div className="relative flex h-screen lg:p-8 xl:p-16">
@@ -210,7 +294,7 @@ const AuthPage: FC<Props> = () => {
                       id="phoneNumber"
                       type={'text'}
                       value={phoneNumber}
-                      setValue={ handlePhoneNumberChange }
+                      setValue={handlePhoneNumberChange}
                       className="bg-white dark:!bg-[#3a3b3c]"
                     />
                     {displayRole == 2 && <div className="flex justify-start -mb-5">

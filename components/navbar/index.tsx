@@ -19,7 +19,7 @@ import { usePassDataContext } from "@/providers/PassedData";
 import NotiPopup from "../notification";
 import SubmitPopup from "../submit";
 import DetailPopup from "../popup";
-import { AdministrativeOperation, BusinessOperation, CustomerOperation } from "@/TDLib/main";
+import { AdministrativeOperation, BusinessOperation, CustomerOperation, OrdersOperation } from "@/TDLib/main";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { Button } from "@nextui-org/react";
 import { FaPen } from "react-icons/fa";
@@ -59,6 +59,7 @@ const Navbar = ({ }: Props) => {
   const [selectedProvince, setSelectedProvince] = useState<any>("");
   const [selectedDistrict, setSelectedDistrict] = useState<any>("");
   const [selectedWard, setSelectedWard] = useState<any>("");
+  const orderOperation = new OrdersOperation();
   const adminOperation = new AdministrativeOperation();
   const imgURL = "https://api.tdlogistics.net.vn/v2/customers/avatar/get?customerId="
   const getActiveRoute = (routes: any) => {
@@ -111,7 +112,33 @@ const Navbar = ({ }: Props) => {
     // console.log("response2", response2)
     console.log("response", response)
     if (!response.error) {
-      setPassData(response.data);
+      const orderRes = await orderOperation.get({
+        addition: {
+          sort: [["createdAt", "ASC"]],
+          page: 1,
+          size: 1,
+          group: []
+        },
+        criteria: [
+          {
+            field: "customerId",
+            operator: "=",
+            value: response.data.id
+          }
+        ]
+      }, token);
+      console.log(orderRes);
+      if (!orderRes.error) {
+        const order = orderRes.data[0];
+        const newPassData = {
+          town: order.wardSource,
+          province: order.provinceSource,
+          district: order.districtSource,
+          detailAddress: order.detailSource
+        };
+        console.log("newPassData", {...newPassData, ...response.data});
+        setPassData({...newPassData, ...response.data});
+      }
       // setDataUpdate(response.data);
       // setUsername(response.data.email);
       // const response2 = await getinfo.getAvatar({ customerId: response.data.id })
@@ -131,12 +158,13 @@ const Navbar = ({ }: Props) => {
         }
         , token);
       // console.log("business", isBusiness.data.length > 0)
-      if(!isBusiness.data) return;
-      if(isBusiness.data.length) {
+      if (!isBusiness.data) return;
+      if (isBusiness.data.length) {
         localStorage.setItem("isBussiness", "1")
       } else {
         localStorage.removeItem("isBussiness")
       }
+      route.push("/orders");
     }
     else {
       route.push("/");
@@ -144,7 +172,7 @@ const Navbar = ({ }: Props) => {
 
     // if (!response2.error || response2.error == undefined) console.log(response2)
     // else if (!!response2.data) {
-      // setPassData(response2.data);
+    // setPassData(response2.data);
     //   setDataUpdate(response2.data);
     //   setUsername(response2.data.account.email);
     //   setProfilePicture("/img/avatars/avatar_4.jpg")
