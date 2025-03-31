@@ -495,7 +495,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
                                 <FormattedMessage id="Register.UploadImage" />
                             </label>
                             {!selectedImage && <label className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer w-max">
-                                <span>Chọn File giấy phép kinh doanh</span>
+                                <FormattedMessage id="Business.PickFile" />
                                 <input
                                     type="file"
                                     accept="application/pdf"
@@ -523,7 +523,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ onClose, data }) => {
                                         }}
                                         className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-all"
                                     >
-                                        Xóa
+                                        <FormattedMessage id="Business.Delete" />
                                     </button>
                                 </div>
                             )}

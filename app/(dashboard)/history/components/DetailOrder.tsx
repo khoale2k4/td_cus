@@ -5,6 +5,7 @@ import JourneyTimeline from "./Timeline";
 import { OrdersOperation } from "@/TDLib/main";
 import { Button } from "@nextui-org/react";
 import { GoogleMap, LoadScript, Polyline, useJsApiLoader } from "@react-google-maps/api";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface DetailOrderProps {
     onClose: () => void;
@@ -18,7 +19,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ""
     });
-    const [shipper, setShipper] = useState<{id: string, fullname: string, phoneNumber: string} | null>(null);
+    const [shipper, setShipper] = useState<{ id: string, fullname: string, phoneNumber: string } | null>(null);
     const [coordinates, setCoordinates] = useState<{ lat: number, lng: number }[]>([]);
     useEffect(() => {
         const handleFetchData = async () => {
@@ -50,10 +51,10 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
 
     const fetchShipper = async () => {
         const token = localStorage.getItem('token');
-        if(!token) return;
+        if (!token) return;
         const response = await orderOperation.getShipperWhoTakenOrder(dataInitial.id, token);
         console.log(response);
-        if(response.success) {
+        if (response.success) {
             setShipper(response.data)
         }
     }
@@ -87,7 +88,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchShipper();
     }, [])
 
@@ -125,12 +126,25 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                         </div>
                         {getDivider({ vertical: false })}
                         <div className="flex flex-1 flex-col gap-2">
-                            {getTitle("History.Detail.FeeAndCost")}
-                            {getDetail("History.Detail.ReceiverPay", dataInitial.receiverWillPay ? intl.formatMessage({ id: "History.Detail.ReceiverPay"}): intl.formatMessage({ id: "History.Detail.SenderPay"}))}
-                            {getDetail("History.Detail.Paid", dataInitial.paid ? intl.formatMessage({ id: "History.Detail.Paid"}): intl.formatMessage({ id: "History.Detail.UnPaid"}))}
-                            {/* {getDetail("History.Detail.Fee", ((dataInitial.fee - dataInitial.cod) < 0 ? 0 : dataInitial.fee - dataInitial.cod).toString())} */}
-                            {getDetail("History.COD", dataInitial.cod)}
-                            {getDetail("History.Detail.Fee", dataInitial.fee ?? 0)}
+                            <div className="flex flex-row justify-between w-full">
+                                <div>
+                                    {getTitle("History.Detail.FeeAndCost")}
+                                    {getDetail("History.Detail.ReceiverPay", dataInitial.receiverWillPay ? intl.formatMessage({ id: "History.Detail.ReceiverPay" }) : intl.formatMessage({ id: "History.Detail.SenderPay" }))}
+                                    {getDetail("History.Detail.Paid", dataInitial.paid ? intl.formatMessage({ id: "History.Detail.Paid" }) : intl.formatMessage({ id: "History.Detail.UnPaid" }))}
+                                    {/* {getDetail("History.Detail.Fee", ((dataInitial.fee - dataInitial.cod) < 0 ? 0 : dataInitial.fee - dataInitial.cod).toString())} */}
+                                    {getDetail("History.COD", dataInitial.cod)}
+                                    {getDetail("History.Detail.Fee", dataInitial.fee ?? 0)}
+                                </div>
+                                {!dataInitial.paid && <div>
+                                    <QRCodeCanvas
+                                        value={dataInitial.qrcode}
+                                        size={160}
+                                        bgColor="transparent"
+                                        className="rounded-lg border border-gray-300 dark:border-gray-700"
+                                    />
+                                    <FormattedMessage id="Orders.QrScan" />
+                                </div>}
+                            </div>
 
                             {getDivider({ vertical: true })}
                             {getTitle("History.Detail.OrderDetail")}

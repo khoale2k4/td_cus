@@ -18,6 +18,7 @@ interface DetailFormProps {
         height: number;
         mass: number;
         COD: number;
+        paymentMethod: number;
     };
     additionData: {
         insurance: boolean;
@@ -50,7 +51,7 @@ interface DetailFormProps {
 const DetailForm: React.FC<DetailFormProps> = ({
     formData, additionData, insuranceData, giftData, images, setFormData, setAdditionData, setInsuranceData, setGiftData, setImages, shippingBillButton
 }) => {
-    const { selectedOption, length, width, height, mass, COD } = formData;
+    const { paymentMethod, selectedOption, length, width, height, mass, COD } = formData;
     const { insurance, doorToDoor, gift, isBulkyGood, receiverWillPay } = additionData;
     const { id, name } = giftData;
     const { companyName, companyAddress, companyPhone, companyEmail, companyTaxCode } = insuranceData;
@@ -267,7 +268,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
                         styles={styles}
                         className={`flex items-center bg-[#F0F2F5] text-navy-800 dark:bg-[#3a3b3c] dark:text-white w-full h-10 px-1 rounded-full`}
                         placeholder={intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery1' })}
-                        value={typesOfPaymentMethod.find(option => option.value === selectedOption)}
+                        value={typesOfPaymentMethod.find(option => option.value === paymentMethod)}
                         onChange={handleSelectOption}
                         options={typesOfPaymentMethod}
                         formatOptionLabel={(option: { value: number, text: string }) => (

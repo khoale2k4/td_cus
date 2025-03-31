@@ -191,7 +191,7 @@
     "Orders.Form2.IsBulkyGood": "Đơn hàng cồng kềnh",
     "Orders.Form2.IsGift": "Đơn hàng quà tặng",
     "Orders.Form3.Title": "Xác nhận thông tin đơn hàng",
-
+    "Orders.QrScan": "Quét mã để thanh toán",
     "Register.Title": "Đăng ký tài khoản doanh nghiệp",
     "Register.Title2": "Thông tin doanh nghiệp",
     "Register.Title3": "Thông tin người đại diện doanh nghiệp",
@@ -205,5 +205,15 @@
     "Register.Button2": "Tạo tài khoản",
     "Register.UploadImage": "Tải file",
     "OTP.Message": "Xác thực thành công!",
-    "OTP.Message2": "Mã OTP không khớp, vui lòng nhập lại!"
+    "OTP.Message2": "Mã OTP không khớp, vui lòng nhập lại!",
+    "Business.NotBusiness": "Bạn chưa phải doanh nghiệp.",
+    "Business.Regis": "Đăng ký ngay",
+    "Business.PickFile": "Tải lên File giấy phép kinh doanh",
+    "Business.Delete": "Xoá",
+    "Business.Info": "Thông tin giấy phép doanh nghiệp",
+    "Business.FileName": "Tên file: ",
+    "Business.DownloadPDF": "Tải file PDF",
+    "Business.Update": "Cập nhật thông tin",
+    "Business.NoFile": "Không có file nào hoặc có lỗi khi tải file."
+
 }
