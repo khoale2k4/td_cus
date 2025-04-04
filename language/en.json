@@ -155,6 +155,7 @@
     "History.Detail.UnPaid": "Unpaid",
     "History.Detail.Fee": "Fee",
     "History.Detail.Total": "Total Amount",
+    "History.Invoice": "Invoice",
     "Timeline.Info": "The order has been newly created",
     "Orders.Message": "An error occurred while calculating the cost, if this error persists please contact customer service.",
     "Orders.Message2": "Order created successfully",

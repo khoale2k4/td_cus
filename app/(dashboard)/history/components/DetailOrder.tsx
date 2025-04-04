@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import DetailPopup from "@/components/popup";
 import JourneyTimeline from "./Timeline";
-import { OrdersOperation } from "@/TDLib/main";
+import { InvoiceOperation, OrdersOperation } from "@/TDLib/main";
 import { Button } from "@nextui-org/react";
 import { GoogleMap, LoadScript, Polyline, useJsApiLoader } from "@react-google-maps/api";
 import { QRCodeCanvas } from "qrcode.react";
+import DownloadButton from "./DownloadButton";
 
 interface DetailOrderProps {
     onClose: () => void;
@@ -15,12 +16,23 @@ interface DetailOrderProps {
 const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
     const intl = useIntl()
     const orderOperation = new OrdersOperation();
+    const invoiceOperation = new InvoiceOperation();
+    const [invoiceFile, setInvoiceFile] = useState<string | null>(null);
     const [showMap, setShowMap] = useState(false);
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ""
     });
     const [shipper, setShipper] = useState<{ id: string, fullname: string, phoneNumber: string } | null>(null);
     const [coordinates, setCoordinates] = useState<{ lat: number, lng: number }[]>([]);
+
+    const handleDownload = () => {
+        // Tạo link tải xuống
+        const link = document.createElement("a");
+        link.href = `data:application/pdf;base64,${invoiceFile}`;
+        link.download = "HoaDon_" + dataInitial.trackingNumber;
+        link.click();
+    };
+
     useEffect(() => {
         const handleFetchData = async () => {
             const token = localStorage.getItem('token') ?? "";
@@ -41,6 +53,8 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                 }));
                 setCoordinates(parsedCoordinates);
             }
+            const invoiceResponse = await invoiceOperation.getByOrderId(dataInitial.id, token);
+            setInvoiceFile(invoiceResponse.data);
         };
         handleFetchData();
     }, [dataInitial.id]);
@@ -71,14 +85,16 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
         return (<strong style={{ color: "red" }}><FormattedMessage id={id} />:</strong>);
     }
 
-    const getDetail = (id: string, data: string | null) => {
+    const getDetail = (id: string, data: string | ReactNode | null) => {
         return (
             <div className='flex gap-2'>
                 <div className='w-32 min-w-[128px] flex justify-between'>
-                    <strong><FormattedMessage id={id} /></strong>
-                    :</div> {data ?? intl.formatMessage({ id: "Login.Message15" })}</div>
+                    <strong><FormattedMessage id={id} /></strong>:
+                </div>
+                {data ?? intl.formatMessage({ id: "Login.Message15" })}
+            </div>
         );
-    }
+    };
 
     const getDivider = ({ vertical = false }: { vertical: boolean }) => {
         if (vertical) {
@@ -112,6 +128,9 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                                         intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' })
                             )}
                             {getDetail("History.additionServices", getAdditionServices({ bulky: dataInitial.isBulkyGood, door: dataInitial.deliverDoorToDoor, gift: dataInitial.giftOrder }))}
+                            {invoiceFile && getDetail("History.Invoice", <div className="p-4">
+                                <DownloadButton base64Data={invoiceFile} filename={"HoaDon_" + dataInitial.trackingNumber} />
+                            </div>)}
 
                             {getDivider({ vertical: true })}
                             {getTitle("History.Detail.Sender")}
@@ -126,15 +145,27 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                         </div>
                         {getDivider({ vertical: false })}
                         <div className="flex flex-1 flex-col gap-2">
-                            <div className="flex flex-row justify-between w-full">
-                                <div>
-                                    {getTitle("History.Detail.FeeAndCost")}
-                                    {getDetail("History.Detail.ReceiverPay", dataInitial.receiverWillPay ? intl.formatMessage({ id: "History.Detail.ReceiverPay" }) : intl.formatMessage({ id: "History.Detail.SenderPay" }))}
-                                    {getDetail("History.Detail.Paid", dataInitial.paid ? intl.formatMessage({ id: "History.Detail.Paid" }) : intl.formatMessage({ id: "History.Detail.UnPaid" }))}
-                                    {/* {getDetail("History.Detail.Fee", ((dataInitial.fee - dataInitial.cod) < 0 ? 0 : dataInitial.fee - dataInitial.cod).toString())} */}
-                                    {getDetail("History.COD", dataInitial.cod)}
-                                    {getDetail("History.Detail.Fee", dataInitial.fee ?? 0)}
-                                </div>
+                            {/* <div className="flex flex-row justify-between w-full">
+                                <div> */}
+                            {getTitle("History.Detail.FeeAndCost")}
+                            {getDetail("History.Detail.ReceiverPay", dataInitial.receiverWillPay ? intl.formatMessage({ id: "History.Detail.ReceiverPay" }) : intl.formatMessage({ id: "History.Detail.SenderPay" }))}
+                            {getDetail("History.Detail.Paid", dataInitial.paid ? intl.formatMessage({ id: "History.Detail.Paid" }) : intl.formatMessage({ id: "History.Detail.UnPaid" }))}
+                            {/* {getDetail("History.Detail.Fee", ((dataInitial.fee - dataInitial.cod) < 0 ? 0 : dataInitial.fee - dataInitial.cod).toString())} */}
+                            {getDetail("History.COD", dataInitial.cod)}
+                            {getDetail("History.Detail.Fee", dataInitial.fee ?? 0)}
+                            <button
+                                onClick={() => {
+                                    if (dataInitial?.qrcode) {
+                                        window.open(dataInitial.qrcode, "_blank");
+                                    } else {
+                                        alert("Không tìm thấy mã QR để thanh toán.");
+                                    }
+                                }}
+                                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded"
+                            >
+                                Thanh toán
+                            </button>
+                            {/* </div>
                                 {!dataInitial.paid && <div>
                                     <QRCodeCanvas
                                         value={dataInitial.qrcode}
@@ -144,7 +175,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                                     />
                                     <FormattedMessage id="Orders.QrScan" />
                                 </div>}
-                            </div>
+                            </div> */}
 
                             {getDivider({ vertical: true })}
                             {getTitle("History.Detail.OrderDetail")}
@@ -171,7 +202,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         }
             onClose={onClose} title={intl.formatMessage({ id: "History.Detail.Title" })} />
     );

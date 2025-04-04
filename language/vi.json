@@ -155,6 +155,7 @@
     "History.Detail.UnPaid": "Chưa thanh toán",
     "History.Detail.Fee": "Chi phí",
     "History.Detail.Total": "Tổng tiền",
+    "History.Invoice": "Hoá đơn",
     "Timeline.Info": "Đơn hàng được tạo mới",
     "Orders.Message": "Đã có lỗi xảy ra khi tính toán chi phí, nếu lỗi này lặp lại nhiều lần vui lòng liên hệ CSKH.",
     "Orders.Message2": "Tạo mới đơn hàng thành công",

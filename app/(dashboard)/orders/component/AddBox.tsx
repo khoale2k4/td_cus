@@ -295,7 +295,8 @@ const AddPanel: React.FC = () => {
             deliverDoorToDoor: additionData.doorToDoor,
             isBulkyGood: additionData.isBulkyGood,
             note: "",
-            paymentMethod: formData.selectedOption === 0 ? 'BY_CASH' : 'BY_BANK_TRANSFER'
+            paymentMethod: formData.selectedOption === 0 ? 'BY_CASH' : 'BY_BANK_TRANSFER',
+            willExportInvoice: additionData.insurance
         }, token ?? "");
         if (additionData.insurance) {
             const cargoInsuranceResponse = await cargoInsuranceOperation.create({

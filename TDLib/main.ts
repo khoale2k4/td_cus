@@ -46,8 +46,8 @@ export enum LoginOption {
     CUSTOMER = "CUSTOMER"
 }
 
-// const host = "http://localhost:3000/v3";
-const host = "https://api.tdlogistics.net.vn/v3";
+const host = "http://localhost:3000/v3";
+// const host = "https://api.tdlogistics.net.vn/v3";
 
 export class AuthOperation {
     private baseUrl: String;
@@ -223,9 +223,9 @@ export class BusinessOperation {
         try {
             const formData = new FormData();
             formData.append("data", JSON.stringify(payload));
-    
+
             formData.append("file", imageFile);
-    
+
             const response = await axios.post(`${this.baseUrl}/signup`, formData, {
                 withCredentials: true,
                 headers: {
@@ -233,7 +233,7 @@ export class BusinessOperation {
                     "Content-Type": "multipart/form-data"
                 }
             });
-    
+
             return response.data;
         } catch (error) {
             console.error("Error signing up business:", error);
@@ -245,9 +245,9 @@ export class BusinessOperation {
         try {
             const formData = new FormData();
             formData.append("data", JSON.stringify(payload));
-    
+
             formData.append("file", imageFile);
-    
+
             const response = await axios.post(`${this.baseUrl}/update/${id}`, formData, {
                 withCredentials: true,
                 headers: {
@@ -255,14 +255,14 @@ export class BusinessOperation {
                     "Content-Type": "multipart/form-data"
                 }
             });
-    
+
             return response.data;
         } catch (error) {
             console.error("Error signing up business:", error);
             return this.handleError(error);
         }
     }
-    
+
 
     async searchBusinesses(payload: SearchPayload, token: string) {
         try {
@@ -300,7 +300,7 @@ export class BusinessOperation {
                 },
                 responseType: "blob"
             });
-    
+
             if (response.data instanceof Blob) {
                 return response.data;
             } else {
@@ -312,7 +312,7 @@ export class BusinessOperation {
             return null;
         }
     }
-    
+
 
     private handleError(error: any) {
         return {
@@ -827,7 +827,7 @@ export class CargoInsuranceOperation {
     }
 }
 
-export class MapOperation{
+export class MapOperation {
     async getCoordinates(address: string, ggmapkey: string): Promise<{ lat: number; lng: number } | null> {
         try {
             const response = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
@@ -943,6 +943,7 @@ export interface OrderDTO {
     isBulkyGood: boolean;
     note: string;
     paymentMethod: 'BY_CASH' | 'BY_BANK_TRANSFER';
+    willExportInvoice: boolean;
 }
 
 
@@ -1040,30 +1041,30 @@ export class OrdersOperation {
     }
 
     async create(payload: OrderDTO, token: string) {
-            try {
-                const formData = new FormData();
-                formData.append("data", JSON.stringify(payload)); 
-        
-                const response = await axios.post(`${this.baseUrl}/create`, formData, {
-                    withCredentials: true,
-                    headers: {
-                        Authorization: "Bearer " + token,
-                        "Content-Type": "multipart/form-data",
-                    },
-                });
-        
-                return { error: response.data.error, message: response.data.message, data: response.data.data };
-            } catch (error: any) {
-                console.log("Error creating agency: ", error?.response?.data);
-                console.error("Request that caused the error: ", error?.request);
-                return { 
-                    error: error?.response?.data, 
-                    request: error?.request, 
-                    status: error.response ? error.response.status : null 
-                };
-            }
+        try {
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(payload));
+
+            const response = await axios.post(`${this.baseUrl}/create`, formData, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            return { error: response.data.error, message: response.data.message, data: response.data.data };
+        } catch (error: any) {
+            console.log("Error creating agency: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                error: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
-    
+    }
+
 
     async get(payload: SearchPayload, token: String) {
         try {
@@ -1250,6 +1251,36 @@ export class OrdersOperation {
         }
     }
 }
+
+
+export class InvoiceOperation {
+    private baseUrl: string;
+    constructor() {
+        this.baseUrl = host + "/invoices";
+    }
+
+    async getByOrderId(orderId: string, token: string) {
+        try {
+            const response = await axios.get(`${this.baseUrl}/order/${orderId}`, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token,
+                },
+            });
+
+            return { error: response.data.error, message: response.data.message, data: response.data.data };
+        } catch (error: any) {
+            console.log("Error getting invoice: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                error: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+}
+
 
 export interface AdministrativePayload {
     province?: string,
