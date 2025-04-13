@@ -23,6 +23,10 @@ export const columnsData = [
     accessor: "cod",
   },
   {
+    Header: "createdAt",
+    accessor: "createdAt",
+  },
+  {
     Header: "order.detail",
   },
 ];

@@ -180,7 +180,7 @@ const DetailOrder: React.FC<DetailOrderProps> = ({ onClose, dataInitial }) => {
                             {getDivider({ vertical: true })}
                             {getTitle("History.Detail.OrderDetail")}
                             {getDetail("History.Mass", dataInitial.mass ?? `${dataInitial.fromMass} - ${dataInitial.toMass} (g)`)}
-                            {getDetail("History.Size", `${dataInitial.width}x${dataInitial.height}x${dataInitial.length} (cm)`)}
+                            {dataInitial.width && getDetail("History.Size", `${dataInitial.width}x${dataInitial.height}x${dataInitial.length} (cm)`)}
                             {getDetail("History.Value", dataInitial.value)}
                             {getDetail("History.GoodType", dataInitial.goodType)}
 

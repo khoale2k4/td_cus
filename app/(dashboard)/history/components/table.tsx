@@ -34,7 +34,7 @@ const CheckTable = (props: Props) => {
     const { columnsData, tableData,
         nextPage,
         previousPage,
-        gotoPage, curPage} = props;
+        gotoPage, curPage } = props;
     const [openModal, setOpenModal] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [openError2, setOpenError2] = useState(false);
@@ -173,11 +173,20 @@ const CheckTable = (props: Props) => {
                                         {row.cells.map((cell, cellIndex) => {
                                             let renderData;
                                             if (cell.column.Header !== "order.detail") {
-                                                renderData = (
-                                                    <p className="mt-1 text-sm font-bold text-navy-700 dark:text-white pr-4 whitespace-nowrap">
-                                                        {cell.value}
-                                                    </p>
-                                                );
+                                                if (cell.column.Header === intl.formatMessage({ id: 'createdAt' })) {
+                                                    const date = new Date(cell.value);
+                                                    renderData = (
+                                                        <p className="mt-1 text-sm font-bold text-navy-700 dark:text-white pr-4 whitespace-nowrap">
+                                                            {date.toLocaleDateString('vi-VN')}
+                                                        </p>
+                                                    );
+                                                } else {
+                                                    renderData = (
+                                                        <p className="mt-1 text-sm font-bold text-navy-700 dark:text-white pr-4 whitespace-nowrap">
+                                                            {cell.value}
+                                                        </p>
+                                                    );
+                                                }
                                             } else if (cell.column.Header === "order.detail") {
                                                 renderData = (
                                                     <div className="w-full flex justify-end">

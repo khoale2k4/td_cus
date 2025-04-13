@@ -62,8 +62,8 @@ var LoginOption;
     LoginOption["STAFF"] = "STAFF";
     LoginOption["CUSTOMER"] = "CUSTOMER";
 })(LoginOption || (exports.LoginOption = LoginOption = {}));
-var host = "http://localhost:3000/v3";
-// const host = "https://api.tdlogistics.net.vn/v3";
+// const host = "http://localhost:3000/v3";
+var host = "https://api.tdlogistics.net.vn/v3";
 var AuthOperation = /** @class */ (function () {
     function AuthOperation() {
         this.baseUrl = host + "/auth";

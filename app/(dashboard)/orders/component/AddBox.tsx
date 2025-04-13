@@ -316,7 +316,8 @@ const AddPanel: React.FC = () => {
             setMessage(intl.formatMessage({ id: "Orders.Message2" }))
             setOpenError(true)
             setQrCode(orderResponse.data.qrcode);
-            setCurrentForm(formData.paymentMethod === 0 ? 0 : 4);
+            window.open(orderResponse.data.qrcode, "_blank");
+            setCurrentForm(0);
         }
     };
 
