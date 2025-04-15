@@ -320,7 +320,7 @@ const AddPanel: React.FC = () => {
             setMessage(intl.formatMessage({ id: "Orders.Message2" }))
             setOpenError(true)
             setQrCode(orderResponse.data.qrcode);
-            window.open(orderResponse.data.qrcode, "_blank");
+            if(formData.selectedOption === 1) window.open(orderResponse.data.qrcode, "_blank");
             setCurrentForm(0);
         }
     };
