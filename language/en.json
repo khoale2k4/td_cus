@@ -69,6 +69,8 @@
     "OrderForm.MoreDetailsForm.typesOfDelivery1": "CPN: Express delivery",
     "OrderForm.MoreDetailsForm.typesOfDelivery3": "TTK: Economy delivery",
     "OrderForm.MoreDetailsForm.typesOfDelivery4": "HTT: Urgent delivery",
+    "OrderForm.MoreDetailsForm.typesOfDelivery5": "Super fast",
+    "OrderForm.MoreDetailsForm.typesOfDelivery6": "Super cheap",
     "OrderForm.MoreDetailsForm.typesOfPaymentMethod1": "By cash",
     "OrderForm.MoreDetailsForm.typesOfPaymentMethod2": "By bank transfer",
     "orderId": "Order ID",

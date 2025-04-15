@@ -138,7 +138,9 @@ const DetailForm: React.FC<DetailFormProps> = ({
     const typesOfDelivery = [
         { value: 0, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery1' }) },
         { value: 1, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery3' }) },
-        { value: 2, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' }) }
+        { value: 2, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' }) },
+        { value: 3, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery5' }) },
+        { value: 4, text: intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery6' }) }
     ];
 
     const typesOfPaymentMethod = [

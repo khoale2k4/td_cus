@@ -69,6 +69,8 @@
     "OrderForm.MoreDetailsForm.typesOfDelivery1": "CPN: Giao hàng nhanh",
     "OrderForm.MoreDetailsForm.typesOfDelivery3": "TTK: Giao hàng tiết kiệm",
     "OrderForm.MoreDetailsForm.typesOfDelivery4": "HTT: Giao hàng hoả tốc",
+    "OrderForm.MoreDetailsForm.typesOfDelivery5": "Siêu nhanh",
+    "OrderForm.MoreDetailsForm.typesOfDelivery6": "Siêu rẻ",
     "OrderForm.MoreDetailsForm.typesOfPaymentMethod1": "Tiền mặt",
     "OrderForm.MoreDetailsForm.typesOfPaymentMethod2": "Chuyển khoản",
     "orderId": "Mã đơn hàng",
