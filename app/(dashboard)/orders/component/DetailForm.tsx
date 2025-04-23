@@ -163,6 +163,7 @@ const DetailForm: React.FC<DetailFormProps> = ({
     };
 
     const handleSelectPaymentMethod = (method: any) => {
+        console.log(method.value);
         setFormData({ paymentMethod: method.value });
     }
 
