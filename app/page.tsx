@@ -95,7 +95,7 @@ const AuthPage: FC<Props> = () => {
     if (!response.error) {
       const orderRes = await orderOperation.get({
         addition: {
-          sort: [["createdAt", "ASC"]],
+          sort: [["createdAt", "DESC"]],
           page: 1,
           size: 1,
           group: []
