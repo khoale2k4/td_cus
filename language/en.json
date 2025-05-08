@@ -71,6 +71,8 @@
     "OrderForm.MoreDetailsForm.typesOfDelivery4": "HTT: Urgent delivery",
     "OrderForm.MoreDetailsForm.typesOfDelivery5": "Super fast",
     "OrderForm.MoreDetailsForm.typesOfDelivery6": "Super cheap",
+    "OrderForm.MoreDetailsForm.agree": "Create applications means agreement with",
+    "OrderForm.MoreDetailsForm.agree2": "terms",
     "OrderForm.MoreDetailsForm.typesOfPaymentMethod1": "By cash",
     "OrderForm.MoreDetailsForm.typesOfPaymentMethod2": "By bank transfer",
     "orderId": "Order ID",

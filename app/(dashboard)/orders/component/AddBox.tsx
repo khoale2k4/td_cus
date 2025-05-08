@@ -266,11 +266,11 @@ const AddPanel: React.FC = () => {
         }
 
         const orderResponse = await orderOperation.create({
-            serviceType: 
-            formData.selectedOption == 0 ? "SPN" : 
-            formData.selectedOption == 1 ? "TTK" : 
-            formData.selectedOption == 3 ? "Siêu nhanh" : 
-            formData.selectedOption == 4 ? "Siêu rẻ" : "HTT",
+            serviceType:
+                formData.selectedOption == 0 ? "SPN" :
+                    formData.selectedOption == 1 ? "TTK" :
+                        formData.selectedOption == 3 ? "Siêu nhanh" :
+                            formData.selectedOption == 4 ? "Siêu rẻ" : "HTT",
             nameSender: sourceInfo.name,
             nameReceiver: destinationInfo.name,
             phoneNumberReceiver: destinationInfo.phoneNumber,
@@ -320,7 +320,7 @@ const AddPanel: React.FC = () => {
             setMessage(intl.formatMessage({ id: "Orders.Message2" }))
             setOpenError(true)
             setQrCode(orderResponse.data.qrcode);
-            if(formData.paymentMethod === 1) window.open(orderResponse.data.qrcode, "_blank");
+            if (formData.paymentMethod === 1) window.open(orderResponse.data.qrcode, "_blank");
             setCurrentForm(0);
         }
     };
@@ -515,6 +515,10 @@ const AddPanel: React.FC = () => {
                                                         :
                                                         intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' })}</div>
                                             </div>
+                                            <p>
+                                                {intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.agree' })}
+                                                <a href="https://tdlogistics.net.vn/vi/terms" target="_blank" rel="noopener noreferrer">{intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.agree2' })}</a>.
+                                            </p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -553,7 +557,7 @@ const AddPanel: React.FC = () => {
                         <Button
                             className='h-10 bg-red-500 w-full rounded-md'
                             onClick={loading ? () => { } : currentForm === 4 ? () => {
-                                setCurrentForm(0); 
+                                setCurrentForm(0);
                             } : () => {
                                 handleButtonClick();
                                 console.log(formData);
