@@ -515,9 +515,16 @@ const AddPanel: React.FC = () => {
                                                         :
                                                         intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.typesOfDelivery4' })}</div>
                                             </div>
-                                            <p>
-                                                {intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.agree' })}
-                                                <a href="https://tdlogistics.net.vn/vi/terms" target="_blank" rel="noopener noreferrer">{intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.agree2' })}</a>.
+                                            <p className="text-sm text-gray-600">
+                                                {intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.agree' })}{' '}
+                                                <a
+                                                    href="https://tdlogistics.net.vn/vi/terms"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 underline hover:text-blue-800"
+                                                >
+                                                    {intl.formatMessage({ id: 'OrderForm.MoreDetailsForm.agree2' })}
+                                                </a>.
                                             </p>
                                         </div>
                                     </div>
